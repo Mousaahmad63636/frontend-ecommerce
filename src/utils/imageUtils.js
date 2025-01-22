@@ -1,5 +1,4 @@
-// src/utils/imageUtils.js
 export const getImageUrl = (imagePath) => {
-    if (!imagePath) return '/placeholder.jpg';
-    return `${process.env.REACT_APP_UPLOAD_URL}${imagePath}`;
+    if (!imagePath) return 'https://placehold.co/300@3x.png';
+    return `https://backend-ecommerce-z7ih.onrender.com${imagePath}`;
 };
