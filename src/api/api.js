@@ -5,7 +5,7 @@ const BASE_URL = process.env.REACT_APP_API_URL;
 const UPLOAD_URL = process.env.REACT_APP_UPLOAD_URL;
 
 const axiosInstance = axios.create({
-    baseURL: BASE_URL,
+    baseURL: process.env.REACT_APP_API_URL, // This should include /api
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json'
