@@ -108,7 +108,7 @@ function OrderConfirmationPage() {
                                 style={{ width: '50px', height: '50px', objectFit: 'cover' }}
                                 className="me-2 rounded"
                                 onError={(e) => {
-                                  e.target.src = 'https://via.placeholder.com/50';
+                                  e.target.src = 'https://placehold.co/60@3x.png';
                                 }}
                               />
                               <span>{item.product.name}</span>

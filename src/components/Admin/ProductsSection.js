@@ -517,8 +517,8 @@ function ProductsSection() {
                                                             style={{ width: '50px', height: '50px', objectFit: 'cover' }}
                                                             className="rounded"
                                                             onError={(e) => {
-                                                                e.target.src = 'https://via.placeholder.com/50';
-                                                            }}
+                                                                e.target.src = 'https://placehold.co/60@3x.png';
+                                                              }}
                                                         />
                                                     ))}
                                                 </div>

@@ -249,7 +249,7 @@ function ProductDetail() {
                     className="img-thumbnail"
                     style={{ width: '80px', height: '80px', objectFit: 'cover', cursor: 'pointer' }}
                     onError={(e) => {
-                      e.target.src = 'https://via.placeholder.com/80';
+                      e.target.src = 'https://placehold.co/60@3x.png';
                     }}
                   />
                 </div>

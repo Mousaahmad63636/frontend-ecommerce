@@ -112,7 +112,7 @@ function ProfilePage() {
               <div className="d-flex flex-column align-items-center text-center mb-4">
                 <div className="position-relative">
                   <img
-                    src={imagePreview || 'https://via.placeholder.com/150'}
+                    src={imagePreview || 'https://placehold.co/60@3x.png'}
                     alt="Profile"
                     className="rounded-circle"
                     width="150"

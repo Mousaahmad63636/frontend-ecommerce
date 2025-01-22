@@ -221,7 +221,7 @@ function OrderHistory() {
                             objectFit: 'cover'
                           }}
                           onError={(e) => {
-                            e.target.src = 'https://via.placeholder.com/60';
+                            e.target.src = 'https://placehold.co/60@3x.png';
                           }}
                         />
                         <div className="flex-grow-1">

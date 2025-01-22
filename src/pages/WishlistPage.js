@@ -40,8 +40,8 @@ function WishlistPage() {
                                 alt={item.name}
                                 style={{ height: '200px', objectFit: 'cover' }}
                                 onError={(e) => {
-                                    e.target.src = 'https://via.placeholder.com/300';
-                                }}
+                                    e.target.src = 'https://placehold.co/60@3x.png';
+                                  }}
                             />
                             <div className="card-body d-flex flex-column">
                                 <h5 className="card-title">{item.name}</h5>
