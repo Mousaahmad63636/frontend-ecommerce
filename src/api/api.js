@@ -1,7 +1,8 @@
 // src/api/api.js
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:5000/api';
+const BASE_URL = process.env.REACT_APP_API_URL;
+const UPLOAD_URL = process.env.REACT_APP_UPLOAD_URL;
 
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
@@ -17,24 +18,21 @@ axiosInstance.interceptors.request.use(request => {
     return request;
 });
 
-// Add response interceptor for debugging
 axiosInstance.interceptors.response.use(
     response => response,
     error => {
-        console.error('Response Error:', error.response?.data);
-        throw error;
-    }
-);
-
-// Response interceptor for error handling
-
-axiosInstance.interceptors.response.use(
-    response => response,
-    error => {
-        if (error.response?.status === 401) {
-            // Don't retry auth failures
-            return Promise.reject(error);
+        // Handle network errors
+        if (!error.response) {
+            return Promise.reject(new Error('Network error. Please check your connection.'));
         }
+
+        // Handle expired token
+        if (error.response.status === 401) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+            return Promise.reject(new Error('Session expired. Please login again.'));
+        }
+
         return Promise.reject(error);
     }
 );
