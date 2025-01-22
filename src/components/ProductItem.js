@@ -115,7 +115,7 @@ function ProductItem({ product }) {
             alt={product.name}
             style={{ height: '220px', objectFit: 'contain', padding: '10px' }}
             onError={(e) => {
-              e.target.src = 'https://via.placeholder.com/300';
+              e.target.src = 'https://placehold.co/300@3x.png';
             }}
           />
 

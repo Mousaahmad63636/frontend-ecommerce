@@ -211,7 +211,7 @@ function ProductDetail() {
                 className="img-fluid rounded main-product-image"
                 style={{ width: '100%', height: 'auto', maxHeight: '500px', objectFit: 'contain' }}
                 onError={(e) => {
-                  e.target.src = 'https://via.placeholder.com/500';
+                  e.target.src = 'https://placehold.co/500@3x.png';
                 }}
               />
               {product.images && product.images.length > 1 && (

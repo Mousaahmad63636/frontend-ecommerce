@@ -524,7 +524,7 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                                     className="me-2 rounded"
                                     style={{ width: '40px', height: '40px', objectFit: 'cover' }}
                                     onError={(e) => {
-                                      e.target.src = '/images/placeholder.png'; // Fallback to local placeholder
+                                      e.target.src = 'https://placehold.co/60@3x.png';
                                     }}
                                   />
                                   <div>

@@ -119,7 +119,7 @@ const handleCheckout = () => {
                       alt={item.name}
                       className="cart-item-image"
                       onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/100';
+                        e.target.src = 'https://placehold.co/100@3x.png';
                       }}
                     />
                     <div className="cart-item-details">
