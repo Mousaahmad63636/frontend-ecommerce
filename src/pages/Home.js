@@ -20,6 +20,8 @@ function Home() {
   const [blackFridayData, setBlackFridayData] = useState(null);
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('q');
+  const [initialLoading, setInitialLoading] = useState(true);
+  
   const [heroSettings, setHeroSettings] = useState({
     type: 'image',
     mediaUrl: '/hero.jpg',
@@ -28,74 +30,90 @@ function Home() {
   });
 
   useEffect(() => {
-    const fetchSettings = async () => {
+    const fetchAllData = async () => {
       try {
-        const response = await api.getSettings();
-        if (response?.heroSection) {
-          setHeroSettings(response.heroSection);
+        setInitialLoading(true);
+        setError(null);
+        
+        // Fetch all data in parallel
+        const [settingsResponse, productsData, blackFridayResponse] = await Promise.all([
+          api.getSettings(),
+          api.getProducts(),
+          api.getBlackFridayData().catch(() => null)
+        ]);
+
+        // Update hero settings
+        if (settingsResponse?.heroSection) {
+          setHeroSettings(settingsResponse.heroSection);
         }
-      } catch (error) {
-        console.error('Error fetching hero settings:', error);
-      }
-    };
 
-    fetchSettings();
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const productsData = await api.getProducts();
+        // Update products and categories
         setProducts(productsData);
-
         const uniqueCategories = [...new Set(productsData.map(product => product.category))];
         setCategories(uniqueCategories);
 
-        try {
-          if (api.getBlackFridayData) {
-            const blackFridayResponse = await api.getBlackFridayData();
-            if (blackFridayResponse?.isActive) {
-              setBlackFridayData({
-                discount: blackFridayResponse.discountPercentage,
-                endDate: blackFridayResponse.endDate
-              });
-            }
-          }
-        } catch (blackFridayError) {
-          console.log('Black Friday data not available');
+        // Update Black Friday data
+        if (blackFridayResponse?.isActive) {
+          setBlackFridayData({
+            discount: blackFridayResponse.discountPercentage,
+            endDate: blackFridayResponse.endDate
+          });
         }
 
       } catch (error) {
-        console.error('Error fetching products:', error);
-        setError('Failed to load products');
+        console.error('Error loading page data:', error);
+        setError('Failed to load page data. Please try again.');
       } finally {
+        setInitialLoading(false);
         setLoading(false);
       }
     };
 
-    fetchData();
+    fetchAllData();
   }, []);
 
   useEffect(() => {
-    let filtered = products;
+    if (products.length > 0) {
+      let filtered = products;
 
-    if (searchQuery) {
-      const searchLower = searchQuery.toLowerCase();
-      filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(searchLower) ||
-        product.description.toLowerCase().includes(searchLower) ||
-        product.category.toLowerCase().includes(searchLower)
-      );
-    } else if (selectedCategory !== 'all') {
-      filtered = filtered.filter(product => product.category === selectedCategory);
+      if (searchQuery) {
+        const searchLower = searchQuery.toLowerCase();
+        filtered = filtered.filter(product =>
+          product.name.toLowerCase().includes(searchLower) ||
+          product.description.toLowerCase().includes(searchLower) ||
+          product.category.toLowerCase().includes(searchLower)
+        );
+      } else if (selectedCategory !== 'all') {
+        filtered = filtered.filter(product => product.category === selectedCategory);
+      }
+
+      setFilteredProducts(filtered);
     }
-
-    setFilteredProducts(filtered);
   }, [products, searchQuery, selectedCategory]);
 
-  if (loading) {
-    return <Loading />;
+  if (initialLoading) {
+    return (
+      <div className="container mt-5 text-center">
+        <Loading />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mt-5">
+        <div className="alert alert-danger">
+          <h4 className="alert-heading">Error Loading Page</h4>
+          <p>{error}</p>
+          <button 
+            className="btn btn-primary mt-3"
+            onClick={() => window.location.reload()}
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -107,7 +125,6 @@ function Home() {
         />
       )}
 
-      {/* Hero Section */}
       <section className="hero-section">
         {heroSettings.type === 'video' ? (
           <video
@@ -155,14 +172,12 @@ function Home() {
         </>
       )}
 
-      {/* All Products Section */}
       <section className="py-5 bg-light">
         <div className="container">
           <h2 className="text-center mb-4">
             {searchQuery ? `Search Results for "${searchQuery}"` : 'Our Products'}
           </h2>
 
-          {/* Category Filter - Only show when not searching */}
           {!searchQuery && (
             <div className="row justify-content-center mb-4">
               <div className="col-md-6">
@@ -182,10 +197,8 @@ function Home() {
             </div>
           )}
 
-          {error ? (
-            <div className="alert alert-danger" role="alert">
-              {error}
-            </div>
+          {loading ? (
+            <Loading />
           ) : filteredProducts.length > 0 ? (
             <ProductList products={filteredProducts} />
           ) : (
@@ -199,7 +212,6 @@ function Home() {
         </div>
       </section>
 
-      {/* Contact Section */}
       <ContactSection />
     </div>
   );
