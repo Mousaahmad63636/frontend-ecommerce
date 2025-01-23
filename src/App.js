@@ -141,9 +141,16 @@ function AppContent() {
                 }
               />
 
-              <Route path="/login" element={
-                isAuthenticated ? <Navigate to="/" replace /> : <Home />
-              } />
+              <Route
+                path="/login"
+                element={
+                  isAuthenticated ? (
+                    <Navigate to="/" replace />
+                  ) : (
+                    <Navigate to="/" replace />
+                  )
+                }
+              />
 
               {/* Admin Routes */}
               <Route
@@ -183,21 +190,18 @@ function AppContent() {
 // Root App Component with Providers
 function App() {
   return (
-    <Router>
-      <ErrorBoundary>
-        <NotificationProvider>
-          <AuthProvider>
-            <WishlistProvider>
-              <CartProvider>
-                <ScrollToTop />
-                <AppContent />
-              </CartProvider>
-            </WishlistProvider>
-          </AuthProvider>
-        </NotificationProvider>
-      </ErrorBoundary>
-    </Router>
+    <ErrorBoundary>
+      <NotificationProvider>
+        <AuthProvider>
+          <WishlistProvider>
+            <CartProvider>
+              <ScrollToTop />
+              <AppContent />
+            </CartProvider>
+          </WishlistProvider>
+        </AuthProvider>
+      </NotificationProvider>
+    </ErrorBoundary>
   );
 }
-
 export default App;
