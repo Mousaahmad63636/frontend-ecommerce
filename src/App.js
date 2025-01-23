@@ -10,6 +10,7 @@ import { WishlistProvider } from './contexts/WishlistContext';
 import { NotificationProvider } from './components/Notification/NotificationProvider';
 import { AuthProvider } from './contexts/AuthContext';
 
+
 // Hooks
 import { useAuth } from './contexts/AuthContext';
 import { useNotification } from './components/Notification/NotificationProvider';
