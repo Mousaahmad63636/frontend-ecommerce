@@ -141,6 +141,10 @@ function AppContent() {
                 }
               />
 
+              <Route path="/login" element={
+                isAuthenticated ? <Navigate to="/" replace /> : <Home />
+              } />
+
               {/* Admin Routes */}
               <Route
                 path="/admin/*"
@@ -157,7 +161,7 @@ function AppContent() {
                 <div className="container mt-5 text-center">
                   <h1>404 - Page Not Found</h1>
                   <p>The page you're looking for doesn't exist.</p>
-                  <button 
+                  <button
                     className="btn btn-primary"
                     onClick={() => window.history.back()}
                   >
