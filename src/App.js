@@ -1,18 +1,20 @@
 import React, { useEffect, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
 
-// Contexts
+// Context Providers
 import { CartProvider } from './contexts/CartContext';
 import { WishlistProvider } from './contexts/WishlistContext';
 import { NotificationProvider } from './components/Notification/NotificationProvider';
 import { AuthProvider } from './contexts/AuthContext';
+
+// Hooks
 import { useAuth } from './contexts/AuthContext';
 import { useNotification } from './components/Notification/NotificationProvider';
 
-// Components
+// Core Components
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
@@ -22,7 +24,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import ConsultingFloat from './components/ConsultingFloat/ConsultingFloat';
 
-// Lazy loaded pages
+// Lazy-loaded Pages
 const Home = React.lazy(() => import('./pages/Home'));
 const ProductDetail = React.lazy(() => import('./pages/ProductDetail'));
 const WishlistPage = React.lazy(() => import('./pages/WishlistPage'));
@@ -34,15 +36,15 @@ const CheckoutPage = React.lazy(() => import('./pages/CheckoutPage'));
 const DeliveryPage = React.lazy(() => import('./pages/DeliveryPage'));
 const PaymentPage = React.lazy(() => import('./pages/PaymentPage'));
 
-// Checkout steps context
+// Context Creation
 export const CheckoutStepsContext = React.createContext();
 
-// Main App Component
 function AppContent() {
   const { showNotification } = useNotification();
   const { isAuthenticated, isAdmin } = useAuth();
   const [currentCheckoutStep, setCurrentCheckoutStep] = React.useState(1);
 
+  // Network status handlers
   useEffect(() => {
     const handleOnline = () => showNotification('Back online', 'success');
     const handleOffline = () => showNotification('No internet connection', 'error');
@@ -74,120 +76,40 @@ function AppContent() {
           <Suspense fallback={<Loading />}>
             <Routes>
               {/* Public Routes */}
-              <Route path="/" element={
-                isAdmin ? <Navigate to="/admin" replace /> : <Home />
-              } />
+              <Route path="/" element={isAdmin ? <Navigate to="/admin" replace /> : <Home />} />
               <Route path="/product/:id" element={<ProductDetail />} />
 
-              {/* Checkout Flow Routes */}
-              <Route
-                path="/checkout"
-                element={
-                  <ProtectedRoute>
-                    <CheckoutPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/checkout/delivery"
-                element={
-                  <ProtectedRoute>
-                    <DeliveryPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/checkout/payment"
-                element={
-                  <ProtectedRoute>
-                    <PaymentPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/wishlist"
-                element={
-                  <ProtectedRoute requireAuth={false}>
-                    <WishlistPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    {isAdmin ? <Navigate to="/admin" replace /> : <ProfilePage />}
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/orders"
-                element={
-                  <ProtectedRoute>
-                    <OrdersPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/order-confirmation/:orderId"
-                element={
-                  <ProtectedRoute>
-                    <OrderConfirmationPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/login"
-                element={
-                  isAuthenticated ? (
-                    <Navigate to="/" replace />
-                  ) : (
-                    <Navigate to="/" replace />
-                  )
-                }
-              />
+              {/* Protected Routes */}
+              <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
+              <Route path="/checkout/delivery" element={<ProtectedRoute><DeliveryPage /></ProtectedRoute>} />
+              <Route path="/checkout/payment" element={<ProtectedRoute><PaymentPage /></ProtectedRoute>} />
+              <Route path="/wishlist" element={<ProtectedRoute requireAuth={false}><WishlistPage /></ProtectedRoute>} />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  {isAdmin ? <Navigate to="/admin" replace /> : <ProfilePage />}
+                </ProtectedRoute>
+              } />
+              <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
+              <Route path="/order-confirmation/:orderId" element={<ProtectedRoute><OrderConfirmationPage /></ProtectedRoute>} />
 
               {/* Admin Routes */}
-              <Route
-                path="/admin/*"
-                element={
-                  <AdminRoute>
-                    <AdminPage />
-                  </AdminRoute>
-                }
-              />
+              <Route path="/admin/*" element={<AdminRoute><AdminPage /></AdminRoute>} />
 
+              {/* Redirect Routes */}
+              <Route path="/login" element={<Navigate to="/" replace />} />
 
-              {/* Fallback route for unmatched paths */}
-              <Route path="*" element={
-                <div className="container mt-5 text-center">
-                  <h1>404 - Page Not Found</h1>
-                  <p>The page you're looking for doesn't exist.</p>
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => window.history.back()}
-                  >
-                    Go Back
-                  </button>
-                </div>
-              } />
+              {/* 404 Route */}
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>
         </main>
         <Footer />
         <ConsultingFloat />
-
       </div>
     </CheckoutStepsContext.Provider>
   );
 }
 
-// Root App Component with Providers
 function App() {
   return (
     <ErrorBoundary>
@@ -204,4 +126,5 @@ function App() {
     </ErrorBoundary>
   );
 }
+
 export default App;
