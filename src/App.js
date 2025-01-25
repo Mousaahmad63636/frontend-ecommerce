@@ -1,5 +1,5 @@
 import React, { useEffect, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
@@ -21,6 +21,7 @@ import Loading from './components/Loading/Loading';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ConsultingFloat from './components/ConsultingFloat/ConsultingFloat';
+import LoginModal from './components/Auth/LoginModal';
 
 // Lazy loaded pages
 const Home = React.lazy(() => import('./pages/Home'));
@@ -42,6 +43,14 @@ function AppContent() {
   const { showNotification } = useNotification();
   const { isAuthenticated, isAdmin } = useAuth();
   const [currentCheckoutStep, setCurrentCheckoutStep] = React.useState(1);
+  const [showLoginModal, setShowLoginModal] = React.useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === '/login') {
+      setShowLoginModal(true);
+    }
+  }, [location]);
 
   useEffect(() => {
     const handleOnline = () => showNotification('Back online', 'success');
@@ -73,6 +82,15 @@ function AppContent() {
         <main className="main-content">
           <Suspense fallback={<Loading />}>
             <Routes>
+              {/* Login Route */}
+              <Route path="/login" element={
+                isAuthenticated ? (
+                  <Navigate to="/" replace />
+                ) : (
+                  <Home />
+                )
+              } />
+
               {/* Public Routes */}
               <Route path="/" element={
                 isAdmin ? <Navigate to="/admin" replace /> : <Home />
@@ -151,7 +169,6 @@ function AppContent() {
                 }
               />
 
-
               {/* Fallback route for unmatched paths */}
               <Route path="*" element={
                 <div className="container mt-5 text-center">
@@ -171,6 +188,23 @@ function AppContent() {
         <Footer />
         <ConsultingFloat />
 
+        {showLoginModal && (
+          <LoginModal
+            onClose={() => {
+              setShowLoginModal(false);
+              if (location.pathname === '/login') {
+                window.history.pushState({}, '', '/');
+              }
+            }}
+            onSuccess={() => {
+              setShowLoginModal(false);
+              showNotification('Logged in successfully!', 'success');
+              if (location.pathname === '/login') {
+                window.history.pushState({}, '', '/');
+              }
+            }}
+          />
+        )}
       </div>
     </CheckoutStepsContext.Provider>
   );
