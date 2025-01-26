@@ -23,12 +23,13 @@ export const AuthProvider = ({ children }) => {
 
     const checkAuthStatus = useCallback(async () => {
         if (initialized) return;
-
+    
         try {
             const token = localStorage.getItem('token');
-            
+            console.log('Token in checkAuthStatus:', token); // Debugging
             if (token) {
                 const response = await api.getUserProfile();
+                console.log('User profile response:', response); // Debugging
                 if (response?.user) {
                     setUser(response.user);
                 } else {
@@ -37,6 +38,7 @@ export const AuthProvider = ({ children }) => {
                 }
             }
         } catch (error) {
+            console.error('Error in checkAuthStatus:', error); // Debugging
             localStorage.removeItem('token');
             setUser(null);
         } finally {
