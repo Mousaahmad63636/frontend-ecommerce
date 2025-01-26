@@ -1,0 +1,163 @@
+
+C:.
+- .gitignore
+- package-lock.json
+- package.json
+- Project Tree.txt
+- README.md
+
+C:.\backend
+- .env
+- createAdmin.js
+- package-lock.json
+- package.json
+- server.js
+
+C:.\backend\logs
+- access.log
+
+C:.\backend\middleware
+- auth.js
+
+C:.\backend\models
+- Order.js
+- Product.js
+- PromoCode.js
+- User.js
+
+C:.\backend\routes
+- orders.js
+- products.js
+- promoCodes.js
+- users.js
+
+C:.\backend\scripts
+- createAdmin.js
+
+C:.\backend\uploads
+
+C:.\backend\uploads\products
+
+C:.\backend\uploads\profile-images
+
+C:.\public
+- favicon.ico
+- hero.jpg
+- index.html
+- logo192.png
+- logo512.png
+- manifest.json
+- robots.txt
+
+C:.\src
+- App.css
+- App.js
+- App.test.js
+- index.css
+- index.js
+- logo.svg
+- reportWebVitals.js
+- setupTests.js
+
+C:.\src\api
+- api.js
+
+C:.\src\components
+- BestSelling.js
+- Cart.js
+- ContactSection.js
+- Footer.js
+- Header.css
+- Header.js
+- OrderManagement.js
+- ProductItem.js
+- ProductList.js
+- ScrollToTop.js
+- WhatsAppFloat.css
+- WhatsAppFloat.js
+
+C:.\src\components\Admin
+- PromoCodeManager.js
+
+C:.\src\components\Auth
+- AdminRoute.js
+- LoginModal.css
+- LoginModal.js
+- ProtectedRoute.js
+
+C:.\src\components\BlackFridayBanner
+- BlackFridayBanner.css
+- BlackFridayBanner.js
+
+C:.\src\components\CountdownTimer
+- CountdownTimer.js
+
+C:.\src\components\DiscountTimer
+- DiscountTimer.css
+- DiscountTimer.js
+
+C:.\src\components\ErrorBoundary
+- ErrorBoundary.css
+- ErrorBoundary.js
+
+C:.\src\components\Loading
+- Loading.css
+- Loading.js
+
+C:.\src\components\Notification
+- Notification.css
+- Notification.js
+- NotificationProvider.js
+
+C:.\src\components\Profile
+- AddressBook.js
+- OrderHistory.js
+- SecuritySettings.js
+
+C:.\src\components\SideCart
+- SideCart.css
+- SideCart.js
+
+C:.\src\constants
+- index.js
+
+C:.\src\contexts
+- AuthContext.js
+- CartContext.js
+- WishlistContext.js
+
+C:.\src\hooks
+- useAsync.js
+- useAuthRedirect.js
+- useForm.js
+- useProfileImage.js
+- useScrollPosition.js
+
+C:.\src\pages
+- AdminPage.js
+- CartPage.js
+- CheckoutPage.js
+- DeliveryPage.js
+- Home.css
+- Home.js
+- OrderConfirmationPage.js
+- OrdersPage.js
+- PaymentPage.js
+- ProductDetail.js
+- ProfilePage.js
+- WishlistPage.js
+
+C:.\src\services
+- apiService.js
+- GuestStorage.js
+
+C:.\src\styles
+- Notifications.css
+
+C:.\src\utils
+- api.js
+- formatters.js
+
+C:.\uploads
+
+C:.\uploads\profile-images
