@@ -1,5 +1,5 @@
 import React, { useEffect, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate ,useNavigate} from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
@@ -40,7 +40,7 @@ export const CheckoutStepsContext = React.createContext();
 
 // Main App Component
 function AppContent() {
-  const navigate = useNavigate(); // Add this line at the top of AppContent
+  const navigate = useNavigate();
   const { showNotification } = useNotification();
   const { isAuthenticated, isAdmin, initialized } = useAuth();
   const [currentCheckoutStep, setCurrentCheckoutStep] = React.useState(1);
@@ -81,7 +81,7 @@ function AppContent() {
           <Suspense fallback={<Loading />}>
             <Routes>
               {/* Public Routes First */}
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<Home />} /> {/* Directly render Home component */}
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/category/:categoryName" element={<Home />} />
               <Route path="/search" element={<Home />} />
