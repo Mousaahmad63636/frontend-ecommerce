@@ -1,13 +1,15 @@
 // src/components/Auth/LoginModal.js
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../Notification/NotificationProvider';
+
 import './LoginModal.css';
 
-function LoginModal({ onClose, onSuccess }) {
+function LoginModal({ onClose = () => {}, onSuccess = () => {}, initialMode = 'login' }) {
   const navigate = useNavigate();
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(initialMode === 'login');
+  // ...rest of the code
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -80,7 +82,8 @@ const handleSubmit = async (e) => {
           await register(formData);
 
       if (onSuccess) onSuccess();
-      onClose();
+      navigate('/'); // Add this line
+      if (onClose) onClose(); // Make onClose optional
 
   } catch (error) {
       console.error('Auth error:', error);

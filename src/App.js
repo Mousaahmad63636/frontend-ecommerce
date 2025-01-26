@@ -1,5 +1,5 @@
 import React, { useEffect, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate ,useNavigate} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
@@ -87,10 +87,22 @@ function AppContent() {
 
               {/* Auth Routes */}
               <Route path="/login" element={
-                isAuthenticated ? <Navigate to="/" replace /> : <LoginModal />
+                isAuthenticated ?
+                  <Navigate to="/" replace /> :
+                  <LoginModal
+                    onClose={() => navigate('/')}
+                    onSuccess={() => navigate('/')}
+                    initialMode="login"
+                  />
               } />
               <Route path="/register" element={
-                isAuthenticated ? <Navigate to="/" replace /> : <LoginModal initialMode="register" />
+                isAuthenticated ?
+                  <Navigate to="/" replace /> :
+                  <LoginModal
+                    onClose={() => navigate('/')}
+                    onSuccess={() => navigate('/')}
+                    initialMode="register"
+                  />
               } />
 
               {/* Protected Routes */}
