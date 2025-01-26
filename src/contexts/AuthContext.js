@@ -53,10 +53,10 @@ export const AuthProvider = ({ children }) => {
         try {
             setLoading(true);
             const response = await api.login({ email, password });
-
+    
             if (response?.user) {
                 if (response.token) {
-                    localStorage.setItem('token', response.token);
+                    localStorage.setItem('token', response.token); // Ensure this line is executed
                 }
                 setUser(response.user);
                 showNotification(`Welcome back, ${response.user.name}!`, 'success');
