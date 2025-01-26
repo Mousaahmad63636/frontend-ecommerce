@@ -41,7 +41,7 @@ export const CheckoutStepsContext = React.createContext();
 // Main App Component
 function AppContent() {
   const { showNotification } = useNotification();
-  const { isAuthenticated, isAdmin } = useAuth();
+  const { isAuthenticated, isAdmin, initialized } = useAuth();
   const [currentCheckoutStep, setCurrentCheckoutStep] = React.useState(1);
 
   useEffect(() => {
@@ -67,6 +67,11 @@ function AppContent() {
     }
   };
 
+  // Wait for auth to initialize before rendering routes
+  if (!initialized) {
+    return <Loading />;
+  }
+
   return (
     <CheckoutStepsContext.Provider value={checkoutStepsValue}>
       <div className="app-wrapper">
@@ -74,6 +79,12 @@ function AppContent() {
         <main className="main-content">
           <Suspense fallback={<Loading />}>
             <Routes>
+              {/* Public Routes First */}
+              <Route path="/" element={<Home />} />
+              <Route path="/product/:id" element={<ProductDetail />} />
+              <Route path="/category/:categoryName" element={<Home />} />
+              <Route path="/search" element={<Home />} />
+
               {/* Auth Routes */}
               <Route path="/login" element={
                 isAuthenticated ? <Navigate to="/" replace /> : <LoginModal />
@@ -81,12 +92,6 @@ function AppContent() {
               <Route path="/register" element={
                 isAuthenticated ? <Navigate to="/" replace /> : <LoginModal initialMode="register" />
               } />
-
-              {/* Public Routes */}
-              <Route path="/" element={
-                isAdmin ? <Navigate to="/admin" replace /> : <Home />
-              } />
-              <Route path="/product/:id" element={<ProductDetail />} />
 
               {/* Protected Routes */}
               <Route
@@ -159,10 +164,6 @@ function AppContent() {
                   </AdminRoute>
                 }
               />
-
-              {/* Category and Search Routes */}
-              <Route path="/category/:categoryName" element={<Home />} />
-              <Route path="/search" element={<Home />} />
 
               {/* Fallback route for unmatched paths */}
               <Route path="*" element={

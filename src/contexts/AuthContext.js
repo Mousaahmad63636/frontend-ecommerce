@@ -16,14 +16,15 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [initialized, setInitialized] = useState(false);
     const { showNotification } = useNotification();
     const navigate = useNavigate();
 
     const checkAuthStatus = useCallback(async () => {
+        if (initialized) return;
+
         try {
-            setLoading(true);
             const token = localStorage.getItem('token');
             
             if (token) {
@@ -42,7 +43,7 @@ export const AuthProvider = ({ children }) => {
             setLoading(false);
             setInitialized(true);
         }
-    }, []); // Remove initialized from dependencies
+    }, [initialized]);
 
     useEffect(() => {
         checkAuthStatus();
@@ -59,6 +60,7 @@ export const AuthProvider = ({ children }) => {
                 }
                 setUser(response.user);
                 showNotification(`Welcome back, ${response.user.name}!`, 'success');
+                navigate('/');
                 return response.user;
             }
             throw new Error('Invalid response from server');
@@ -174,13 +176,7 @@ export const AuthProvider = ({ children }) => {
     }), [user, loading, initialized, logout, checkAuthStatus]);
 
     if (!initialized && loading) {
-        return (
-            <div className="d-flex justify-content-center align-items-center min-vh-100">
-                <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                </div>
-            </div>
-        );
+        return null;
     }
 
     return (
