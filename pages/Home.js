@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, useLocation } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import BestSelling from '../components/BestSelling';
 import ProductList from '../components/ProductList';
 import ContactSection from '../components/ContactSection';
 import BlackFridayBanner from '../components/BlackFridayBanner/BlackFridayBanner';
 import Loading from '../components/Loading/Loading';
-import LoginModal from '../components/Auth/LoginModal';
 import api from '../api/api';
 import './Home.css';
 import TimerDisplay from '../components/Admin/TimerDisplay';
@@ -19,9 +18,7 @@ function Home() {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [blackFridayData, setBlackFridayData] = useState(null);
-  const [showLoginModal, setShowLoginModal] = useState(false);
   const [searchParams] = useSearchParams();
-  const location = useLocation();
   const searchQuery = searchParams.get('q');
   const [heroSettings, setHeroSettings] = useState({
     type: 'image',
@@ -29,14 +26,6 @@ function Home() {
     title: 'Welcome to our Store',
     subtitle: 'Discover amazing products at great prices'
   });
-
-  useEffect(() => {
-    if (location.pathname === '/login') {
-      setShowLoginModal(true);
-      // Prevent continuous refresh by immediately updating URL
-      window.history.replaceState({}, '', '/');
-    }
-  }, [location.pathname]);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -104,20 +93,6 @@ function Home() {
 
     setFilteredProducts(filtered);
   }, [products, searchQuery, selectedCategory]);
-
-  const handleLoginClose = () => {
-    setShowLoginModal(false);
-    if (location.pathname === '/login') {
-      window.history.pushState({}, '', '/');
-    }
-  };
-
-  const handleLoginSuccess = () => {
-    setShowLoginModal(false);
-    if (location.pathname === '/login') {
-      window.history.pushState({}, '', '/');
-    }
-  };
 
   if (loading) {
     return <Loading />;
@@ -226,14 +201,6 @@ function Home() {
 
       {/* Contact Section */}
       <ContactSection />
-
-      {/* Login Modal */}
-      {showLoginModal && (
-        <LoginModal
-          onClose={handleLoginClose}
-          onSuccess={handleLoginSuccess}
-        />
-      )}
     </div>
   );
 }
