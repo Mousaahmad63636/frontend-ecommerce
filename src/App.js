@@ -22,7 +22,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import ConsultingFloat from './components/ConsultingFloat/ConsultingFloat';
 
-// Lazy loaded pages
+// Lazy loaded pages and components
 const Home = React.lazy(() => import('./pages/Home'));
 const ProductDetail = React.lazy(() => import('./pages/ProductDetail'));
 const WishlistPage = React.lazy(() => import('./pages/WishlistPage'));
@@ -33,6 +33,8 @@ const AdminPage = React.lazy(() => import('./pages/AdminPage'));
 const CheckoutPage = React.lazy(() => import('./pages/CheckoutPage'));
 const DeliveryPage = React.lazy(() => import('./pages/DeliveryPage'));
 const PaymentPage = React.lazy(() => import('./pages/PaymentPage'));
+const LoginModal = React.lazy(() => import('./components/Auth/LoginModal'));
+const CartPage = React.lazy(() => import('./pages/CartPage'));
 
 // Checkout steps context
 export const CheckoutStepsContext = React.createContext();
@@ -73,16 +75,22 @@ function AppContent() {
         <main className="main-content">
           <Suspense fallback={<Loading />}>
             <Routes>
+              {/* Auth Routes */}
+              <Route path="/login" element={
+                isAuthenticated ? <Navigate to="/" replace /> : <LoginModal />
+              } />
+              <Route path="/register" element={
+                isAuthenticated ? <Navigate to="/" replace /> : <LoginModal initialMode="register" />
+              } />
 
-              <Route path="/login" element={<LoginModal />} />
-              <Route path="/register" element={<LoginModal />} />
               {/* Public Routes */}
               <Route path="/" element={
                 isAdmin ? <Navigate to="/admin" replace /> : <Home />
               } />
               <Route path="/product/:id" element={<ProductDetail />} />
+              <Route path="/cart" element={<CartPage />} />
 
-              {/* Checkout Flow Routes */}
+              {/* Protected Routes */}
               <Route
                 path="/checkout"
                 element={
@@ -154,6 +162,9 @@ function AppContent() {
                 }
               />
 
+              {/* Category and Search Routes */}
+              <Route path="/category/:categoryName" element={<Home />} />
+              <Route path="/search" element={<Home />} />
 
               {/* Fallback route for unmatched paths */}
               <Route path="*" element={
@@ -173,7 +184,6 @@ function AppContent() {
         </main>
         <Footer />
         <ConsultingFloat />
-
       </div>
     </CheckoutStepsContext.Provider>
   );
