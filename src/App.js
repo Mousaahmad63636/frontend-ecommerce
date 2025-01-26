@@ -34,7 +34,6 @@ const CheckoutPage = React.lazy(() => import('./pages/CheckoutPage'));
 const DeliveryPage = React.lazy(() => import('./pages/DeliveryPage'));
 const PaymentPage = React.lazy(() => import('./pages/PaymentPage'));
 const LoginModal = React.lazy(() => import('./components/Auth/LoginModal'));
-const CartPage = React.lazy(() => import('./pages/CartPage'));
 
 // Checkout steps context
 export const CheckoutStepsContext = React.createContext();
