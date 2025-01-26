@@ -22,7 +22,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import ConsultingFloat from './components/ConsultingFloat/ConsultingFloat';
 
-// Lazy loaded pages and components
+// Lazy loaded pages
 const Home = React.lazy(() => import('./pages/Home'));
 const ProductDetail = React.lazy(() => import('./pages/ProductDetail'));
 const WishlistPage = React.lazy(() => import('./pages/WishlistPage'));
@@ -87,7 +87,6 @@ function AppContent() {
                 isAdmin ? <Navigate to="/admin" replace /> : <Home />
               } />
               <Route path="/product/:id" element={<ProductDetail />} />
-              <Route path="/cart" element={<CartPage />} />
 
               {/* Protected Routes */}
               <Route
