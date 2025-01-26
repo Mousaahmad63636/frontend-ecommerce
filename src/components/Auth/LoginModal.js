@@ -1,12 +1,14 @@
 // src/components/Auth/LoginModal.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom'; 
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../Notification/NotificationProvider';
 import './LoginModal.css';
 
 function LoginModal({ onClose, onSuccess }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     email: '',
