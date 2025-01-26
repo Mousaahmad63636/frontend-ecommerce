@@ -40,6 +40,7 @@ export const CheckoutStepsContext = React.createContext();
 
 // Main App Component
 function AppContent() {
+  const navigate = useNavigate(); // Add this line at the top of AppContent
   const { showNotification } = useNotification();
   const { isAuthenticated, isAdmin, initialized } = useAuth();
   const [currentCheckoutStep, setCurrentCheckoutStep] = React.useState(1);
