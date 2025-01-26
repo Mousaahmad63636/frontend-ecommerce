@@ -82,14 +82,13 @@ function AppContent() {
         <main className="main-content">
           <Suspense fallback={<Loading />}>
             <Routes>
-              {/* Login Route */}
-              <Route path="/login" element={
-                isAuthenticated ? (
-                  <Navigate to="/" replace />
-                ) : (
-                  <Home />
-                )
-              } />
+            <Route path="/login" element={
+  isAuthenticated ? (
+    <Navigate to="/" replace />
+  ) : (
+    <Navigate to="/" replace />
+  )
+} />
 
               {/* Public Routes */}
               <Route path="/" element={

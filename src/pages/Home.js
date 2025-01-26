@@ -31,9 +31,10 @@ function Home() {
   });
 
   useEffect(() => {
-    // Show login modal if we're at /login path
     if (location.pathname === '/login') {
       setShowLoginModal(true);
+      // Prevent continuous refresh by immediately updating URL
+      window.history.replaceState({}, '', '/');
     }
   }, [location.pathname]);
 

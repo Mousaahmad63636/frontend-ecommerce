@@ -49,7 +49,12 @@ function LoginModal({ onClose, onSuccess }) {
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
-
+  const handleLoginClose = () => {
+    setShowLoginModal(false);
+    if (location.pathname === '/login') {
+      window.history.replaceState({}, '', '/');
+    }
+  };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
