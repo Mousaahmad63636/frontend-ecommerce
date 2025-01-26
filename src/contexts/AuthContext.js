@@ -22,8 +22,6 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
 
     const checkAuthStatus = useCallback(async () => {
-        if (initialized) return;
-
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
@@ -44,7 +42,7 @@ export const AuthProvider = ({ children }) => {
             setLoading(false);
             setInitialized(true);
         }
-    }, [initialized]);
+    }, []); // Remove initialized from dependencies
 
     useEffect(() => {
         checkAuthStatus();

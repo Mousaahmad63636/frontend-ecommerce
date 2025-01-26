@@ -1,14 +1,10 @@
 // src/components/Auth/ProtectedRoute.js
-import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import Loading from '../Loading/Loading';
-
-function ProtectedRoute({ children, requireAuth = false }) {
-    const { isAuthenticated, loading } = useAuth();
+function ProtectedRoute({ children, requireAuth = true }) {
+    const { isAuthenticated, loading, initialized } = useAuth();
     const location = useLocation();
 
-    if (loading) {
+    // Show loading while checking auth status
+    if (!initialized || loading) {
         return <Loading />;
     }
 
@@ -24,5 +20,3 @@ function ProtectedRoute({ children, requireAuth = false }) {
 
     return children;
 }
-
-export default ProtectedRoute;

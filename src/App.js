@@ -73,6 +73,9 @@ function AppContent() {
         <main className="main-content">
           <Suspense fallback={<Loading />}>
             <Routes>
+
+              <Route path="/login" element={<LoginModal />} />
+              <Route path="/register" element={<LoginModal />} />
               {/* Public Routes */}
               <Route path="/" element={
                 isAdmin ? <Navigate to="/admin" replace /> : <Home />
