@@ -35,10 +35,8 @@ const DeliveryPage = React.lazy(() => import('./pages/DeliveryPage'));
 const PaymentPage = React.lazy(() => import('./pages/PaymentPage'));
 const LoginModal = React.lazy(() => import('./components/Auth/LoginModal'));
 
-// Checkout steps context
 export const CheckoutStepsContext = React.createContext();
 
-// Main App Component
 function AppContent() {
   const navigate = useNavigate();
   const { showNotification } = useNotification();
@@ -68,7 +66,6 @@ function AppContent() {
     }
   };
 
-  // Wait for auth to initialize before rendering routes
   if (!initialized) {
     return <Loading />;
   }
@@ -80,105 +77,79 @@ function AppContent() {
         <main className="main-content">
           <Suspense fallback={<Loading />}>
             <Routes>
-              {/* Public Routes First */}
-              <Route path="/" element={<Home />} /> {/* Directly render Home component */}
+              {/* Public Routes - No Authentication Required */}
+              <Route path="/" element={<Home />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/category/:categoryName" element={<Home />} />
               <Route path="/search" element={<Home />} />
+              <Route path="/wishlist" element={<WishlistPage />} />
 
               {/* Auth Routes */}
               <Route path="/login" element={
-                isAuthenticated ?
-                  <Navigate to="/" replace /> :
-                  <LoginModal
-                    onClose={() => navigate('/')}
-                    onSuccess={() => navigate('/')}
-                    initialMode="login"
-                  />
+                isAuthenticated ? 
+                <Navigate to="/" replace /> : 
+                <LoginModal 
+                  onClose={() => {
+                    const returnUrl = new URLSearchParams(window.location.search).get('returnUrl');
+                    navigate(returnUrl || '/');
+                  }}
+                  onSuccess={() => {
+                    const returnUrl = new URLSearchParams(window.location.search).get('returnUrl');
+                    navigate(returnUrl || '/');
+                  }}
+                  initialMode="login"
+                />
               } />
               <Route path="/register" element={
-                isAuthenticated ?
-                  <Navigate to="/" replace /> :
-                  <LoginModal
-                    onClose={() => navigate('/')}
-                    onSuccess={() => navigate('/')}
-                    initialMode="register"
-                  />
+                isAuthenticated ? 
+                <Navigate to="/" replace /> : 
+                <LoginModal 
+                  onClose={() => navigate('/')}
+                  onSuccess={() => navigate('/')}
+                  initialMode="register"
+                />
               } />
 
-              {/* Protected Routes */}
-              <Route
-                path="/checkout"
-                element={
-                  <ProtectedRoute>
-                    <CheckoutPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/checkout/delivery"
-                element={
-                  <ProtectedRoute>
-                    <DeliveryPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/checkout/payment"
-                element={
-                  <ProtectedRoute>
-                    <PaymentPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/wishlist"
-                element={
-                  <ProtectedRoute requireAuth={false}>
-                    <WishlistPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    {isAdmin ? <Navigate to="/admin" replace /> : <ProfilePage />}
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/orders"
-                element={
-                  <ProtectedRoute>
-                    <OrdersPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/order-confirmation/:orderId"
-                element={
-                  <ProtectedRoute>
-                    <OrderConfirmationPage />
-                  </ProtectedRoute>
-                }
-              />
+              {/* Protected Routes - Require Authentication */}
+              <Route path="/checkout" element={
+                <ProtectedRoute requireAuth={true}>
+                  <CheckoutPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/checkout/delivery" element={
+                <ProtectedRoute requireAuth={true}>
+                  <DeliveryPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/checkout/payment" element={
+                <ProtectedRoute requireAuth={true}>
+                  <PaymentPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/profile" element={
+                <ProtectedRoute requireAuth={true}>
+                  {isAdmin ? <Navigate to="/admin" replace /> : <ProfilePage />}
+                </ProtectedRoute>
+              } />
+              <Route path="/orders" element={
+                <ProtectedRoute requireAuth={true}>
+                  <OrdersPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/order-confirmation/:orderId" element={
+                <ProtectedRoute requireAuth={true}>
+                  <OrderConfirmationPage />
+                </ProtectedRoute>
+              } />
 
               {/* Admin Routes */}
-              <Route
-                path="/admin/*"
-                element={
-                  <AdminRoute>
-                    <AdminPage />
-                  </AdminRoute>
-                }
-              />
+              <Route path="/admin/*" element={
+                <AdminRoute>
+                  <AdminPage />
+                </AdminRoute>
+              } />
 
-              {/* Fallback route for unmatched paths */}
+              {/* 404 Route */}
               <Route path="*" element={
                 <div className="container mt-5 text-center">
                   <h1>404 - Page Not Found</h1>
@@ -201,7 +172,6 @@ function AppContent() {
   );
 }
 
-// Root App Component with Providers
 function App() {
   return (
     <Router>

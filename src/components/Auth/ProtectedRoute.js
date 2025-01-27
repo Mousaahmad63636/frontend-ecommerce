@@ -1,27 +1,24 @@
 import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import Loading from '../Loading/Loading';
 
 const ProtectedRoute = ({ children, requireAuth = true }) => {
-    const { isAuthenticated, loading } = useAuth();
-    const location = useLocation();
+  const { isAuthenticated } = useAuth();
 
-    if (loading) {
-        return <Loading />;
-    }
-
-    // If authentication is not required, render children
-    if (!requireAuth) {
-        return children;
-    }
-
-    // If authentication is required and user is not authenticated
-    if (requireAuth && !isAuthenticated) {
-        return <Navigate to="/login" state={{ from: location }} replace />;
-    }
-
+  // If authentication is not required, render children
+  if (!requireAuth) {
     return children;
+  }
+
+  // If authentication is required but user is not authenticated,
+  // redirect to login with return URL
+  if (requireAuth && !isAuthenticated) {
+    const currentPath = window.location.pathname;
+    return <Navigate to={`/login?returnUrl=${encodeURIComponent(currentPath)}`} />;
+  }
+
+  // User is authenticated, render children
+  return children;
 };
 
-export default ProtectedRoute;  // Add this default export
+export default ProtectedRoute;
