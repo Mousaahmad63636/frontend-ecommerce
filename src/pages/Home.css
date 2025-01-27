@@ -1,56 +1,6 @@
 /* src/pages/Home.css */
-.hero-section {
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-              url('/public/hero.jpg') center/cover;
-  color: white;
-  padding: 100px 0;
-  margin-bottom: 40px;
-}
 
-.hero-content {
-  text-align: center;
-}
-
-.hero-title {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-
-.hero-subtitle {
-  font-size: 1.2rem;
-  opacity: 0.9;
-}
-
-.section-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.section-divider {
-  width: 60px;
-  height: 3px;
-  background-color: #007bff;
-  margin: 20px auto;
-}
-
-.category-filter {
-  max-width: 300px;
-  margin: 0 auto 30px;
-}
-
-@media (max-width: 768px) {
-  .hero-section {
-    padding: 60px 0;
-  }
-
-  .hero-title {
-    font-size: 2rem;
-  }
-
-  .hero-subtitle {
-    font-size: 1rem;
-  }
-}
+/* General styles */
 .hero-section {
   position: relative;
   height: 400px;
@@ -60,6 +10,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
+  padding: 2rem;
 }
 
 .hero-media {
@@ -75,13 +26,13 @@
 .hero-content {
   position: relative;
   z-index: 1;
-  padding: 2rem;
+  padding: 1.5rem;
   background: rgba(0, 0, 0, 0.5);
   border-radius: 8px;
 }
 
 .hero-title {
-  font-size: 3rem;
+  font-size: 2.5rem;
   margin-bottom: 1rem;
 }
 
@@ -90,16 +41,96 @@
   opacity: 0.9;
 }
 
+/* Section Header */
+.section-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.section-divider {
+  width: 60px;
+  height: 3px;
+  background-color: #007bff;
+  margin: 20px auto;
+}
+
+/* Category Filter */
+.category-filter {
+  max-width: 300px;
+  margin: 0 auto 30px;
+}
+
+/* Grid Layout for Items */
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 1rem;
+  margin: 20px auto;
+  max-width: 1200px;
+  padding: 1rem;
+}
+
+.item {
+  background-color: #f9f9f9;
+  color: #333;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .hero-section {
+    height: 350px;
+  }
+
+  .hero-title {
+    font-size: 2.2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .items-grid {
+    grid-template-columns: repeat(4, 1fr); /* Show 4 items per row */
+  }
+}
+
 @media (max-width: 768px) {
   .hero-section {
     height: 300px;
   }
 
   .hero-title {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 
   .hero-subtitle {
     font-size: 1rem;
+  }
+
+  .items-grid {
+    grid-template-columns: repeat(3, 1fr); /* Show 3 items per row */
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    height: 250px;
+    padding: 1rem;
+  }
+
+  .hero-title {
+    font-size: 1.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .items-grid {
+    grid-template-columns: repeat(2, 1fr); /* Show 2 items per row */
   }
 }
