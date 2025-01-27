@@ -54,20 +54,17 @@ function Header() {
     if (searchQuery.trim()) {
       navigate(`/?q=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery('');
-      setShowMobileMenu(false); // Close mobile menu if open
+      setShowMobileMenu(false);
     }
   };
 
   const handleProfileClick = () => {
-    navigate('/profile'); // This ensures clicking profile always goes to profile page
-  };
-
-  const handleWishlistClick = (e) => {
-    if (!isAuthenticated) {
-      e.preventDefault();
-      showNotification('Please login to view your wishlist', 'info');
+    if (isAuthenticated) {
+      navigate('/profile');
+    } else {
       setShowLoginModal(true);
     }
+    setShowProfileDropdown(false);
   };
 
   const handleCartClick = (e) => {
@@ -99,10 +96,7 @@ function Header() {
         </form>
 
         <nav className="nav-icons">
-          <Link
-            to="/wishlist"
-            className="nav-icon"
-          >
+          <Link to="/wishlist" className="nav-icon">
             <div className="icon-container">
               <i className="fas fa-heart"></i>
               {getWishlistCount() > 0 && (
@@ -114,10 +108,7 @@ function Header() {
             <span className="icon-label">Wishlist</span>
           </Link>
 
-          <button
-            className="nav-icon cart-button"
-            onClick={handleCartClick}
-          >
+          <button className="nav-icon cart-button" onClick={handleCartClick}>
             <div className="icon-container">
               <i className="fas fa-shopping-cart"></i>
               {getCartItemsCount() > 0 && (
@@ -133,7 +124,7 @@ function Header() {
             <div className="profile-dropdown">
               <button
                 className="nav-icon profile-button"
-                onClick={handleProfileClick}  // Ensure this handler is defined
+                onClick={() => setShowProfileDropdown(!showProfileDropdown)}
                 aria-label="Profile"
               >
                 <div className="icon-container">
@@ -186,10 +177,7 @@ function Header() {
 
                   <div className="dropdown-divider"></div>
 
-                  <button
-                    onClick={handleLogout}
-                    className="dropdown-item text-danger"
-                  >
+                  <button onClick={handleLogout} className="dropdown-item text-danger">
                     <i className="fas fa-sign-out-alt"></i>
                     Logout
                   </button>
@@ -197,12 +185,11 @@ function Header() {
               )}
             </div>
           ) : (
-            <button
-              className="login-button"
-              onClick={() => setShowLoginModal(true)}
-            >
-              <i className="fas fa-sign-in-alt"></i>
-              <span>Login</span>
+            <button className="nav-icon" onClick={() => setShowLoginModal(true)}>
+              <div className="icon-container">
+                <i className="fas fa-user-circle"></i>
+              </div>
+              <span className="icon-label">Sign in</span>
             </button>
           )}
         </nav>
@@ -230,22 +217,15 @@ function Header() {
           </form>
 
           <nav className="mobile-nav">
-            <Link
-              to={isAuthenticated ? "/wishlist" : "#"}
-              className="mobile-nav-item"
-              onClick={handleWishlistClick}
-            >
+            <Link to="/wishlist" className="mobile-nav-item">
               <i className="fas fa-heart"></i>
               Wishlist
-              {isAuthenticated && getWishlistCount() > 0 && (
+              {getWishlistCount() > 0 && (
                 <span className="mobile-badge">{getWishlistCount()}</span>
               )}
             </Link>
 
-            <button
-              className="mobile-nav-item"
-              onClick={handleCartClick}
-            >
+            <button className="mobile-nav-item" onClick={handleCartClick}>
               <i className="fas fa-shopping-cart"></i>
               Cart
               {getCartItemsCount() > 0 && (
@@ -269,10 +249,7 @@ function Header() {
                     Admin Panel
                   </Link>
                 )}
-                <button
-                  onClick={handleLogout}
-                  className="mobile-nav-item text-danger"
-                >
+                <button onClick={handleLogout} className="mobile-nav-item text-danger">
                   <i className="fas fa-sign-out-alt"></i>
                   Logout
                 </button>
@@ -283,14 +260,13 @@ function Header() {
                 onClick={() => setShowLoginModal(true)}
               >
                 <i className="fas fa-sign-in-alt"></i>
-                Login
+                Sign in
               </button>
             )}
           </nav>
         </div>
       )}
 
-      {/* Modals */}
       {showLoginModal && (
         <LoginModal
           onClose={() => setShowLoginModal(false)}
