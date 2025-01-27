@@ -16,36 +16,32 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [initialized, setInitialized] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [initialized, setInitialized] = useState(true);
     const { showNotification } = useNotification();
     const navigate = useNavigate();
 
     const checkAuthStatus = useCallback(async () => {
-        if (initialized) return;
-    
-        try {
-            const token = localStorage.getItem('token');
-            console.log('Token in checkAuthStatus:', token); // Debugging
-            if (token) {
+        const token = localStorage.getItem('token');
+        
+        if (token) {
+            try {
                 const response = await api.getUserProfile();
-                console.log('User profile response:', response); // Debugging
                 if (response?.user) {
                     setUser(response.user);
                 } else {
                     localStorage.removeItem('token');
                     setUser(null);
                 }
+            } catch (error) {
+                localStorage.removeItem('token');
+                setUser(null);
             }
-        } catch (error) {
-            console.error('Error in checkAuthStatus:', error); // Debugging
-            localStorage.removeItem('token');
-            setUser(null);
-        } finally {
-            setLoading(false);
-            setInitialized(true);
         }
-    }, [initialized]);
+        
+        setInitialized(true);
+        setLoading(false);
+    }, []);
 
     useEffect(() => {
         checkAuthStatus();
@@ -58,7 +54,7 @@ export const AuthProvider = ({ children }) => {
     
             if (response?.user) {
                 if (response.token) {
-                    localStorage.setItem('token', response.token); // Ensure this line is executed
+                    localStorage.setItem('token', response.token);
                 }
                 setUser(response.user);
                 showNotification(`Welcome back, ${response.user.name}!`, 'success');
@@ -176,10 +172,6 @@ export const AuthProvider = ({ children }) => {
         deleteAccount,
         refreshUser: checkAuthStatus
     }), [user, loading, initialized, logout, checkAuthStatus]);
-
-    if (!initialized && loading) {
-        return null;
-    }
 
     return (
         <AuthContext.Provider value={contextValue}>
