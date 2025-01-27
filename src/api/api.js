@@ -5,7 +5,17 @@ import axios from 'axios';
 const BASE_URL = process.env.REACT_APP_API_URL;
 const UPLOAD_URL = process.env.REACT_APP_UPLOAD_URL;
 
-// Create axios instance
+
+const publicRoutes = [
+    '/products',
+    '/products/best-selling',
+    '/products/search',
+    '/products/categories',
+    '/settings',
+    '/timer',
+    '/promo-codes/validate'
+];
+
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
     withCredentials: true,
@@ -14,38 +24,47 @@ const axiosInstance = axios.create({
     }
 });
 
-// Single Request Interceptor
 axiosInstance.interceptors.request.use(request => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        request.headers.Authorization = `Bearer ${token}`; // Ensure this line is executed
+    // Check if the route is public
+    const isPublicRoute = publicRoutes.some(route => request.url.startsWith(route));
+    
+    // Only add token for non-public routes
+    if (!isPublicRoute) {
+        const token = localStorage.getItem('token');
+        if (token) {
+            request.headers.Authorization = `Bearer ${token}`;
+        }
     }
-    console.log('Request:', request);
     return request;
 }, error => {
     return Promise.reject(error);
 });
 
+
 // Single Response Interceptor
 axiosInstance.interceptors.response.use(
     response => response,
     error => {
-        // Handle network errors
+        const isPublicRoute = publicRoutes.some(route => error.config.url.startsWith(route));
+
         if (!error.response) {
             return Promise.reject(new Error('Network error. Please check your connection.'));
         }
 
-        // Handle expired token
-        if (error.response.status === 401) {
+        // Only handle 401 for non-public routes
+        if (error.response.status === 401 && !isPublicRoute) {
             localStorage.removeItem('token');
-            window.location.href = '/login';
+            // Only redirect if not on a public page
+            if (!window.location.pathname.startsWith('/')) {
+                window.location.href = '/login';
+            }
             return Promise.reject(new Error('Session expired. Please login again.'));
         }
 
-        console.error('Response Error:', error.response?.data);
         return Promise.reject(error);
     }
 );
+
 
 const api = {
     // Auth Methods
