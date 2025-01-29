@@ -1,14 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import {
+  HomeWrapper,
+  HeroSection,
+  HeroMedia,
+  HeroContent,
+  HeroTitle,
+  HeroSubtitle,
+  Section,
+  SectionTitle,
+  CategorySelect,
+  NoResults,
+  LoadingWrapper
+} from '../styles/HomeStyles';
+
 import BestSelling from '../components/BestSelling';
 import ProductList from '../components/ProductList';
 import ContactSection from '../components/ContactSection';
 import BlackFridayBanner from '../components/BlackFridayBanner/BlackFridayBanner';
 import Loading from '../components/Loading/Loading';
-import api from '../api/api';
-import './Home.css';
 import TimerDisplay from '../components/Admin/TimerDisplay';
 import DiscountedProducts from '../components/DiscountedProducts';
+import api from '../api/api';
 
 function Home() {
   const [products, setProducts] = useState([]);
@@ -52,8 +65,8 @@ function Home() {
         const uniqueCategories = [...new Set(productsData.map(product => product.category))];
         setCategories(uniqueCategories);
 
-        try {
-          if (api.getBlackFridayData) {
+        if (api.getBlackFridayData) {
+          try {
             const blackFridayResponse = await api.getBlackFridayData();
             if (blackFridayResponse?.isActive) {
               setBlackFridayData({
@@ -61,11 +74,10 @@ function Home() {
                 endDate: blackFridayResponse.endDate
               });
             }
+          } catch (blackFridayError) {
+            console.log('Black Friday data not available');
           }
-        } catch (blackFridayError) {
-          console.log('Black Friday data not available');
         }
-
       } catch (error) {
         console.error('Error fetching products:', error);
         setError('Failed to load products');
@@ -95,11 +107,15 @@ function Home() {
   }, [products, searchQuery, selectedCategory]);
 
   if (loading) {
-    return <Loading />;
+    return (
+      <LoadingWrapper>
+        <Loading />
+      </LoadingWrapper>
+    );
   }
 
   return (
-    <div className="home-container">
+    <HomeWrapper>
       {blackFridayData && (
         <BlackFridayBanner
           endDate={blackFridayData.endDate}
@@ -107,101 +123,89 @@ function Home() {
         />
       )}
 
-      {/* Hero Section */}
-      <section className="hero-section">
-        {heroSettings.type === 'video' ? (
-          <video
-            src={heroSettings.mediaUrl}
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="hero-media"
-          />
-        ) : (
-          <div
-            className="hero-media"
-            style={{
-              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${heroSettings.mediaUrl})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
-            }}
-          />
-        )}
-        <div className="hero-content">
-          <h1 className="hero-title">{heroSettings.title}</h1>
-          <p className="hero-subtitle">{heroSettings.subtitle}</p>
-        </div>
-      </section>
+      <HeroSection>
+        <HeroMedia
+          style={{
+            backgroundImage: `url(${heroSettings.mediaUrl})`
+          }}
+        >
+          {heroSettings.type === 'video' ? (
+            <video
+              src={heroSettings.mediaUrl}
+              autoPlay
+              loop
+              muted
+              playsInline
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          ) : null}
+        </HeroMedia>
+        <HeroContent>
+          <HeroTitle>{heroSettings.title}</HeroTitle>
+          <HeroSubtitle>{heroSettings.subtitle}</HeroSubtitle>
+        </HeroContent>
+      </HeroSection>
 
       {!searchQuery && (
         <>
-          <section className="py-5 bg-light">
-            <div className="container">
+          <Section background="#f5f5f5">
+            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
               <DiscountedProducts />
-            </div>
-            <div className="d-flex justify-content-between align-items-center mb-4">
-              <div className="d-flex align-items-center">
-                <h2 className="mb-0">Special Offers</h2>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <SectionTitle>Special Offers</SectionTitle>
                 <TimerDisplay />
               </div>
             </div>
-          </section>
-          <section className="py-5">
-            <div className="container">
+          </Section>
+
+          <Section>
+            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
               <BestSelling />
             </div>
-          </section>
+          </Section>
         </>
       )}
 
-      {/* All Products Section */}
-      <section className="py-5 bg-light">
-        <div className="container">
-          <h2 className="text-center mb-4">
+      <Section background="#f5f5f5">
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <SectionTitle>
             {searchQuery ? `Search Results for "${searchQuery}"` : 'Our Products'}
-          </h2>
+          </SectionTitle>
 
-          {/* Category Filter - Only show when not searching */}
           {!searchQuery && (
-            <div className="row justify-content-center mb-4">
-              <div className="col-md-6">
-                <select
-                  className="form-select"
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                >
-                  <option value="all">All Categories</option>
-                  {categories.map(category => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+            <CategorySelect
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              <option value="all">All Categories</option>
+              {categories.map(category => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </CategorySelect>
           )}
 
           {error ? (
-            <div className="alert alert-danger" role="alert">
-              {error}
-            </div>
+            <NoResults>
+              <h3>Error</h3>
+              <p>{error}</p>
+            </NoResults>
           ) : filteredProducts.length > 0 ? (
             <ProductList products={filteredProducts} />
           ) : (
-            <div className="text-center py-5">
+            <NoResults>
               <h3>No products found</h3>
               {searchQuery && (
                 <p>No results found for "{searchQuery}". Try a different search term or browse our categories.</p>
               )}
-            </div>
+            </NoResults>
           )}
         </div>
-      </section>
+      </Section>
 
-      {/* Contact Section */}
       <ContactSection />
-    </div>
+    </HomeWrapper>
   );
 }
 
