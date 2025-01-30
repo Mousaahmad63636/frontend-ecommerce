@@ -65,29 +65,32 @@ const SideCart = ({ isOpen, onClose }) => {
     return subtotal - discountAmount + shippingFee;
 };
 
+// src/components/SideCart/SideCart.js
+// Replace the handleCheckout function with:
+
 const handleCheckout = () => {
   if (cartItems.length === 0) {
-      showNotification('Your cart is empty', 'error');
-      return;
+    showNotification('Your cart is empty', 'error');
+    return;
   }
 
   // Prepare cart data
   const cartData = {
-      items: cartItems,
-      subtotal: calculateSubtotal(),
-      shipping: shippingFee,
-      discount: promoDiscount ? {
-          type: promoDiscount.type,
-          value: promoDiscount.value
-      } : null,
-      promoCode: promoCode,
-      total: calculateTotal(),
-      originalTotal: calculateOriginalTotal(),
-      savedAmount: calculateOriginalTotal() - calculateTotal(),
-      specialInstructions
+    items: cartItems,
+    subtotal: calculateSubtotal(),
+    shipping: shippingFee,
+    discount: promoDiscount ? {
+      type: promoDiscount.type,
+      value: promoDiscount.value
+    } : null,
+    promoCode: promoCode,
+    total: calculateTotal(),
+    originalTotal: calculateOriginalTotal(),
+    savedAmount: calculateOriginalTotal() - calculateTotal(),
+    specialInstructions
   };
 
-  // Store in localStorage with proper formatting
+  // Store in localStorage
   localStorage.setItem('cartData', JSON.stringify(cartData));
   onClose();
   navigate('/checkout');

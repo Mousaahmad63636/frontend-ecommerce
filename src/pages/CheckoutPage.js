@@ -194,14 +194,14 @@ function CheckoutPage() {
           <div className="card">
             <div className="card-header d-flex justify-content-between align-items-center">
               <h4 className="mb-0">Checkout Information</h4>
-              {!isAuthenticated && (
+              <div className="text-end mb-3">
                 <button
                   className="btn btn-outline-primary btn-sm"
                   onClick={handleLoginClick}
                 >
-                  Login to autofill
+                  Already have an account? Login
                 </button>
-              )}
+              </div>
             </div>
             <div className="card-body">
               <form onSubmit={handleSubmit}>
@@ -238,31 +238,31 @@ function CheckoutPage() {
                 </div>
 
                 <div className="mb-3">
-    <label className="form-label">Phone Number*</label>
-    <input
-        type="tel"
-        className={`form-control ${formErrors.phoneNumber ? 'is-invalid' : ''}`}
-        name="phoneNumber"
-        value={formData.phoneNumber}
-        onChange={(e) => {
-            // Only allow digits and limit to 8 characters
-            const value = e.target.value.replace(/\D/g, '').slice(0, 8);
-            handleInputChange({
-                target: {
-                    name: 'phoneNumber',
-                    value
-                }
-            });
-        }}
-        placeholder="Enter 8 digit phone number"
-        required
-        pattern="\d{8}"
-        maxLength="8"
-    />
-    {formErrors.phoneNumber && (
-        <div className="invalid-feedback">{formErrors.phoneNumber}</div>
-    )}
-</div>
+                  <label className="form-label">Phone Number*</label>
+                  <input
+                    type="tel"
+                    className={`form-control ${formErrors.phoneNumber ? 'is-invalid' : ''}`}
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
+                    onChange={(e) => {
+                      // Only allow digits and limit to 8 characters
+                      const value = e.target.value.replace(/\D/g, '').slice(0, 8);
+                      handleInputChange({
+                        target: {
+                          name: 'phoneNumber',
+                          value
+                        }
+                      });
+                    }}
+                    placeholder="Enter 8 digit phone number"
+                    required
+                    pattern="\d{8}"
+                    maxLength="8"
+                  />
+                  {formErrors.phoneNumber && (
+                    <div className="invalid-feedback">{formErrors.phoneNumber}</div>
+                  )}
+                </div>
 
                 <div className="mb-3">
                   <label className="form-label">Delivery Address*</label>

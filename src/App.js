@@ -110,29 +110,17 @@ function AppContent() {
                 />
               } />
 
-              {/* Protected Routes - Require Authentication */}
-              <Route path="/checkout" element={
-                <ProtectedRoute requireAuth={true}>
-                  <CheckoutPage />
-                </ProtectedRoute>
-              } />
-              <Route path="/checkout/delivery" element={
-                <ProtectedRoute requireAuth={true}>
-                  <DeliveryPage />
-                </ProtectedRoute>
-              } />
-              <Route path="/checkout/payment" element={
-                <ProtectedRoute requireAuth={true}>
-                  <PaymentPage />
-                </ProtectedRoute>
-              } />
+<Route path="/checkout" element={<CheckoutPage />} />
+<Route path="/checkout/delivery" element={<DeliveryPage />} />
+<Route path="/checkout/payment" element={<PaymentPage />} />
+
               <Route path="/profile" element={
                 <ProtectedRoute requireAuth={true}>
                   {isAdmin ? <Navigate to="/admin" replace /> : <ProfilePage />}
                 </ProtectedRoute>
               } />
               <Route path="/orders" element={
-                <ProtectedRoute requireAuth={true}>
+                <ProtectedRoute>
                   <OrdersPage />
                 </ProtectedRoute>
               } />

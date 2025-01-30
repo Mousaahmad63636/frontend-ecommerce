@@ -1,5 +1,15 @@
-// src/components/Footer.js
 import React, { useState, useEffect } from 'react';
+import {
+  FooterWrapper,
+  FooterContainer,
+  FooterGrid,
+  FooterSection,
+  SocialLinks,
+  ContactInfo,
+  Divider,
+  Copyright,
+  ScrollToTop
+} from '../styles/FooterStyles';
 
 function Footer() {
   const [showScroll, setShowScroll] = useState(false);
@@ -22,58 +32,66 @@ function Footer() {
   };
 
   return (
-    <footer className="bg-dark text-white py-4 mt-5">
-      <div className="container">
-        <div className="row">
-          <div className="col-md-6">
+    <FooterWrapper>
+      <FooterContainer>
+        <FooterGrid>
+          <FooterSection>
             <h5>Follow Us</h5>
-            <div className="social-links">
-              <a href="https://instagram.com" className="text-white me-3" target="_blank" rel="noopener noreferrer">
-                <i className="fab fa-instagram fa-lg"></i>
+            <SocialLinks>
+              <a 
+                href="https://instagram.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="Follow us on Instagram"
+              >
+                <i className="fab fa-instagram"></i>
               </a>
-              <a href="https://facebook.com" className="text-white me-3" target="_blank" rel="noopener noreferrer">
-                <i className="fab fa-facebook fa-lg"></i>
+              <a 
+                href="https://facebook.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="Follow us on Facebook"
+              >
+                <i className="fab fa-facebook"></i>
               </a>
-              <a href="https://tiktok.com" className="text-white" target="_blank" rel="noopener noreferrer">
-                <i className="fab fa-tiktok fa-lg"></i>
+              <a 
+                href="https://tiktok.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="Follow us on TikTok"
+              >
+                <i className="fab fa-tiktok"></i>
               </a>
-            </div>
-          </div>
-          <div className="col-md-6">
+            </SocialLinks>
+          </FooterSection>
+
+          <FooterSection>
             <h5>Contact Us</h5>
-            <p className="mb-0">Email: support@example.com</p>
-            <p>Phone: +1 234 567 890</p>
-          </div>
-        </div>
-        <hr className="my-4" />
-        <div className="text-center">
-          <p className="mb-0">&copy; 2024 Your E-commerce Store. All rights reserved.</p>
-        </div>
-      </div>
+            <ContactInfo>
+              <p>Email: support@example.com</p>
+              <p>Phone: +1 234 567 890</p>
+              <p>Address: 123 Street Name, City, Country</p>
+            </ContactInfo>
+          </FooterSection>
+        </FooterGrid>
+
+        <Divider />
+
+        <Copyright>
+          <p>&copy; {new Date().getFullYear()} Your E-commerce Store. All rights reserved.</p>
+        </Copyright>
+      </FooterContainer>
+
       {showScroll && (
-        <div 
-          className="scroll-to-top"
+        <ScrollToTop 
           onClick={scrollTop}
-          style={{
-            position: 'fixed',
-            bottom: '20px',
-            right: '20px',
-            cursor: 'pointer',
-            backgroundColor: '#007bff',
-            borderRadius: '50%',
-            width: '40px',
-            height: '40px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            transition: 'all 0.3s ease',
-            zIndex: 1000
-          }}
+          role="button"
+          aria-label="Scroll to top"
         >
-          <i className="fas fa-arrow-up text-white"></i>
-        </div>
+          <i className="fas fa-arrow-up"></i>
+        </ScrollToTop>
       )}
-    </footer>
+    </FooterWrapper>
   );
 }
 
