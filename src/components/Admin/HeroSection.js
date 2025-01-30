@@ -38,29 +38,37 @@ function HeroSection() {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+// src/components/Admin/HeroSection.js
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  try {
+    setLoading(true);
+    const formData = new FormData();
     
-    try {
-      setLoading(true);
-      const formData = new FormData();
-      formData.append('type', settings.type);
-      formData.append('title', settings.title);
-      formData.append('subtitle', settings.subtitle);
-      
-      if (mediaFile) {
-        formData.append('media', mediaFile);
-      }
-
-      await api.updateHeroSettings(formData);
-      showNotification('Hero section updated successfully', 'success');
-    } catch (error) {
-      showNotification(error.message || 'Error updating hero section', 'error');
-    } finally {
-      setLoading(false);
+    // Append all form data
+    formData.append('type', settings.type);
+    formData.append('title', settings.title);
+    formData.append('subtitle', settings.subtitle);
+    
+    if (mediaFile) {
+      formData.append('media', mediaFile);
     }
-  };
 
+    const response = await api.updateHeroSettings(formData);
+    
+    if (response.heroSection) {
+      setSettings(response.heroSection);
+      setPreviewUrl(response.heroSection.mediaUrl);
+      showNotification('Hero section updated successfully', 'success');
+    }
+  } catch (error) {
+    showNotification(error.message || 'Error updating hero section', 'error');
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className="card">
       <div className="card-header">

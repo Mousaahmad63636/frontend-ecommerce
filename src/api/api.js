@@ -208,7 +208,6 @@ const api = {
         axiosInstance.put('/settings/hero', formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
         }).then(res => res.data),
-
     // Admin Dashboard Methods
     getAllOrders: () => axiosInstance.get('/admin/orders').then(res => res.data),
     getDashboardStats: () => axiosInstance.get('/admin/dashboard/stats').then(res => res.data),
