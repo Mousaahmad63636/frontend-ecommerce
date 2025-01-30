@@ -19,7 +19,7 @@ function CheckoutPage() {
   const [cartData, setCartData] = useState(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [formErrors, setFormErrors] = useState({});
-  
+
   // Initialize form data from localStorage or user data
   const [formData, setFormData] = useState(() => {
     const savedCustomerInfo = localStorage.getItem('customerInfo');
@@ -142,7 +142,7 @@ function CheckoutPage() {
           value: Number(cartData.discount)
         } : null
       };
-      
+
 
       // Use guest order API endpoint
       const response = await api.createGuestOrder(orderData);
@@ -298,12 +298,28 @@ function CheckoutPage() {
               <h4>Order Summary</h4>
             </div>
             <div className="card-body">
-              {cartItems.map(item => (
-                <div key={item._id} className="d-flex justify-content-between mb-2">
-                  <span>{item.name} x {item.quantity}</span>
-                  <span>${(item.price * item.quantity).toFixed(2)}</span>
-                </div>
-              ))}
+            {cartItems.map(item => (
+  <div key={item._id} className="d-flex justify-content-between align-items-center mb-2">
+    <div className="d-flex align-items-center">
+      <img
+        src={getImageUrl(item.image)}
+        alt={item.name}
+        style={{ 
+          width: '60px', 
+          height: '60px', 
+          objectFit: 'cover',
+          marginRight: '10px',
+          borderRadius: '4px'
+        }}
+        onError={(e) => {
+          e.target.src = 'https://placehold.co/60@3x.png';
+        }}
+      />
+      <span>{item.name} x {item.quantity}</span>
+    </div>
+    <span>${(item.price * item.quantity).toFixed(2)}</span>
+  </div>
+))}
               <hr />
               <div className="d-flex justify-content-between mb-2">
                 <span>Subtotal</span>

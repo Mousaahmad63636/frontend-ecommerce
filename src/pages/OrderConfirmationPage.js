@@ -12,23 +12,31 @@ function OrderConfirmationPage() {
   const [loading, setLoading] = useState(true);
   const { showNotification } = useNotification();
 
-  useEffect(() => {
-    const fetchOrder = async () => {
+// In OrderConfirmationPage.js
+useEffect(() => {
+  const fetchOrder = async () => {
+    try {
+      setLoading(true);
+      // Try to fetch as guest order first
+      const response = await api.createGuestOrder(orderId);
+      setOrder(response);
+    } catch (error) {
       try {
-        setLoading(true);
+        // If guest order fetch fails, try as authenticated order
         const response = await api.getOrder(orderId);
         setOrder(response);
-      } catch (error) {
+      } catch (secondError) {
         showNotification('Failed to load order details', 'error');
-      } finally {
-        setLoading(false);
       }
-    };
-
-    if (orderId) {
-      fetchOrder();
+    } finally {
+      setLoading(false);
     }
-  }, [orderId, showNotification]);
+  };
+
+  if (orderId) {
+    fetchOrder();
+  }
+}, [orderId, showNotification]);
 
   if (loading) {
     return <Loading />;

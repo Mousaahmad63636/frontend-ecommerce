@@ -22,30 +22,30 @@ const SideCart = ({ isOpen, onClose }) => {
 
   const handleApplyPromo = async () => {
     if (!promoCode.trim()) {
-        showNotification('Please enter a promo code', 'error');
-        return;
+      showNotification('Please enter a promo code', 'error');
+      return;
     }
 
     try {
-        setIsSubmittingPromo(true);
-        const response = await api.validatePromoCode(promoCode, calculateSubtotal());
-        
-        if (response.success) {
-            const { type, value } = response.discount;
-            setPromoDiscount({
-                type,
-                value,
-                display: type === 'percentage' ? `${value}%` : `$${value}`
-            });
-            showNotification(`Promo code applied! ${type === 'percentage' ? value + '%' : '$' + value} off`, 'success');
-        }
+      setIsSubmittingPromo(true);
+      const response = await api.validatePromoCode(promoCode, calculateSubtotal());
+
+      if (response.success) {
+        const { type, value } = response.discount;
+        setPromoDiscount({
+          type,
+          value,
+          display: type === 'percentage' ? `${value}%` : `$${value}`
+        });
+        showNotification(`Promo code applied! ${type === 'percentage' ? value + '%' : '$' + value} off`, 'success');
+      }
     } catch (error) {
-        setPromoDiscount(null);
-        showNotification(error.message || 'Invalid promo code', 'error');
+      setPromoDiscount(null);
+      showNotification(error.message || 'Invalid promo code', 'error');
     } finally {
-        setIsSubmittingPromo(false);
+      setIsSubmittingPromo(false);
     }
-};
+  };
   const calculateSubtotal = () => {
     return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
   };
@@ -59,42 +59,42 @@ const SideCart = ({ isOpen, onClose }) => {
     if (!promoDiscount) return subtotal + shippingFee;
 
     const discountAmount = promoDiscount.type === 'percentage'
-        ? (subtotal * promoDiscount.value) / 100
-        : promoDiscount.value;
+      ? (subtotal * promoDiscount.value) / 100
+      : promoDiscount.value;
 
     return subtotal - discountAmount + shippingFee;
-};
-
-// src/components/SideCart/SideCart.js
-// Replace the handleCheckout function with:
-
-const handleCheckout = () => {
-  if (cartItems.length === 0) {
-    showNotification('Your cart is empty', 'error');
-    return;
-  }
-
-  // Prepare cart data
-  const cartData = {
-    items: cartItems,
-    subtotal: calculateSubtotal(),
-    shipping: shippingFee,
-    discount: promoDiscount ? {
-      type: promoDiscount.type,
-      value: promoDiscount.value
-    } : null,
-    promoCode: promoCode,
-    total: calculateTotal(),
-    originalTotal: calculateOriginalTotal(),
-    savedAmount: calculateOriginalTotal() - calculateTotal(),
-    specialInstructions
   };
 
-  // Store in localStorage
-  localStorage.setItem('cartData', JSON.stringify(cartData));
-  onClose();
-  navigate('/checkout');
-};
+  // src/components/SideCart/SideCart.js
+  // Replace the handleCheckout function with:
+
+  const handleCheckout = () => {
+    if (cartItems.length === 0) {
+      showNotification('Your cart is empty', 'error');
+      return;
+    }
+
+    // Prepare cart data
+    const cartData = {
+      items: cartItems,
+      subtotal: calculateSubtotal(),
+      shipping: shippingFee,
+      discount: promoDiscount ? {
+        type: promoDiscount.type,
+        value: promoDiscount.value
+      } : null,
+      promoCode: promoCode,
+      total: calculateTotal(),
+      originalTotal: calculateOriginalTotal(),
+      savedAmount: calculateOriginalTotal() - calculateTotal(),
+      specialInstructions
+    };
+
+    // Store in localStorage
+    localStorage.setItem('cartData', JSON.stringify(cartData));
+    onClose();
+    navigate('/checkout');
+  };
 
   if (!isOpen) return null;
 
@@ -116,15 +116,21 @@ const handleCheckout = () => {
             <>
               <div className="cart-items">
                 {cartItems.map(item => (
-                  <div key={item._id} className="cart-item">
-                    <img
-                      src={getImageUrl(item.image)}
-                      alt={item.name}
-                      className="cart-item-image"
-                      onError={(e) => {
-                        e.target.src = 'https://placehold.co/100@3x.png';
-                      }}
-                    />
+            <div className="cart-item">
+            <img
+              src={getImageUrl(item.image)}
+              alt={item.name}
+              className="cart-item-image"
+              style={{ 
+                width: '60px', 
+                height: '60px', 
+                objectFit: 'cover',
+                borderRadius: '4px' 
+              }}
+              onError={(e) => {
+                e.target.src = 'https://placehold.co/60@3x.png';
+              }}
+            />
                     <div className="cart-item-details">
                       <h6>{item.name}</h6>
                       <div className="price">${(item.price * item.quantity).toFixed(2)}</div>
@@ -195,57 +201,57 @@ const handleCheckout = () => {
             </div>
 
             <div className="price-summary">
-    <div className="d-flex justify-content-between mb-2">
-        <span>Subtotal</span>
-        <span>${calculateSubtotal().toFixed(2)}</span>
-    </div>
-    
-    {promoDiscount && (
-        <div className="d-flex justify-content-between mb-2 text-success">
-            <span>
-                <i className="fas fa-tag me-1"></i>
-                Promo Discount {promoDiscount.display}
-            </span>
-            <span>
-                -${(promoDiscount.type === 'percentage' 
-                    ? (calculateSubtotal() * promoDiscount.value / 100)
-                    : promoDiscount.value).toFixed(2)}
-            </span>
-        </div>
-    )}
+              <div className="d-flex justify-content-between mb-2">
+                <span>Subtotal</span>
+                <span>${calculateSubtotal().toFixed(2)}</span>
+              </div>
 
-    <div className="d-flex justify-content-between mb-2">
-        <span>Shipping</span>
-        <span>${shippingFee.toFixed(2)}</span>
-    </div>
+              {promoDiscount && (
+                <div className="d-flex justify-content-between mb-2 text-success">
+                  <span>
+                    <i className="fas fa-tag me-1"></i>
+                    Promo Discount {promoDiscount.display}
+                  </span>
+                  <span>
+                    -${(promoDiscount.type === 'percentage'
+                      ? (calculateSubtotal() * promoDiscount.value / 100)
+                      : promoDiscount.value).toFixed(2)}
+                  </span>
+                </div>
+              )}
 
-    <hr />
+              <div className="d-flex justify-content-between mb-2">
+                <span>Shipping</span>
+                <span>${shippingFee.toFixed(2)}</span>
+              </div>
 
-    {promoDiscount && (
-        <div className="d-flex justify-content-between mb-2">
-            <span>Original Total</span>
-            <span className="text-decoration-line-through text-muted">
-                ${calculateOriginalTotal().toFixed(2)}
-            </span>
-        </div>
-    )}
+              <hr />
 
-    <div className="d-flex justify-content-between">
-        <span className="fw-bold">Final Total</span>
-        <span className="fw-bold">
-            ${calculateTotal().toFixed(2)}
-        </span>
-    </div>
+              {promoDiscount && (
+                <div className="d-flex justify-content-between mb-2">
+                  <span>Original Total</span>
+                  <span className="text-decoration-line-through text-muted">
+                    ${calculateOriginalTotal().toFixed(2)}
+                  </span>
+                </div>
+              )}
 
-    {promoCode && promoDiscount && (
-        <div className="mt-3 p-2 bg-light rounded">
-            <small className="text-muted">
-                <i className="fas fa-ticket-alt me-1"></i>
-                Promo code applied: {promoCode}
-            </small>
-        </div>
-    )}
-</div>
+              <div className="d-flex justify-content-between">
+                <span className="fw-bold">Final Total</span>
+                <span className="fw-bold">
+                  ${calculateTotal().toFixed(2)}
+                </span>
+              </div>
+
+              {promoCode && promoDiscount && (
+                <div className="mt-3 p-2 bg-light rounded">
+                  <small className="text-muted">
+                    <i className="fas fa-ticket-alt me-1"></i>
+                    Promo code applied: {promoCode}
+                  </small>
+                </div>
+              )}
+            </div>
 
             <button
               className="btn btn-primary w-100 mb-2"
