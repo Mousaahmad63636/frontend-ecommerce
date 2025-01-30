@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNotification } from '../../components/Notification/NotificationProvider';
 import api from '../../api/api';
-
+import styled from 'styled-components';
+import { getImageUrl } from '../../utils/imageUtils';
+const HeroMedia = styled.div`
+  width: 100%;
+  height: 300px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 8px;
+`;
 function HeroSection() {
   const [settings, setSettings] = useState({
     type: 'image',
@@ -99,27 +108,26 @@ const handleSubmit = async (e) => {
           </div>
 
           {previewUrl && (
-            <div className="mb-3">
-              <label className="form-label">Preview</label>
-              <div className="preview-container">
-                {settings.type === 'image' ? (
-                  <img
-                    src={previewUrl}
-                    alt="Hero preview"
-                    className="img-fluid rounded"
-                    style={{ maxHeight: '200px' }}
-                  />
-                ) : (
-                  <video
-                    src={previewUrl}
-                    controls
-                    className="img-fluid rounded"
-                    style={{ maxHeight: '200px' }}
-                  />
-                )}
-              </div>
-            </div>
-          )}
+  <div className="mb-3">
+    <label className="form-label">Preview</label>
+    <div className="preview-container">
+      {settings.type === 'image' ? (
+        <HeroMedia
+          style={{
+            backgroundImage: `url(${getImageUrl(previewUrl)})`
+          }}
+        />
+      ) : (
+        <video
+          src={previewUrl}
+          controls
+          className="img-fluid rounded"
+          style={{ maxHeight: '200px' }}
+        />
+      )}
+    </div>
+  </div>
+)}
 
           <div className="mb-3">
             <label className="form-label">Title</label>
