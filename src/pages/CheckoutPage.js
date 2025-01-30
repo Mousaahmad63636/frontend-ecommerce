@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNotification } from '../components/Notification/NotificationProvider';
 import LoginModal from '../components/Auth/LoginModal';
 import api from '../api/api';
+import { getImageUrl } from '../utils/imageUtils';
 // Add this function at the top of the file, before the CheckoutPage component
 const validatePhoneNumber = (phone) => {
   const phoneRegex = /^\d{8}$/;  // Exactly 8 digits
