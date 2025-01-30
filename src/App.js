@@ -124,11 +124,7 @@ function AppContent() {
                   <OrdersPage />
                 </ProtectedRoute>
               } />
-              <Route path="/order-confirmation/:orderId" element={
-                <ProtectedRoute requireAuth={true}>
-                  <OrderConfirmationPage />
-                </ProtectedRoute>
-              } />
+          <Route path="/order-confirmation/:orderId" element={<OrderConfirmationPage />} />
 
               {/* Admin Routes */}
               <Route path="/admin/*" element={

@@ -1,4 +1,3 @@
-// src/pages/CheckoutPage.js
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../contexts/CartContext';
 import { useNavigate } from 'react-router-dom';
@@ -16,6 +15,7 @@ function CheckoutPage() {
   const [cartData, setCartData] = useState(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  
   // Initialize form data from localStorage or user data
   const [formData, setFormData] = useState(() => {
     const savedCustomerInfo = localStorage.getItem('customerInfo');
@@ -41,10 +41,7 @@ function CheckoutPage() {
       specialInstructions: ''
     };
   });
-  const validatePhoneNumber = (phone) => {
-    const phoneRegex = /^\d{8}$/;  // Exactly 8 digits
-    return phoneRegex.test(phone);
-  };
+
   useEffect(() => {
     const savedCartData = localStorage.getItem('cartData');
     if (savedCartData) {
@@ -119,11 +116,6 @@ function CheckoutPage() {
       return;
     }
 
-    if (cartItems.length === 0) {
-      showNotification('Your cart is empty', 'error');
-      return;
-    }
-
     try {
       setLoading(true);
       const orderData = {
@@ -138,34 +130,20 @@ function CheckoutPage() {
         customerName: formData.customerName.trim(),
         phoneNumber: formData.phoneNumber.trim(),
         address: formData.address.trim(),
-        specialInstructions: formData.specialInstructions
+        specialInstructions: formData.specialInstructions,
+        customerEmail: formData.customerEmail?.trim() || '',
+        promoCode: cartData.promoCode || null,
+        promoDiscount: cartData.discount ? {
+          type: 'percentage',
+          value: Number(cartData.discount)
+        } : null
       };
 
-      // Add email if exists
-      if (formData.customerEmail?.trim()) {
-        orderData.customerEmail = formData.customerEmail.trim();
-      }
-
-      // Add promo code if exists
-      if (cartData.promoCode) {
-        orderData.promoCode = cartData.promoCode;
-      }
-
-      // Only add promoDiscount if there is an actual discount
-      if (cartData.discount && cartData.discount > 0) {
-        orderData.promoDiscount = {
-          type: 'percentage', // or whatever type you're using
-          value: Number(cartData.discount)
-        };
-      }
-
-      const response = isAuthenticated
-        ? await api.createOrder(orderData)
-        : await api.createGuestOrder(orderData);
+      // Use guest order API endpoint
+      const response = await api.createGuestOrder(orderData);
 
       clearCart();
       localStorage.removeItem('cartData');
-
       showNotification('Order placed successfully!', 'success');
       navigate(`/order-confirmation/${response.order._id}`);
     } catch (error) {
@@ -178,6 +156,7 @@ function CheckoutPage() {
       setLoading(false);
     }
   };
+
 
   const handleLoginClick = () => {
     setShowLoginModal(true);
