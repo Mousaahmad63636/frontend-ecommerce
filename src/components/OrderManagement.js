@@ -249,61 +249,61 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
   };
 
   const handleWhatsAppMessage = (order, type = 'pending') => {
-    // Get templates from settings
-    const englishTemplate = settings.whatsappMessageTemplate?.english || '';
-    const arabicTemplate = settings.whatsappMessageTemplate?.arabic || '';
-
+    // Calculate the subtotal directly from products
+    const subtotal = order.products.reduce((sum, item) => 
+      sum + (item.product?.price || 0) * item.quantity, 0
+    );
+  
     // Format order details for both languages
     const orderDetailsEnglish = order.products.map(item =>
       `📦 ${item.product?.name || ''}
-      Price: $${safeToFixed(item.product?.price)} × ${item.quantity}
-      Total: $${safeToFixed(item.product?.price * item.quantity)}`
-    ).join('\n\n');
-
+        Price: $${safeToFixed(item.product?.price)} × ${item.quantity}
+        Total: $${safeToFixed((item.product?.price || 0) * item.quantity)}`
+    ).join('\n');
+  
     const orderDetailsArabic = order.products.map(item =>
       `📦 ${item.product?.name || ''}
-      القيمة: ${safeToFixed(item.product?.price)}$ × ${item.quantity}
-      المجموع: ${safeToFixed(item.product?.price * item.quantity)}$`
-    ).join('\n\n');
-
-    // Calculate values
+        القيمة: ${safeToFixed(item.product?.price)}$ × ${item.quantity}
+        المجموع: ${safeToFixed((item.product?.price || 0) * item.quantity)}$`
+    ).join('\n');
+  
+    // Calculate final values
     const deliveryFee = order.shippingFee;
-    const totalWithDelivery = order.totalAmount;
-    const discount = order.promoDiscount ? (order.subtotal * order.promoDiscount) / 100 : 0;
-
+    const totalWithDelivery = subtotal + deliveryFee; // Correct total calculation
+    const discount = order.promoDiscount ? (subtotal * order.promoDiscount) / 100 : 0;
+    const finalTotal = totalWithDelivery - discount; // Final total with discount
+  
     // Replace variables in English template
     let englishMessage = englishTemplate
       .replace('{{customerName}}', order.customerName)
       .replace('{{orderId}}', order.orderId)
       .replace('{{orderDetails}}', orderDetailsEnglish)
-      .replace('{{subtotal}}', safeToFixed(order.subtotal))
+      .replace('{{subtotal}}', safeToFixed(subtotal))
       .replace('{{deliveryFee}}', safeToFixed(deliveryFee))
-      .replace('{{total}}', safeToFixed(totalWithDelivery))
+      .replace('{{total}}', safeToFixed(finalTotal)) // Use final total
       .replace('{{address}}', order.address || '')
       .replace('{{discount}}', discount ? `💎 Discount: -$${safeToFixed(discount)}\n` : '');
-
+  
     // Replace variables in Arabic template
     let arabicMessage = arabicTemplate
       .replace('{{customerName}}', order.customerName)
       .replace('{{orderId}}', order.orderId)
       .replace('{{orderDetails}}', orderDetailsArabic)
-      .replace('{{subtotal}}', safeToFixed(order.subtotal))
+      .replace('{{subtotal}}', safeToFixed(subtotal))
       .replace('{{deliveryFee}}', safeToFixed(deliveryFee))
-      .replace('{{total}}', safeToFixed(totalWithDelivery))
+      .replace('{{total}}', safeToFixed(finalTotal)) // Use final total
       .replace('{{address}}', order.address || '')
       .replace('{{discount}}', discount ? `💎 الخصم: -${safeToFixed(discount)}$\n` : '');
-
-    // Combine messages
-    const combinedMessage = englishTemplate ?
-      `${englishMessage}\n\n${arabicMessage}` :
+  
+    // Combine messages and send
+    const combinedMessage = englishTemplate ? 
+      `${englishMessage}\n\n${arabicMessage}` : 
       arabicMessage;
-
-    // Send message via WhatsApp Web
+  
     const phoneNumber = order.phoneNumber.replace(/\D/g, '');
     const whatsappURL = `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(combinedMessage)}`;
     window.open(whatsappURL, '_blank', 'noopener,noreferrer');
   };
-
   const filteredOrders = sortOrders(
     filterOrdersByDate(orders).filter(order => {
       const matchesStatus = statusFilter === 'all' ? true : order.status.toLowerCase() === statusFilter;
