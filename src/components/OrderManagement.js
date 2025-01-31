@@ -123,12 +123,15 @@ function OrderManagement() {
     try {
       await api.updateOrderStatus(orderId, newStatus);
       showNotification('Order status updated successfully', 'success');
-      fetchOrders();
-
-      const order = orders.find(o => o._id === orderId);
-      if (order && newStatus === 'Confirmed') {
-        handleWhatsAppMessage(order, 'confirmed');
+      
+      if (newStatus === 'Confirmed') {
+        const order = orders.find(o => o._id === orderId);
+        if (order) {
+          handleWhatsAppMessage(order, 'confirmed');
+        }
       }
+      
+      fetchOrders();
     } catch (err) {
       console.error('Error updating order status:', err);
       showNotification('Failed to update order status', 'error');
@@ -246,66 +249,50 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
   };
 
   const handleWhatsAppMessage = (order, type = 'pending') => {
-    // Get templates from settings
-    const englishTemplate = settings.whatsappMessageTemplate?.english || '';
-    const arabicTemplate = settings.whatsappMessageTemplate?.arabic || '';
-
-    // Format order details for both languages
-    const orderDetailsEnglish = order.products.map(item =>
-      `📦 ${item.product?.name || ''}
-      Price: $${safeToFixed(item.product?.price)} × ${item.quantity}
-      Total: $${safeToFixed(item.product?.price * item.quantity)}`
+    const phoneNumber = order.phoneNumber.replace(/\D/g, '');
+    
+    // Format order details for WhatsApp message
+    const orderDetails = order.products.map(item =>
+      `📦 ${item.product?.name}
+      القيمة: ${item.product?.price}$ × ${item.quantity}
+      المجموع: ${(item.product?.price * item.quantity).toFixed(2)}$`
     ).join('\n\n');
-
-    const orderDetailsArabic = order.products.map(item =>
-      `📦 ${item.product?.name || ''}
-      القيمة: ${safeToFixed(item.product?.price)}$ × ${item.quantity}
-      المجموع: ${safeToFixed(item.product?.price * item.quantity)}$`
-    ).join('\n\n');
-
+  
     // Calculate values
     const deliveryFee = order.shippingFee;
     const totalWithDelivery = order.totalAmount;
     const discount = order.promoDiscount ? (order.subtotal * order.promoDiscount) / 100 : 0;
-
-    // Replace variables in English template
-    let englishMessage = englishTemplate
-      .replace('{{customerName}}', order.customerName)
-      .replace('{{orderId}}', order.orderId)
-      .replace('{{orderDetails}}', orderDetailsEnglish)
-      .replace('{{subtotal}}', safeToFixed(order.subtotal))
-      .replace('{{deliveryFee}}', safeToFixed(deliveryFee))
-      .replace('{{total}}', safeToFixed(totalWithDelivery))
-      .replace('{{address}}', order.address || '')
-      .replace('{{discount}}', discount ? `💎 Discount: -$${safeToFixed(discount)}\n` : '');
-
-    // Replace variables in Arabic template
-    let arabicMessage = arabicTemplate
-      .replace('{{customerName}}', order.customerName)
-      .replace('{{orderId}}', order.orderId)
-      .replace('{{orderDetails}}', orderDetailsArabic)
-      .replace('{{subtotal}}', safeToFixed(order.subtotal))
-      .replace('{{deliveryFee}}', safeToFixed(deliveryFee))
-      .replace('{{total}}', safeToFixed(totalWithDelivery))
-      .replace('{{address}}', order.address || '')
-      .replace('{{discount}}', discount ? `💎 الخصم: -${safeToFixed(discount)}$\n` : '');
-
-    // Use default templates if settings templates are empty
-    if (!englishTemplate || !arabicTemplate) {
-      const defaultMessage = getDefaultMessage(order, type, orderDetailsArabic, deliveryFee, totalWithDelivery, discount);
-      arabicMessage = defaultMessage;
-      englishMessage = ''; // Skip English if using default template
-    }
-
-    // Combine messages
-    const combinedMessage = englishTemplate ? `${englishMessage}\n\n${arabicMessage}` : arabicMessage;
-
-    // Send message
-    const phoneNumber = order.phoneNumber.replace(/\D/g, '');
-    const whatsappURL = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(combinedMessage)}`;
+  
+    // Create message text
+    const message = `🛍️ *طلب جديد*
+  ──────────────
+  
+  مرحباً ${order.customerName}! 👋
+  
+  تم تأكيد طلبك بنجاح ✅
+  رقم الطلب: #${order.orderId}
+  
+  ──────────────
+  *تفاصيل الطلب:*
+  
+  ${orderDetails}
+  
+  ──────────────
+  *ملخص الطلب:*
+  💰 المجموع الفرعي: ${order.subtotal.toFixed(2)}$
+  ${discount ? `💎 الخصم: -${discount.toFixed(2)}$\n` : ''}
+  🚚 رسوم التوصيل: ${deliveryFee.toFixed(2)}$
+  *المجموع النهائي: ${totalWithDelivery.toFixed(2)}$*
+  
+  ──────────────
+  ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
+  نقدر ثقتك بنا 🙏`;
+  
+    // Open WhatsApp Web with the formatted message
+    const whatsappURL = `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
     window.open(whatsappURL, '_blank', 'noopener,noreferrer');
   };
-
+  
   const filteredOrders = sortOrders(
     filterOrdersByDate(orders).filter(order => {
       const matchesStatus = statusFilter === 'all' ? true : order.status.toLowerCase() === statusFilter;
