@@ -37,7 +37,7 @@ function ProductList({ products }) {
     }
 
     addToCart(product);
-    showNotification(`Added ${product.name} to cart!`, 'success');
+
   };
 
   const handleWishlistToggle = async (e, product) => {

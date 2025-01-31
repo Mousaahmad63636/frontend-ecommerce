@@ -154,7 +154,6 @@ const SideCart = ({ isOpen, onClose }) => {
                       className="btn btn-link text-danger remove-item"
                       onClick={() => {
                         removeFromCart(item._id);
-                        showNotification('Item removed from cart', 'success');
                       }}
                     >
                       <i className="fas fa-trash"></i>
