@@ -52,7 +52,8 @@ function ProductItem({ product }) {
     e.preventDefault();
     e.stopPropagation();
     const productUrl = `${window.location.origin}/product/${product._id}`;
-    const message = encodeURIComponent(`Hi! I'm interested in buying ${product.name}\n\nProduct Link: ${productUrl}`);
+    const imageUrl = getImageUrl(product.images[0]); // Get the first image URL
+    const message = encodeURIComponent(`Hi! I'm interested in buying ${product.name}\n\nProduct Link: ${productUrl}\n${imageUrl}`);
     window.open(`https://wa.me/${process.env.REACT_APP_WHATSAPP_NUMBER}?text=${message}`, '_blank');
   };
 
