@@ -55,7 +55,7 @@ function ProductList({ products }) {
     }
   };
 
-  const handleWhatsAppClick = (e) => {
+  const handleWhatsAppClick = (e, product) => {
     e.preventDefault();
     e.stopPropagation();
     const productUrl = `${window.location.origin}/product/${product._id}`;
