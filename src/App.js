@@ -158,6 +158,7 @@ function AppContent() {
 
 function App() {
   return (
+    <HelmetProvider>
     <Router>
       <ErrorBoundary>
         <NotificationProvider>
@@ -172,6 +173,7 @@ function App() {
         </NotificationProvider>
       </ErrorBoundary>
     </Router>
+    </HelmetProvider>
   );
 }
 
