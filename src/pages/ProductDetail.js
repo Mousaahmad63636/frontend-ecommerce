@@ -75,7 +75,7 @@ function ProductDetail() {
       subtotal: subtotal
     }, finalQuantity);
 
-    showNotification(`${finalQuantity} ${product.name}(s) added to cart!`, 'success');
+   // showNotification(`${finalQuantity} ${product.name}(s) added to cart!`, 'success');
   };
 
   const handleBuyOnWhatsApp = () => {
