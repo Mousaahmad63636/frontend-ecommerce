@@ -52,9 +52,19 @@ function ProductItem({ product }) {
     e.preventDefault();
     e.stopPropagation();
     const productUrl = `${window.location.origin}/product/${product._id}`;
-    const imageUrl = getImageUrl(product.images[0]); // Get the first image URL
-    const message = encodeURIComponent(`Hi! I'm interested in buying ${product.name}\n\nProduct Link: ${productUrl}\n${imageUrl}`);
-    window.open(`https://wa.me/${process.env.REACT_APP_WHATSAPP_NUMBER}?text=${message}`, '_blank');
+    const imageUrl = getImageUrl(product.images[0]);
+    
+    // WhatsApp requires URL encoding and specific format for link previews
+    const message = encodeURIComponent(
+      `Check out this product: ${product.name}\n\n` +
+      `${productUrl}\n\n` +
+      `Price: $${currentPrice.toFixed(2)}`
+    );
+  
+    window.open(
+      `https://wa.me/${process.env.REACT_APP_WHATSAPP_NUMBER}?text=${message}`,
+      '_blank'
+    );
   };
 
   const handleAddToCart = (e) => {

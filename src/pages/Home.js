@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import {
   HomeWrapper,
   HeroSection,
@@ -36,8 +37,8 @@ function Home() {
   const [heroSettings, setHeroSettings] = useState({
     type: 'image',
     mediaUrl: '/hero.jpg',
-    title: 'Welcome to our Store',
-    subtitle: 'Discover amazing products at great prices'
+    title: 'Welcome to Our Trendy E-commerce Store',
+    subtitle: 'Discover Amazing Products at Great Prices'
   });
 
   useEffect(() => {
@@ -80,7 +81,7 @@ function Home() {
         }
       } catch (error) {
         console.error('Error fetching products:', error);
-        setError('Failed to load products');
+        setError('Failed to load products. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -116,6 +117,37 @@ function Home() {
 
   return (
     <HomeWrapper>
+      <Helmet>
+        <title>Trendy E-commerce Store | Discover Amazing Products</title>
+        <meta name="description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices. Explore special offers, discounted products, and more." />
+        <meta name="keywords" content="e-commerce, trendy products, online shopping, special offers, discounted products, best selling, contact us" />
+        <meta property="og:title" content="Trendy E-commerce Store | Discover Amazing Products" />
+        <meta property="og:description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices. Explore special offers, discounted products, and more." />
+        <meta property="og:image" content="/hero.jpg" />
+        <meta property="og:url" content="https://www.yourstore.com" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Trendy E-commerce Store | Discover Amazing Products" />
+        <meta name="twitter:description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices. Explore special offers, discounted products, and more." />
+        <meta name="twitter:image" content="/hero.jpg" />
+        
+        <script type="application/ld+json">
+          {`
+            {
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "url": "https://www.yourstore.com",
+              "name": "Trendy E-commerce Store",
+              "description": "Discover amazing trendy products at great prices.",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://www.yourstore.com/search?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+              }
+            }
+          `}
+        </script>
+      </Helmet>
+
       {blackFridayData && (
         <BlackFridayBanner
           endDate={blackFridayData.endDate}
@@ -128,6 +160,7 @@ function Home() {
           style={{
             backgroundImage: `url(${heroSettings.mediaUrl})`
           }}
+          aria-label="Trendy E-commerce Store Hero Section"
         >
           {heroSettings.type === 'video' ? (
             <video
@@ -137,6 +170,7 @@ function Home() {
               muted
               playsInline
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              aria-label="Trendy products showcase video"
             />
           ) : null}
         </HeroMedia>
@@ -152,7 +186,7 @@ function Home() {
             <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
               <DiscountedProducts />
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <SectionTitle>Special Offers</SectionTitle>
+                <SectionTitle>Explore Our Special Offers</SectionTitle>
                 <TimerDisplay />
               </div>
             </div>
@@ -169,7 +203,7 @@ function Home() {
       <Section background="#f5f5f5">
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <SectionTitle>
-            {searchQuery ? `Search Results for "${searchQuery}"` : 'Our Products'}
+            {searchQuery ? `Search Results for "${searchQuery}"` : 'Discover Our Trendy Products'}
           </SectionTitle>
 
           {!searchQuery && (
@@ -195,9 +229,9 @@ function Home() {
             <ProductList products={filteredProducts} />
           ) : (
             <NoResults>
-              <h3>No products found</h3>
+              <h3>No Products Found</h3>
               {searchQuery && (
-                <p>No results found for "{searchQuery}". Try a different search term or browse our categories.</p>
+                <p>No results found for "{searchQuery}". Try a different search term or browse our trendy categories.</p>
               )}
             </NoResults>
           )}
