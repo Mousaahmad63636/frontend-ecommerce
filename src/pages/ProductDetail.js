@@ -79,8 +79,9 @@ function ProductDetail() {
   };
 
   const handleBuyOnWhatsApp = () => {
-    const message = `Hi! I'm interested in buying ${product.name}`;
-    window.open(`https://wa.me/1234567890?text=${encodeURIComponent(message)}`, '_blank');
+    const productUrl = window.location.href;
+    const message = encodeURIComponent(`Hi! I'm interested in buying ${product.name}\n\nProduct Link: ${productUrl}`);
+    window.open(`https://wa.me/${process.env.REACT_APP_WHATSAPP_NUMBER}?text=${message}`, '_blank');
   };
 
   const handleWishlistToggle = async () => {

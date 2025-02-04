@@ -6,6 +6,7 @@ import { useWishlist } from '../contexts/WishlistContext';
 import { useNotification } from './Notification/NotificationProvider';
 import { getImageUrl } from '../utils/imageUtils';
 import DiscountTimer from './DiscountTimer';
+
 function ProductItem({ product }) {
   const { addToCart } = useCart();
   const { isInWishlist, addToWishlist, removeFromWishlist, loading } = useWishlist();
@@ -47,6 +48,14 @@ function ProductItem({ product }) {
     }
   };
 
+  const handleWhatsAppClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const productUrl = `${window.location.origin}/product/${product._id}`;
+    const message = encodeURIComponent(`Hi! I'm interested in buying ${product.name}\n\nProduct Link: ${productUrl}`);
+    window.open(`https://wa.me/${process.env.REACT_APP_WHATSAPP_NUMBER}?text=${message}`, '_blank');
+  };
+
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -57,7 +66,6 @@ function ProductItem({ product }) {
     }
 
     addToCart(product);
-    //showNotification(`Added ${product.name} to cart!`, 'success');
   };
 
   return (
@@ -163,13 +171,11 @@ function ProductItem({ product }) {
           )}
         </div>
 
-        {/* Product Details <span className="badge bg-light text-dark border">{product.category}</span>*/}
+        {/* Product Details */}
         <div className="card-body d-flex flex-column">
           <div className="mb-2">
             <h5 className="card-title mb-1 text-dark" style={{ fontSize: '1.1rem' }}>{product.name}</h5>
-
           </div>
-
 
           {/* Price Section */}
           <div className="mb-3">
@@ -186,10 +192,8 @@ function ProductItem({ product }) {
               <span className="fw-bold text-dark h5 mb-0">
                 ${currentPrice.toFixed(2)}
               </span>
-
             )}
           </div>
-
 
           {/* Action Buttons */}
           <div className="mt-auto d-grid gap-2">
@@ -202,12 +206,7 @@ function ProductItem({ product }) {
               {product.soldOut ? 'Sold Out' : 'Add to Cart'}
             </button>
             <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                const message = encodeURIComponent(`Hi! I'm interested in buying ${product.name}`);
-                window.open(`https://wa.me/96178934833?text=${message}`, '_blank');
-              }}
+              onClick={handleWhatsAppClick}
               className={`btn ${product.soldOut ? 'btn-secondary' : 'btn-success'} btn-sm`}
               disabled={product.soldOut}
             >

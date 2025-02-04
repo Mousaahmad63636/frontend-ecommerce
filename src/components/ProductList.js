@@ -59,8 +59,9 @@ function ProductList({ products }) {
     e.preventDefault();
     e.stopPropagation();
     
-    const message = encodeURIComponent(`Hi! I'm interested in buying ${product.name}`);
-    window.open(`https://wa.me/96178934833?text=${message}`, '_blank');
+    const productUrl = `${window.location.origin}/product/${product._id}`;
+    const message = encodeURIComponent(`Hi! I'm interested in buying ${product.name}\n\nProduct Link: ${productUrl}`);
+    window.open(`https://wa.me/${process.env.REACT_APP_WHATSAPP_NUMBER}?text=${message}`, '_blank');
   };
 
   if (!products || products.length === 0) {
