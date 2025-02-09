@@ -380,3 +380,43 @@ export const ErrorContainer = styled.div`
   max-width: 600px;
   margin: 40px auto;
 `;
+export const RelatedProductsSection = styled.section`
+  padding: 40px 20px;
+  margin-top: 40px;
+  background: #f8f9fa;
+
+  @media (min-width: 1024px) {
+    padding: 60px 20px;
+    margin-top: 60px;
+  }
+`;
+
+export const RelatedProductsTitle = styled.h2`
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2d3436;
+
+  @media (min-width: 1024px) {
+    font-size: 28px;
+  }
+`;
+
+export const RelatedProductsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+`;
