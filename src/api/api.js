@@ -13,7 +13,8 @@ const publicRoutes = [
     '/products/categories',
     '/settings',
     '/timer',
-    '/promo-codes/validate'
+    '/promo-codes/validate',
+    '/orders/guest'
 ];
 
 const axiosInstance = axios.create({
