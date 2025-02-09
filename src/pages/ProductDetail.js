@@ -1,143 +1,25 @@
-import React, { useState, useEffect } from 'react';
+// src/pages/ProductDetail.js
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
 import { Helmet } from 'react-helmet-async';
+import { useSwipeable } from 'react-swipeable';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useNotification } from '../components/Notification/NotificationProvider';
 import { getImageUrl } from '../utils/imageUtils';
 import api from '../api/api';
-
-// Styled Components
-const PageContainer = styled.div`
-  min-height: 100vh;
-  background: #fff;
-`;
-
-const BackButton = styled.button`
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  z-index: 100;
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  color: #333;
-`;
-
-const Gallery = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100vw; // Square aspect ratio on mobile
-  background: #f8f9fa;
-
-  @media (min-width: 768px) {
-    height: 50vh;
-    min-height: 400px;
-  }
-`;
-
-const MainImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-`;
-
-const ImageNav = styled.div`
-  position: absolute;
-  bottom: 20px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 20px;
-`;
-
-const ThumbButton = styled.button`
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  border: none;
-  background: ${props => props.active ? '#000' : 'rgba(0,0,0,0.2)'};
-  padding: 0;
-`;
-
-const ProductInfo = styled.div`
-  padding: 20px;
-  position: relative;
-  background: white;
-  border-radius: 20px 20px 0 0;
-  margin-top: -20px;
-  z-index: 2;
-`;
-
-const PriceTag = styled.div`
-  position: absolute;
-  top: -50px;
-  right: 20px;
-  background: white;
-  padding: 10px 20px;
-  border-radius: 25px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-`;
-
-const ActionButtons = styled.div`
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 15px;
-  background: white;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  z-index: 100;
-`;
-
-const Button = styled.button`
-  border: none;
-  border-radius: 8px;
-  padding: 12px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-
-  &.primary {
-    background: #007bff;
-    color: white;
-    
-    &:disabled {
-      background: #ccc;
-    }
-  }
-
-  &.whatsapp {
-    background: #25D366;
-    color: white;
-
-    &:disabled {
-      background: #ccc;
-    }
-  }
-`;
+import * as S from '../styles/ProductDetailStyles';
 
 function ProductDetail() {
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [state, setState] = useState({
+    product: null,
+    loading: true,
+    error: null,
+    currentImageIndex: 0,
+    quantity: 1
+  });
+
+  const touchStartX = useRef(0);
   const navigate = useNavigate();
   const { id } = useParams();
   const { addToCart } = useCart();
@@ -147,112 +29,239 @@ function ProductDetail() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        setLoading(true);
         const data = await api.getProductById(id);
-        setProduct(data);
+        setState(prev => ({
+          ...prev,
+          product: data,
+          loading: false
+        }));
       } catch (err) {
-        showNotification('Failed to load product details', 'error');
-      } finally {
-        setLoading(false);
+        setState(prev => ({
+          ...prev,
+          error: 'Failed to load product details',
+          loading: false
+        }));
       }
     };
 
     fetchProduct();
   }, [id]);
 
-  if (loading || !product) {
-    return <div>Loading...</div>;
+  const handlers = useSwipeable({
+    onSwipedLeft: () => handleImageNavigation('next'),
+    onSwipedRight: () => handleImageNavigation('prev'),
+    preventDefaultTouchmoveEvent: true,
+    trackMouse: true
+  });
+
+  const handleImageNavigation = (direction) => {
+    if (!state.product?.images) return;
+
+    setState(prev => ({
+      ...prev,
+      currentImageIndex: direction === 'next'
+        ? (prev.currentImageIndex + 1) % prev.product.images.length
+        : prev.currentImageIndex === 0
+          ? prev.product.images.length - 1
+          : prev.currentImageIndex - 1
+    }));
+  };
+
+// ... continuing ProductDetail.js
+
+const handleQuantityChange = (change) => {
+  setState(prev => ({
+    ...prev,
+    quantity: Math.max(1, Math.min(10, prev.quantity + change))
+  }));
+};
+
+const handleAddToCart = () => {
+  if (state.product.soldOut) {
+    showNotification('This product is sold out', 'error');
+    return;
   }
 
-  const hasDiscount = product.discountPercentage > 0;
+  addToCart({
+    ...state.product,
+    quantity: state.quantity
+  });
+  showNotification('Added to cart successfully', 'success');
+};
 
+const handleWishlistToggle = async () => {
+  try {
+    const isProductInWishlist = isInWishlist(state.product._id);
+    if (isProductInWishlist) {
+      await removeFromWishlist(state.product._id);
+      showNotification('Removed from wishlist', 'success');
+    } else {
+      await addToWishlist(state.product);
+      showNotification('Added to wishlist', 'success');
+    }
+  } catch (error) {
+    showNotification('Failed to update wishlist', 'error');
+  }
+};
+
+const handleWhatsAppOrder = () => {
+  if (state.product.soldOut) return;
+
+  const message = encodeURIComponent(
+    `Hi! I'm interested in buying ${state.product.name} (${state.quantity} items)\n\n` +
+    `Product Link: ${window.location.href}\n` +
+    `Price: $${(state.product.price * state.quantity).toFixed(2)}`
+  );
+  
+  window.open(
+    `https://wa.me/${process.env.REACT_APP_WHATSAPP_NUMBER}?text=${message}`,
+    '_blank'
+  );
+};
+
+if (state.loading) {
   return (
-    <PageContainer>
-      <Helmet>
-        <title>{product.name}</title>
-      </Helmet>
+    <S.LoadingContainer>
+      <div className="spinner-border text-primary" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </div>
+    </S.LoadingContainer>
+  );
+}
 
-      <BackButton onClick={() => navigate(-1)}>
-        <i className="fas fa-arrow-left"></i>
-      </BackButton>
+if (state.error || !state.product) {
+  return (
+    <S.ErrorContainer>
+      <div className="alert alert-danger">
+        {state.error || 'Product not found'}
+      </div>
+    </S.ErrorContainer>
+  );
+}
 
-      <Gallery>
-        <MainImage 
-          src={getImageUrl(product.images[currentImageIndex])}
-          alt={product.name}
-          onError={(e) => {
-            e.target.src = 'https://placehold.co/500@3x.png';
-          }}
-        />
-        {product.images.length > 1 && (
-          <ImageNav>
+const { product, currentImageIndex, quantity } = state;
+const hasDiscount = product.discountPercentage > 0;
+const isWishlisted = isInWishlist(product._id);
+
+return (
+  <S.PageContainer>
+    <Helmet>
+      <title>{product.name} - Your Store</title>
+      <meta name="description" content={product.description} />
+    </Helmet>
+
+    <S.BackButton onClick={() => navigate(-1)}>
+      <i className="fas fa-arrow-left"></i>
+    </S.BackButton>
+
+    <S.DesktopContainer>
+      <div>
+        <S.Gallery {...handlers}>
+          <S.ImageSwiper currentIndex={currentImageIndex}>
+            {product.images.map((image, index) => (
+              <S.ImageContainer key={index}>
+                <S.MainImage
+                  src={getImageUrl(image)}
+                  alt={`${product.name} - Image ${index + 1}`}
+                  onError={(e) => {
+                    e.target.src = 'https://placehold.co/500@3x.png';
+                  }}
+                />
+              </S.ImageContainer>
+            ))}
+          </S.ImageSwiper>
+
+          <S.ImageNav>
             {product.images.map((_, index) => (
-              <ThumbButton
+              <S.NavDot
                 key={index}
                 active={currentImageIndex === index}
-                onClick={() => setCurrentImageIndex(index)}
+                onClick={() => setState(prev => ({ ...prev, currentImageIndex: index }))}
               />
             ))}
-          </ImageNav>
-        )}
-      </Gallery>
+          </S.ImageNav>
+        </S.Gallery>
 
-      <ProductInfo>
-        <PriceTag>
-          <span className="fw-bold fs-4">${product.price.toFixed(2)}</span>
+        <S.ThumbnailsContainer>
+          {product.images.map((image, index) => (
+            <S.Thumbnail
+              key={index}
+              active={currentImageIndex === index}
+              onClick={() => setState(prev => ({ ...prev, currentImageIndex: index }))}
+            >
+              <img
+                src={getImageUrl(image)}
+                alt={`Thumbnail ${index + 1}`}
+                onError={(e) => {
+                  e.target.src = 'https://placehold.co/80@3x.png';
+                }}
+              />
+            </S.Thumbnail>
+          ))}
+        </S.ThumbnailsContainer>
+      </div>
+
+      <S.ProductInfo>
+        <S.PriceTag>
+          <S.CurrentPrice hasDiscount={hasDiscount}>
+            ${(product.price * quantity).toFixed(2)}
+          </S.CurrentPrice>
           {hasDiscount && (
-            <span className="text-decoration-line-through text-muted small">
-              ${product.originalPrice.toFixed(2)}
-            </span>
+            <S.OriginalPrice>
+              ${(product.originalPrice * quantity).toFixed(2)}
+            </S.OriginalPrice>
           )}
-        </PriceTag>
+        </S.PriceTag>
 
-        <h1 className="h4 mb-3">{product.name}</h1>
+        <S.ProductTitle>{product.name}</S.ProductTitle>
 
         {product.soldOut && (
-          <div className="badge bg-danger mb-3">Sold Out</div>
+          <S.SoldOutBadge>Sold Out</S.SoldOutBadge>
         )}
 
-        <p className="text-muted mb-4">{product.description}</p>
+        <S.Description>{product.description}</S.Description>
 
-        {hasDiscount && (
-          <div className="alert alert-success">
-            Save ${(product.originalPrice - product.price).toFixed(2)} with this offer!
-          </div>
-        )}
-      </ProductInfo>
+        <S.QuantitySelector>
+          <S.QuantityLabel>Quantity:</S.QuantityLabel>
+          <S.QuantityControls>
+            <button onClick={() => handleQuantityChange(-1)} disabled={quantity <= 1}>
+              <i className="fas fa-minus"></i>
+            </button>
+            <span>{quantity}</span>
+            <button onClick={() => handleQuantityChange(1)} disabled={quantity >= 10}>
+              <i className="fas fa-plus"></i>
+            </button>
+          </S.QuantityControls>
+        </S.QuantitySelector>
 
-      <div style={{ height: '100px' }}></div>
+        <S.ActionButtons>
+          <S.WishlistButton
+            onClick={handleWishlistToggle}
+            active={isWishlisted}
+          >
+            <i className="fas fa-heart"></i>
+          </S.WishlistButton>
 
-      <ActionButtons>
-        <Button
-          className="primary"
-          onClick={() => addToCart(product)}
-          disabled={product.soldOut}
-        >
-          <i className="fas fa-shopping-cart"></i>
-          {product.soldOut ? 'Sold Out' : 'Add to Cart'}
-        </Button>
+          <S.AddToCartButton
+            onClick={handleAddToCart}
+            disabled={product.soldOut}
+          >
+            <i className="fas fa-shopping-cart"></i>
+            {product.soldOut ? 'Sold Out' : 'Add to Cart'}
+          </S.AddToCartButton>
 
-        <Button
-          className="whatsapp"
-          onClick={() => {
-            const message = encodeURIComponent(
-              `Hi! I'm interested in buying ${product.name}\n\nProduct Link: ${window.location.href}`
-            );
-            window.open(
-              `https://wa.me/${process.env.REACT_APP_WHATSAPP_NUMBER}?text=${message}`,
-              '_blank'
-            );
-          }}
-          disabled={product.soldOut}
-        >
-          <i className="fab fa-whatsapp"></i>
-          {!product.soldOut && 'Order on WhatsApp'}
-        </Button>
-      </ActionButtons>
-    </PageContainer>
-  );
+          <S.WhatsAppButton
+            onClick={handleWhatsAppOrder}
+            disabled={product.soldOut}
+          >
+            <i className="fab fa-whatsapp"></i>
+            {!product.soldOut && <span className="whatsapp-text">Order on WhatsApp</span>}
+          </S.WhatsAppButton>
+        </S.ActionButtons>
+      </S.ProductInfo>
+    </S.DesktopContainer>
+  </S.PageContainer>
+);
 }
 
 export default ProductDetail;
