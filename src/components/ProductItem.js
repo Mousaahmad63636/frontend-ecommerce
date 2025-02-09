@@ -27,7 +27,23 @@ const ProductCard = styled(Link)`
     border-radius: 8px;
   }
 `;
+const PriceOverlay = styled.div`
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 
+  @media (max-width: 640px) {
+    padding: 6px 10px;
+  }
+`;
 const ImageContainer = styled.div`
   position: relative;
   padding-top: 100%;
@@ -189,7 +205,7 @@ const ActionButtonsContainer = styled.div`
 
 const ActionButton = styled.button`
   width: 100%;
-  padding: 8px;
+  padding: 10px;
   border: none;
   border-radius: 6px;
   font-size: 0.9rem;
@@ -216,22 +232,22 @@ const ActionButton = styled.button`
   }
 
   &.whatsapp {
-    background: #25D366;
+    background: ${props => props.disabled ? '#ccc' : '#25D366'};
     color: white;
 
-    &:hover {
+    &:hover:not(:disabled) {
       background: #128C7E;
     }
 
-    &:disabled {
-      background: #ccc;
-      cursor: not-allowed;
+    .whatsapp-text {
+      @media (max-width: 640px) {
+        display: none;
+      }
     }
   }
 
   @media (max-width: 640px) {
-    font-size: 0.8rem;
-    padding: 6px;
+    padding: 8px;
   }
 `;
 
@@ -294,74 +310,77 @@ function ProductItem({ product }) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <ImageContainer>
-        {product.soldOut && (
-          <SoldOutOverlay>
-            <SoldOutBadge>Sold Out</SoldOutBadge>
-          </SoldOutOverlay>
-        )}
+<ImageContainer>
+  {product.soldOut && (
+    <SoldOutOverlay>
+      <SoldOutBadge>Sold Out</SoldOutBadge>
+    </SoldOutOverlay>
+  )}
 
-        <BadgesContainer>
-          {hasDiscount && (
-            <Badge type="discount">
-              Save {product.discountPercentage}%
-            </Badge>
-          )}
-          {product.isNew && (
-            <Badge type="new">New</Badge>
-          )}
-        </BadgesContainer>
+  <BadgesContainer>
+    {hasDiscount && (
+      <Badge type="discount">
+        Save {product.discountPercentage}%
+      </Badge>
+    )}
+    {product.isNew && (
+      <Badge type="new">New</Badge>
+    )}
+  </BadgesContainer>
 
-        <WishlistButton
-          onClick={handleWishlistToggle}
-          active={isWishlisted}
-          aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
-        >
-          <i className="fas fa-heart"></i>
-        </WishlistButton>
+  <WishlistButton
+    onClick={handleWishlistToggle}
+    active={isWishlisted}
+    aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+  >
+    <i className="fas fa-heart"></i>
+  </WishlistButton>
 
-        <ProductImage
-          src={getImageUrl(product.images[0])}
-          alt={product.name}
-          onError={(e) => {
-            e.target.src = 'https://placehold.co/300@3x.png';
-          }}
-        />
-      </ImageContainer>
+  <PriceOverlay>
+    <Price isDiscounted={hasDiscount}>
+      ${product.price.toFixed(2)}
+    </Price>
+    {hasDiscount && (
+      <OriginalPrice>
+        ${product.originalPrice.toFixed(2)}
+      </OriginalPrice>
+    )}
+  </PriceOverlay>
 
-      <ProductInfo>
-        <ProductName>{product.name}</ProductName>
-        <PriceContainer>
-          <Price isDiscounted={hasDiscount}>
-            ${product.price.toFixed(2)}
-          </Price>
-          {hasDiscount && (
-            <OriginalPrice>
-              ${product.originalPrice.toFixed(2)}
-            </OriginalPrice>
-          )}
-        </PriceContainer>
-      </ProductInfo>
+  <ProductImage
+    src={getImageUrl(product.images[0])}
+    alt={product.name}
+    onError={(e) => {
+      e.target.src = 'https://placehold.co/300@3x.png';
+    }}
+  />
+</ImageContainer>
 
-      <ActionButtonsContainer>
-        <ActionButton 
-          className="primary"
-          onClick={handleAddToCart}
-          disabled={product.soldOut}
-        >
-          <i className="fas fa-shopping-cart"></i>
-          {product.soldOut ? 'Sold Out' : 'Add to Cart'}
-        </ActionButton>
-        
-        <ActionButton 
-          className="whatsapp"
-          onClick={handleWhatsAppClick}
-          disabled={product.soldOut}
-        >
-          <i className="fab fa-whatsapp"></i>
-          {product.soldOut ? 'Not Available' : 'Buy on WhatsApp'}
-        </ActionButton>
-      </ActionButtonsContainer>
+<ProductInfo>
+  <ProductName>{product.name}</ProductName>
+</ProductInfo>
+
+<ActionButtonsContainer>
+  <ActionButton 
+    className="primary"
+    onClick={handleAddToCart}
+    disabled={product.soldOut}
+  >
+    <i className="fas fa-shopping-cart"></i>
+    {product.soldOut ? 'Sold Out' : 'Add to Cart'}
+  </ActionButton>
+  
+  <ActionButton 
+    className="whatsapp"
+    onClick={handleWhatsAppClick}
+    disabled={product.soldOut}
+  >
+    <i className="fab fa-whatsapp"></i>
+    <span className="whatsapp-text">
+      {!product.soldOut && 'Order on WhatsApp'}
+    </span>
+  </ActionButton>
+</ActionButtonsContainer>
     </ProductCard>
   );
 }
