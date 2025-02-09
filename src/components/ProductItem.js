@@ -1,41 +1,204 @@
+// src/components/ProductItem.js
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useNotification } from './Notification/NotificationProvider';
 import { getImageUrl } from '../utils/imageUtils';
-import DiscountTimer from './DiscountTimer';
+
+const ProductCard = styled(Link)`
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  @media (max-width: 640px) {
+    border-radius: 8px;
+  }
+`;
+
+const ImageContainer = styled.div`
+  position: relative;
+  padding-top: 100%; // 1:1 Aspect ratio
+  background: #f8f9fa;
+  overflow: hidden;
+`;
+
+const ProductImage = styled.img`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 10px;
+  transition: transform 0.3s ease;
+
+  ${ProductCard}:hover & {
+    transform: scale(1.05);
+  }
+`;
+
+const ProductInfo = styled.div`
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const ProductName = styled.h3`
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+  color: #2d3436;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+
+  @media (max-width: 640px) {
+    font-size: 0.9rem;
+  }
+`;
+
+const PriceContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+`;
+
+const Price = styled.span`
+  font-size: ${props => props.isDiscounted ? '1.1rem' : '1rem'};
+  font-weight: ${props => props.isDiscounted ? '600' : '500'};
+  color: ${props => props.isDiscounted ? '#e74c3c' : '#2d3436'};
+
+  @media (max-width: 640px) {
+    font-size: ${props => props.isDiscounted ? '1rem' : '0.9rem'};
+  }
+`;
+
+const OriginalPrice = styled.span`
+  font-size: 0.9rem;
+  color: #95a5a6;
+  text-decoration: line-through;
+
+  @media (max-width: 640px) {
+    font-size: 0.8rem;
+  }
+`;
+
+const BadgesContainer = styled.div`
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  z-index: 2;
+`;
+
+const Badge = styled.span`
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: white;
+  background: ${props => props.type === 'discount' ? '#e74c3c' : '#2ecc71'};
+
+  @media (max-width: 640px) {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+  }
+`;
+
+const ActionButtons = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 2;
+`;
+
+const IconButton = styled.button`
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: none;
+  background: white;
+  color: ${props => props.active ? '#e74c3c' : '#95a5a6'};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  @media (max-width: 640px) {
+    width: 30px;
+    height: 30px;
+    font-size: 0.9rem;
+  }
+`;
+
+const SoldOutOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+`;
+
+const SoldOutBadge = styled.div`
+  background: #e74c3c;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 1rem;
+
+  @media (max-width: 640px) {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+  }
+`;
 
 function ProductItem({ product }) {
   const { addToCart } = useCart();
-  const { isInWishlist, addToWishlist, removeFromWishlist, loading } = useWishlist();
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const { showNotification } = useNotification();
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   const hasDiscount = product.discountPercentage > 0;
-  const hasActiveDiscount = hasDiscount && product.discountEndDate;
-  const originalPrice = hasDiscount ? product.originalPrice : product.price;
-  const currentPrice = product.price;
   const isWishlisted = isInWishlist(product._id);
 
-  const handleImageChange = (direction) => {
-    if (direction === 'next') {
-      setCurrentImageIndex((prev) =>
-        prev === product.images.length - 1 ? 0 : prev + 1
-      );
-    } else {
-      setCurrentImageIndex((prev) =>
-        prev === 0 ? product.images.length - 1 : prev - 1
-      );
-    }
-  };
-
-  const handleWishlistClick = (e) => {
+  const handleWishlistToggle = (e) => {
     e.preventDefault();
     e.stopPropagation();
-
-    if (loading) return;
 
     try {
       if (isWishlisted) {
@@ -46,25 +209,6 @@ function ProductItem({ product }) {
     } catch (error) {
       console.error('Wishlist operation failed:', error);
     }
-  };
-
-  const handleWhatsAppClick = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const productUrl = `${window.location.origin}/product/${product._id}`;
-    const imageUrl = getImageUrl(product.images[0]);
-    
-    // WhatsApp requires URL encoding and specific format for link previews
-    const message = encodeURIComponent(
-      `Check out this product: ${product.name}\n\n` +
-      `${productUrl}\n\n` +
-      `Price: $${currentPrice.toFixed(2)}`
-    );
-  
-    window.open(
-      `https://wa.me/${process.env.REACT_APP_WHATSAPP_NUMBER}?text=${message}`,
-      '_blank'
-    );
   };
 
   const handleAddToCart = (e) => {
@@ -80,169 +224,71 @@ function ProductItem({ product }) {
   };
 
   return (
-    <Link to={`/product/${product._id}`} className="text-decoration-none">
-      <div className="card h-100 product-card position-relative overflow-hidden shadow-sm">
-        {/* Status Overlays */}
+    <ProductCard 
+      to={`/product/${product._id}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <ImageContainer>
         {product.soldOut && (
-          <div
-            className="position-absolute w-100 h-100"
-            style={{
-              background: 'rgba(0, 0, 0, 0.7)',
-              zIndex: 4,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              pointerEvents: 'none'
-            }}
-          >
-            <div className="badge bg-danger px-3 py-2" style={{ fontSize: '1.1rem' }}>
-              <i className="fas fa-times-circle me-2"></i>
-              Sold Out
-            </div>
-          </div>
+          <SoldOutOverlay>
+            <SoldOutBadge>Sold Out</SoldOutBadge>
+          </SoldOutOverlay>
         )}
 
-        {/* Discount Badge */}
-        {hasDiscount && (
-          <div
-            className="position-absolute start-0 top-0 m-2 py-1 px-2 bg-danger text-white"
-            style={{
-              zIndex: 3,
-              borderRadius: '0 0 4px 0',
-              fontSize: '0.9rem'
-            }}
-          >
-            <i className="fas fa-tag me-1"></i>
-            Save ${(originalPrice - currentPrice).toFixed(2)}
-          </div>
-        )}
-
-        {/* Wishlist Button */}
-        <button
-          className={`position-absolute end-0 top-0 m-2 btn btn-light rounded-circle p-2 ${isWishlisted ? 'shadow' : ''}`}
-          onClick={handleWishlistClick}
-          style={{ zIndex: 5, width: '35px', height: '35px' }}
-        >
-          <i className={`fas fa-heart ${isWishlisted ? 'text-danger' : 'text-secondary'}`}></i>
-        </button>
-
-        {/* Product Image Section */}
-        <div className="product-image-container position-relative bg-light">
-          <img
-            src={getImageUrl(product.images[currentImageIndex])}
-            className="card-img-top"
-            alt={product.name}
-            style={{ height: '220px', objectFit: 'contain', padding: '10px' }}
-            onError={(e) => {
-              e.target.src = 'https://placehold.co/300@3x.png';
-            }}
-          />
-
-          {/* Image Navigation */}
-          {product.images.length > 1 && (
-            <>
-              <div className="image-navigation">
-                <button
-                  className="nav-button prev"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleImageChange('prev');
-                  }}
-                >
-                  <i className="fas fa-chevron-left"></i>
-                </button>
-                <button
-                  className="nav-button next"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleImageChange('next');
-                  }}
-                >
-                  <i className="fas fa-chevron-right"></i>
-                </button>
-              </div>
-
-              {/* Image Dots */}
-              <div className="image-dots position-absolute bottom-0 start-50 translate-middle-x mb-2">
-                {product.images.map((_, index) => (
-                  <span
-                    key={index}
-                    className={`dot ${index === currentImageIndex ? 'active' : ''}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setCurrentImageIndex(index);
-                    }}
-                  />
-                ))}
-              </div>
-            </>
+        <BadgesContainer>
+          {hasDiscount && (
+            <Badge type="discount">
+              Save {product.discountPercentage}%
+            </Badge>
           )}
-        </div>
+          {product.isNew && (
+            <Badge type="new">New</Badge>
+          )}
+        </BadgesContainer>
 
-        {/* Product Details */}
-        <div className="card-body d-flex flex-column">
-          <div className="mb-2">
-            <h5 className="card-title mb-1 text-dark" style={{ fontSize: '1.1rem' }}>{product.name}</h5>
-          </div>
-
-          {/* Price Section */}
-          <div className="mb-3">
-            {hasDiscount ? (
-              <div className="d-flex align-items-center gap-2">
-                <span className="text-danger fw-bold h5 mb-0">
-                  ${currentPrice.toFixed(2)}
-                </span>
-                <span className="text-decoration-line-through text-muted small">
-                  ${originalPrice.toFixed(2)}
-                </span>
-              </div>
-            ) : (
-              <span className="fw-bold text-dark h5 mb-0">
-                ${currentPrice.toFixed(2)}
-              </span>
-            )}
-          </div>
-
-          {/* Action Buttons */}
-          <div className="mt-auto d-grid gap-2">
-            <button
+        <ActionButtons>
+          <IconButton
+            onClick={handleWishlistToggle}
+            active={isWishlisted}
+            aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+          >
+            <i className="fas fa-heart"></i>
+          </IconButton>
+          {!product.soldOut && (
+            <IconButton
               onClick={handleAddToCart}
-              className={`btn ${product.soldOut ? 'btn-secondary' : 'btn-primary'} btn-sm`}
-              disabled={product.soldOut}
+              aria-label="Add to cart"
             >
-              <i className={`fas ${product.soldOut ? 'fa-ban' : 'fa-shopping-cart'} me-2`}></i>
-              {product.soldOut ? 'Sold Out' : 'Add to Cart'}
-            </button>
-            <button
-              onClick={handleWhatsAppClick}
-              className={`btn ${product.soldOut ? 'btn-secondary' : 'btn-success'} btn-sm`}
-              disabled={product.soldOut}
-            >
-              <i className="fab fa-whatsapp me-2"></i>
-              {product.soldOut ? 'Not Available' : 'Buy on WhatsApp'}
-            </button>
-          </div>
-        </div>
-      </div>
-    </Link>
+              <i className="fas fa-shopping-cart"></i>
+            </IconButton>
+          )}
+        </ActionButtons>
+
+        <ProductImage
+          src={getImageUrl(product.images[0])}
+          alt={product.name}
+          onError={(e) => {
+            e.target.src = 'https://placehold.co/300@3x.png';
+          }}
+        />
+      </ImageContainer>
+
+      <ProductInfo>
+        <ProductName>{product.name}</ProductName>
+        <PriceContainer>
+          <Price isDiscounted={hasDiscount}>
+            ${product.price.toFixed(2)}
+          </Price>
+          {hasDiscount && (
+            <OriginalPrice>
+              ${product.originalPrice.toFixed(2)}
+            </OriginalPrice>
+          )}
+        </PriceContainer>
+      </ProductInfo>
+    </ProductCard>
   );
 }
-
-ProductItem.propTypes = {
-  product: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    originalPrice: PropTypes.number,
-    discountPercentage: PropTypes.number,
-    discountEndDate: PropTypes.string,
-    images: PropTypes.arrayOf(PropTypes.string).isRequired,
-    category: PropTypes.string.isRequired,
-    soldOut: PropTypes.bool
-  }).isRequired,
-};
 
 export default ProductItem;
