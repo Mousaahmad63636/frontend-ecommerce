@@ -367,7 +367,7 @@ function ProductItem({ product }) {
     disabled={product.soldOut}
   >
     <i className="fas fa-shopping-cart"></i>
-    {product.soldOut ? 'Sold Out' : 'Add to Cart'}
+    {product.soldOut ? 'Sold Out' : '➕'}
   </ActionButton>
   
   <ActionButton 
