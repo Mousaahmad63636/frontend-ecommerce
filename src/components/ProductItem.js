@@ -1,4 +1,3 @@
-// src/components/ProductItem.js
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -31,7 +30,7 @@ const ProductCard = styled(Link)`
 
 const ImageContainer = styled.div`
   position: relative;
-  padding-top: 100%; // 1:1 Aspect ratio
+  padding-top: 100%;
   background: #f8f9fa;
   overflow: hidden;
 `;
@@ -125,17 +124,10 @@ const Badge = styled.span`
   }
 `;
 
-const ActionButtons = styled.div`
+const WishlistButton = styled.button`
   position: absolute;
   top: 10px;
   right: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  z-index: 2;
-`;
-
-const IconButton = styled.button`
   width: 35px;
   height: 35px;
   border-radius: 50%;
@@ -148,6 +140,7 @@ const IconButton = styled.button`
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 2;
 
   &:hover {
     transform: scale(1.1);
@@ -187,6 +180,61 @@ const SoldOutBadge = styled.div`
   }
 `;
 
+const ActionButtonsContainer = styled.div`
+  padding: 0 15px 15px;
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+`;
+
+const ActionButton = styled.button`
+  width: 100%;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &.primary {
+    background: #007bff;
+    color: white;
+
+    &:hover {
+      background: #0056b3;
+    }
+
+    &:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+  }
+
+  &.whatsapp {
+    background: #25D366;
+    color: white;
+
+    &:hover {
+      background: #128C7E;
+    }
+
+    &:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+  }
+
+  @media (max-width: 640px) {
+    font-size: 0.8rem;
+    padding: 6px;
+  }
+`;
+
 function ProductItem({ product }) {
   const { addToCart } = useCart();
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
@@ -223,6 +271,23 @@ function ProductItem({ product }) {
     addToCart(product);
   };
 
+  const handleWhatsAppClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (product.soldOut) return;
+
+    const productUrl = `${window.location.origin}/product/${product._id}`;
+    const message = encodeURIComponent(
+      `Hi! I'm interested in buying ${product.name}\n\nProduct Link: ${productUrl}\nPrice: $${product.price.toFixed(2)}`
+    );
+    
+    window.open(
+      `https://wa.me/${process.env.REACT_APP_WHATSAPP_NUMBER}?text=${message}`,
+      '_blank'
+    );
+  };
+
   return (
     <ProductCard 
       to={`/product/${product._id}`}
@@ -247,23 +312,13 @@ function ProductItem({ product }) {
           )}
         </BadgesContainer>
 
-        <ActionButtons>
-          <IconButton
-            onClick={handleWishlistToggle}
-            active={isWishlisted}
-            aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
-          >
-            <i className="fas fa-heart"></i>
-          </IconButton>
-          {!product.soldOut && (
-            <IconButton
-              onClick={handleAddToCart}
-              aria-label="Add to cart"
-            >
-              <i className="fas fa-shopping-cart"></i>
-            </IconButton>
-          )}
-        </ActionButtons>
+        <WishlistButton
+          onClick={handleWishlistToggle}
+          active={isWishlisted}
+          aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+        >
+          <i className="fas fa-heart"></i>
+        </WishlistButton>
 
         <ProductImage
           src={getImageUrl(product.images[0])}
@@ -287,6 +342,26 @@ function ProductItem({ product }) {
           )}
         </PriceContainer>
       </ProductInfo>
+
+      <ActionButtonsContainer>
+        <ActionButton 
+          className="primary"
+          onClick={handleAddToCart}
+          disabled={product.soldOut}
+        >
+          <i className="fas fa-shopping-cart"></i>
+          {product.soldOut ? 'Sold Out' : 'Add to Cart'}
+        </ActionButton>
+        
+        <ActionButton 
+          className="whatsapp"
+          onClick={handleWhatsAppClick}
+          disabled={product.soldOut}
+        >
+          <i className="fab fa-whatsapp"></i>
+          {product.soldOut ? 'Not Available' : 'Buy on WhatsApp'}
+        </ActionButton>
+      </ActionButtonsContainer>
     </ProductCard>
   );
 }
