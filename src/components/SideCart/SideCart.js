@@ -116,21 +116,21 @@ const SideCart = ({ isOpen, onClose }) => {
             <>
               <div className="cart-items">
                 {cartItems.map(item => (
-            <div className="cart-item">
-            <img
-              src={getImageUrl(item.image)}
-              alt={item.name}
-              className="cart-item-image"
-              style={{ 
-                width: '60px', 
-                height: '60px', 
-                objectFit: 'cover',
-                borderRadius: '4px' 
-              }}
-              onError={(e) => {
-                e.target.src = 'https://placehold.co/60@3x.png';
-              }}
-            />
+                  <div className="cart-item">
+                    <img
+                      src={getImageUrl(item.image)}
+                      alt={item.name}
+                      className="cart-item-image"
+                      style={{
+                        width: '60px',
+                        height: '60px',
+                        objectFit: 'cover',
+                        borderRadius: '4px'
+                      }}
+                      onError={(e) => {
+                        e.target.src = 'https://placehold.co/60@3x.png';
+                      }}
+                    />
                     <div className="cart-item-details">
                       <h6>{item.name}</h6>
                       <div className="price">${(item.price * item.quantity).toFixed(2)}</div>
