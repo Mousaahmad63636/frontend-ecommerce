@@ -12,9 +12,11 @@ import {
   SectionTitle,
   CategorySelect,
   NoResults,
-  LoadingWrapper
+  LoadingWrapper,
+  ContentContainer
 } from '../styles/HomeStyles';
 
+// Component imports
 import BestSelling from '../components/BestSelling';
 import ProductList from '../components/ProductList';
 import ContactSection from '../components/ContactSection';
@@ -25,28 +27,35 @@ import DiscountedProducts from '../components/DiscountedProducts';
 import api from '../api/api';
 
 function Home() {
-  const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
+  // State management
+  const [state, setState] = useState({
+    products: [],
+    filteredProducts: [],
+    categories: [],
+    blackFridayData: null,
+    heroSettings: {
+      type: 'image',
+      mediaUrl: '/hero.jpg',
+      title: 'Welcome to Our Trendy E-commerce Store',
+      subtitle: 'Discover Amazing Products at Great Prices'
+    }
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [blackFridayData, setBlackFridayData] = useState(null);
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('q');
-  const [heroSettings, setHeroSettings] = useState({
-    type: 'image',
-    mediaUrl: '/hero.jpg',
-    title: 'Welcome to Our Trendy E-commerce Store',
-    subtitle: 'Discover Amazing Products at Great Prices'
-  });
 
+  // Fetch hero settings
   useEffect(() => {
     const fetchSettings = async () => {
       try {
         const response = await api.getSettings();
         if (response?.heroSection) {
-          setHeroSettings(response.heroSection);
+          setState(prev => ({
+            ...prev,
+            heroSettings: response.heroSection
+          }));
         }
       } catch (error) {
         console.error('Error fetching hero settings:', error);
@@ -56,31 +65,29 @@ function Home() {
     fetchSettings();
   }, []);
 
+  // Fetch products and black friday data
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const productsData = await api.getProducts();
-        setProducts(productsData);
+        const [productsData, blackFridayResponse] = await Promise.all([
+          api.getProducts(),
+          api.getBlackFridayData?.() || Promise.resolve(null)
+        ]);
 
         const uniqueCategories = [...new Set(productsData.map(product => product.category))];
-        setCategories(uniqueCategories);
-
-        if (api.getBlackFridayData) {
-          try {
-            const blackFridayResponse = await api.getBlackFridayData();
-            if (blackFridayResponse?.isActive) {
-              setBlackFridayData({
-                discount: blackFridayResponse.discountPercentage,
-                endDate: blackFridayResponse.endDate
-              });
-            }
-          } catch (blackFridayError) {
-            console.log('Black Friday data not available');
-          }
-        }
+        
+        setState(prev => ({
+          ...prev,
+          products: productsData,
+          categories: uniqueCategories,
+          blackFridayData: blackFridayResponse?.isActive ? {
+            discount: blackFridayResponse.discountPercentage,
+            endDate: blackFridayResponse.endDate
+          } : null
+        }));
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error('Error fetching data:', error);
         setError('Failed to load products. Please try again later.');
       } finally {
         setLoading(false);
@@ -90,8 +97,9 @@ function Home() {
     fetchData();
   }, []);
 
+  // Filter products based on search and category
   useEffect(() => {
-    let filtered = products;
+    let filtered = state.products;
 
     if (searchQuery) {
       const searchLower = searchQuery.toLowerCase();
@@ -104,8 +112,8 @@ function Home() {
       filtered = filtered.filter(product => product.category === selectedCategory);
     }
 
-    setFilteredProducts(filtered);
-  }, [products, searchQuery, selectedCategory]);
+    setState(prev => ({ ...prev, filteredProducts: filtered }));
+  }, [state.products, searchQuery, selectedCategory]);
 
   if (loading) {
     return (
@@ -115,129 +123,111 @@ function Home() {
     );
   }
 
+  const renderSEOMetadata = () => (
+    <Helmet>
+      <title>Trendy E-commerce Store | Discover Amazing Products</title>
+      <meta name="description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices. Explore special offers, discounted products, and more." />
+      {/* ... rest of SEO metadata ... */}
+    </Helmet>
+  );
+
+  const renderHeroSection = () => (
+    <HeroSection>
+      <HeroMedia
+        style={{ backgroundImage: `url(${state.heroSettings.mediaUrl})` }}
+        aria-label="Trendy E-commerce Store Hero Section"
+      >
+        {state.heroSettings.type === 'video' && (
+          <video
+            src={state.heroSettings.mediaUrl}
+            autoPlay
+            loop
+            muted
+            playsInline
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            aria-label="Trendy products showcase video"
+          />
+        )}
+      </HeroMedia>
+      <HeroContent>
+        <HeroTitle>{state.heroSettings.title}</HeroTitle>
+        <HeroSubtitle>{state.heroSettings.subtitle}</HeroSubtitle>
+      </HeroContent>
+    </HeroSection>
+  );
+
+  const renderProductsSection = () => (
+    <Section background="#f5f5f5">
+      <ContentContainer>
+        <SectionTitle>
+          {searchQuery ? `Search Results for "${searchQuery}"` : 'Discover Our Trendy Products'}
+        </SectionTitle>
+
+        {!searchQuery && (
+          <CategorySelect
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            <option value="all">All Categories</option>
+            {state.categories.map(category => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </CategorySelect>
+        )}
+
+        {error ? (
+          <NoResults>
+            <h3>Error</h3>
+            <p>{error}</p>
+          </NoResults>
+        ) : state.filteredProducts.length > 0 ? (
+          <ProductList products={state.filteredProducts} />
+        ) : (
+          <NoResults>
+            <h3>No Products Found</h3>
+            {searchQuery && (
+              <p>No results found for "{searchQuery}". Try a different search term or browse our trendy categories.</p>
+            )}
+          </NoResults>
+        )}
+      </ContentContainer>
+    </Section>
+  );
+
   return (
     <HomeWrapper>
-      <Helmet>
-        <title>Trendy E-commerce Store | Discover Amazing Products</title>
-        <meta name="description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices. Explore special offers, discounted products, and more." />
-        <meta name="keywords" content="e-commerce, trendy products, online shopping, special offers, discounted products, best selling, contact us" />
-        <meta property="og:title" content="Trendy E-commerce Store | Discover Amazing Products" />
-        <meta property="og:description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices. Explore special offers, discounted products, and more." />
-        <meta property="og:image" content="/hero.jpg" />
-        <meta property="og:url" content="https://www.yourstore.com" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Trendy E-commerce Store | Discover Amazing Products" />
-        <meta name="twitter:description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices. Explore special offers, discounted products, and more." />
-        <meta name="twitter:image" content="/hero.jpg" />
-        
-        <script type="application/ld+json">
-          {`
-            {
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              "url": "https://www.yourstore.com",
-              "name": "Trendy E-commerce Store",
-              "description": "Discover amazing trendy products at great prices.",
-              "potentialAction": {
-                "@type": "SearchAction",
-                "target": "https://www.yourstore.com/search?q={search_term_string}",
-                "query-input": "required name=search_term_string"
-              }
-            }
-          `}
-        </script>
-      </Helmet>
-
-      {blackFridayData && (
+      {renderSEOMetadata()}
+      {state.blackFridayData && (
         <BlackFridayBanner
-          endDate={blackFridayData.endDate}
-          discount={blackFridayData.discount}
+          endDate={state.blackFridayData.endDate}
+          discount={state.blackFridayData.discount}
         />
       )}
-
-      <HeroSection>
-        <HeroMedia
-          style={{
-            backgroundImage: `url(${heroSettings.mediaUrl})`
-          }}
-          aria-label="Trendy E-commerce Store Hero Section"
-        >
-          {heroSettings.type === 'video' ? (
-            <video
-              src={heroSettings.mediaUrl}
-              autoPlay
-              loop
-              muted
-              playsInline
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              aria-label="Trendy products showcase video"
-            />
-          ) : null}
-        </HeroMedia>
-        <HeroContent>
-          <HeroTitle>{heroSettings.title}</HeroTitle>
-          <HeroSubtitle>{heroSettings.subtitle}</HeroSubtitle>
-        </HeroContent>
-      </HeroSection>
+      {renderHeroSection()}
 
       {!searchQuery && (
         <>
           <Section background="#f5f5f5">
-            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <ContentContainer>
               <DiscountedProducts />
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <SectionTitle>Explore Our Special Offers</SectionTitle>
+              <div className="timer-section">
+                <SectionTitle>Special Offers</SectionTitle>
                 <TimerDisplay />
               </div>
-            </div>
+            </ContentContainer>
           </Section>
 
           <Section>
-            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <ContentContainer>
               <BestSelling />
-            </div>
+            </ContentContainer>
           </Section>
         </>
       )}
 
-      <Section background="#f5f5f5">
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <SectionTitle>
-            {searchQuery ? `Search Results for "${searchQuery}"` : 'Discover Our Trendy Products'}
-          </SectionTitle>
-
-          {!searchQuery && (
-            <CategorySelect
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              <option value="all">All Categories</option>
-              {categories.map(category => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </CategorySelect>
-          )}
-
-          {error ? (
-            <NoResults>
-              <h3>Error</h3>
-              <p>{error}</p>
-            </NoResults>
-          ) : filteredProducts.length > 0 ? (
-            <ProductList products={filteredProducts} />
-          ) : (
-            <NoResults>
-              <h3>No Products Found</h3>
-              {searchQuery && (
-                <p>No results found for "{searchQuery}". Try a different search term or browse our trendy categories.</p>
-              )}
-            </NoResults>
-          )}
-        </div>
-      </Section>
-
+      {renderProductsSection()}
       <ContactSection />
     </HomeWrapper>
   );

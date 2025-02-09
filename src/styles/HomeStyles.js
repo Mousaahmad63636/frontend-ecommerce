@@ -125,3 +125,24 @@ export const LoadingWrapper = styled.div`
   align-items: center;
   min-height: 200px;
 `;
+
+export const ContentContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+  width: 100%;
+
+  .timer-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+`;

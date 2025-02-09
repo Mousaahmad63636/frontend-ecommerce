@@ -3,7 +3,7 @@ import './ConsultingFloat.css';
 
 function ConsultingFloat() {
   const phoneNumber = '96171195068';
-  const message = encodeURIComponent('مرحبا اريد استشارة');
+  const message = encodeURIComponent(' hello Spotly, I need help.');
 
   const handleClick = () => {
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
