@@ -105,7 +105,7 @@ function ProductDetail() {
       ...state.product,
       quantity: state.quantity
     });
-    showNotification('Added to cart successfully', 'success');
+
   };
 
   const handleWishlistToggle = async () => {
