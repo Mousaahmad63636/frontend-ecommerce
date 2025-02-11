@@ -55,7 +55,6 @@ function Header() {
   const handleLogout = async () => {
     try {
       await logout();
-      showNotification('Logged out successfully!', 'success');
       navigate('/');
     } catch (error) {
       showNotification('Error logging out', 'error');
