@@ -1,15 +1,13 @@
 // src/components/Auth/LoginModal.js
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../Notification/NotificationProvider';
-
 import './LoginModal.css';
 
 function LoginModal({ onClose = () => {}, onSuccess = () => {}, initialMode = 'login' }) {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(initialMode === 'login');
-  // ...rest of the code
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -21,6 +19,7 @@ function LoginModal({ onClose = () => {}, onSuccess = () => {}, initialMode = 'l
   const [formErrors, setFormErrors] = useState({});
   const { login, register } = useAuth();
   const { showNotification } = useNotification();
+  const [showPassword, setShowPassword] = useState(false);
 
   const validateForm = () => {
     const errors = {};
@@ -42,6 +41,8 @@ function LoginModal({ onClose = () => {}, onSuccess = () => {}, initialMode = 'l
       }
       if (!formData.phoneNumber) {
         errors.phoneNumber = 'Phone number is required';
+      } else if (!/^\d{8}$/.test(formData.phoneNumber)) {
+        errors.phoneNumber = 'Phone number must be exactly 8 digits';
       }
       if (!formData.address) {
         errors.address = 'Address is required';
@@ -54,10 +55,19 @@ function LoginModal({ onClose = () => {}, onSuccess = () => {}, initialMode = 'l
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    if (name === 'phoneNumber') {
+      // Only allow digits and limit to 8 characters
+      const sanitizedValue = value.replace(/\D/g, '').slice(0, 8);
+      setFormData(prev => ({
+        ...prev,
+        [name]: sanitizedValue
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
     // Clear error when user starts typing
     if (formErrors[name]) {
       setFormErrors(prev => ({
@@ -67,34 +77,33 @@ function LoginModal({ onClose = () => {}, onSuccess = () => {}, initialMode = 'l
     }
   };
 
-// src/components/Auth/LoginModal.js
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  
-  if (!validateForm()) {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
       return;
-  }
+    }
 
-  setLoading(true);
-  try {
+    setLoading(true);
+    try {
       let user = isLogin ? 
           await login(formData.email, formData.password) :
           await register(formData);
 
       if (onSuccess) onSuccess();
-      navigate('/'); // Add this line
-      if (onClose) onClose(); // Make onClose optional
+      navigate('/');
+      if (onClose) onClose();
 
-  } catch (error) {
+    } catch (error) {
       console.error('Auth error:', error);
       showNotification(
           error.response?.data?.message || error.message || 'Authentication failed',
           'error'
       );
-  } finally {
+    } finally {
       setLoading(false);
-  }
-};
+    }
+  };
 
   return (
     <div className="modal-backdrop" onClick={(e) => {
@@ -136,20 +145,29 @@ const handleSubmit = async (e) => {
             {/* Password Field */}
             <div className="mb-3">
               <label className="form-label" htmlFor="password">Password</label>
-              <input
-                id="password"
-                type="password"
-                className={`form-control ${formErrors.password ? 'is-invalid' : ''}`}
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                placeholder={isLogin ? "Enter your password" : "Create a password (min. 6 characters)"}
-                required
-                minLength={6}
-              />
-              {formErrors.password && (
-                <div className="invalid-feedback">{formErrors.password}</div>
-              )}
+              <div className="input-group">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  className={`form-control ${formErrors.password ? 'is-invalid' : ''}`}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder={isLogin ? "Enter your password" : "Create a password (min. 6 characters)"}
+                  required
+                  minLength={6}
+                />
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  <i className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                </button>
+                {formErrors.password && (
+                  <div className="invalid-feedback">{formErrors.password}</div>
+                )}
+              </div>
             </div>
 
             {/* Registration Fields */}
@@ -181,12 +199,13 @@ const handleSubmit = async (e) => {
                     name="phoneNumber"
                     value={formData.phoneNumber}
                     onChange={handleInputChange}
-                    placeholder="Enter your phone number"
+                    placeholder="Enter 8-digit phone number"
                     required
                   />
                   {formErrors.phoneNumber && (
                     <div className="invalid-feedback">{formErrors.phoneNumber}</div>
                   )}
+                  <small className="text-muted">Phone number must be exactly 8 digits</small>
                 </div>
 
                 <div className="mb-3">
