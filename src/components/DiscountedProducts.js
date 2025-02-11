@@ -80,9 +80,6 @@ const DiscountedProducts = () => {
     <div className="container my-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="mb-0">Special Offers</h2>
-        <Link to="/?discount=true" className="btn btn-outline-primary">
-          View All Offers
-        </Link>
       </div>
 
       {/* Category Filter */}
