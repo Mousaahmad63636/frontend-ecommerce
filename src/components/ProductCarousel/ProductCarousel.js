@@ -1,34 +1,12 @@
-// src/components/BestSelling.js
-import React, { useState, useEffect } from 'react';
+// src/components/ProductCarousel/ProductCarousel.js
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import ProductItem from './ProductItem';
-import api from '../api/api';
+import ProductItem from '../ProductItem';
 import './ProductCarousel.css';
 
-const BestSelling = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const ProductCarousel = ({ products, title, category, loading }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerPage = window.innerWidth < 768 ? 1 : 4;
-
-  useEffect(() => {
-    const fetchBestSelling = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await api.getBestSelling();
-        setProducts(data);
-      } catch (err) {
-        console.error('Error fetching best-selling products:', err);
-        setError('Unable to load best-selling products');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBestSelling();
-  }, []);
 
   const nextSlide = () => {
     setCurrentIndex((prevIndex) => 
@@ -50,15 +28,15 @@ const BestSelling = () => {
     );
   }
 
-  if (error || !products || products.length === 0) {
+  if (!products || products.length === 0) {
     return null;
   }
 
   return (
-    <div className="product-carousel-section container">
+    <div className="product-carousel-section">
       <div className="section-header">
-        <h2>Best Selling Products</h2>
-        <Link to="/?category=best-selling" className="btn btn-link">
+        <h2>{title}</h2>
+        <Link to={`/?category=${category}`} className="btn btn-link">
           Show All <i className="fas fa-arrow-right"></i>
         </Link>
       </div>
@@ -100,4 +78,4 @@ const BestSelling = () => {
   );
 };
 
-export default BestSelling;
+export default ProductCarousel;

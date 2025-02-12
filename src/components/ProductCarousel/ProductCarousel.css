@@ -1,0 +1,90 @@
+/* src/components/ProductCarousel.css */
+.product-carousel-section {
+  margin: 2rem 0;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+}
+
+.section-header .btn-link {
+  text-decoration: none;
+  color: #007bff;
+  font-weight: 500;
+}
+
+.product-carousel-container {
+  position: relative;
+  padding: 0 40px;
+}
+
+.product-carousel {
+  overflow: hidden;
+  position: relative;
+}
+
+.product-carousel-track {
+  display: grid;
+  transition: transform 0.3s ease;
+}
+
+.carousel-item {
+  padding: 0 10px;
+}
+
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  border: 1px solid #ddd;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.carousel-arrow:hover:not(:disabled) {
+  background: #f8f9fa;
+  border-color: #999;
+}
+
+.carousel-arrow:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.carousel-arrow.prev {
+  left: 0;
+}
+
+.carousel-arrow.next {
+  right: 0;
+}
+
+@media (max-width: 768px) {
+  .product-carousel-container {
+    padding: 0 30px;
+  }
+
+  .carousel-arrow {
+    width: 30px;
+    height: 30px;
+    font-size: 0.8rem;
+  }
+  
+  .carousel-item {
+    padding: 0 5px;
+  }
+}
