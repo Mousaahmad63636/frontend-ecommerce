@@ -2,7 +2,7 @@ import React from 'react';
 import './ConsultingFloat.css';
 
 function ConsultingFloat() {
-  const phoneNumber = '96171195068';
+  const phoneNumber = '96176919370';
   const message = encodeURIComponent(' hello Spotly, I need help.');
 
   const handleClick = () => {
