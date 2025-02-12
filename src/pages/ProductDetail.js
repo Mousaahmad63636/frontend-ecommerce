@@ -297,6 +297,7 @@ function ProductDetail() {
         </S.RelatedProductsSection>
       )}
     </S.PageContainer>
+    
   );
 }
 
