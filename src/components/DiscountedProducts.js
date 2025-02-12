@@ -14,11 +14,18 @@ const DiscountedProducts = () => {
         setLoading(true);
         setError(null);
         const response = await api.getProducts();
+        // Add debug logging
+        console.log('API response:', response);
+        
         const discountedProducts = response.filter(product => 
           product.discountPercentage > 0 && 
           product.discountEndDate && 
           new Date(product.discountEndDate) > new Date()
         );
+        
+        // Add debug logging
+        console.log('Filtered discounted products:', discountedProducts);
+        
         setProducts(discountedProducts);
       } catch (err) {
         console.error('Error fetching discounted products:', err);
@@ -31,19 +38,13 @@ const DiscountedProducts = () => {
     fetchDiscountedProducts();
   }, []);
 
-  if (error) {
-    return null;
-  }
-
   return (
-    <div className="container my-4">
-      <ProductCarousel 
-        products={products}
-        title="Special Offers"
-        category="discounted"
-        loading={loading}
-      />
-    </div>
+    <ProductCarousel 
+      products={products}
+      title="Special Offers"
+      category="discounted"
+      loading={loading}
+    />
   );
 };
 

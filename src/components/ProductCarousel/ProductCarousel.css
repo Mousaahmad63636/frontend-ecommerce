@@ -1,39 +1,41 @@
-
+/* src/components/ProductCarousel/ProductCarousel.css */
 .product-carousel-section {
   margin: 2rem 0;
+  position: relative;
+  overflow: hidden;
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-  padding: 0 1rem;
-}
-
-.section-header .btn-link {
-  text-decoration: none;
-  color: #007bff;
-  font-weight: 500;
+  margin-bottom: 1.5rem;
 }
 
 .product-carousel-container {
   position: relative;
   padding: 0 40px;
+  margin: 0 -10px;
 }
 
 .product-carousel {
   overflow: hidden;
   position: relative;
+  width: 100%;
 }
 
 .product-carousel-track {
   display: grid;
+  grid-auto-flow: column;
   transition: transform 0.3s ease;
+  gap: 20px;
+  width: 100%;
 }
 
 .carousel-item {
+  width: 100%;
   padding: 0 10px;
+  min-width: 0; /* Prevent flex items from growing */
 }
 
 .carousel-arrow {
@@ -57,7 +59,8 @@
 
 .carousel-arrow:hover:not(:disabled) {
   background: #f8f9fa;
-  border-color: #999;
+  border-color: #007bff;
+  color: #007bff;
 }
 
 .carousel-arrow:disabled {
