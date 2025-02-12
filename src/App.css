@@ -1,0 +1,48 @@
+/* Product Card Styling */
+.product-card {
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .product-card:hover {
+    transform: translateY(-2px);
+  }
+  
+  .image-navigation {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    padding: 0 8px;
+  }
+  
+  .nav-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+  
+  .image-dots {
+    display: flex;
+    gap: 6px;
+    z-index: 2;
+  }
+  
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .dot.active {
+    background-color: rgba(0, 0, 0, 0.7);
+    transform: scale(1.2);
+  }

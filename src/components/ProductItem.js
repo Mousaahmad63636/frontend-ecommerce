@@ -5,7 +5,6 @@ import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useNotification } from './Notification/NotificationProvider';
 import { getImageUrl } from '../utils/imageUtils';
-import DiscountTimer from './DiscountTimer';
 
 function ProductItem({ product }) {
   const { addToCart } = useCart();
@@ -14,7 +13,6 @@ function ProductItem({ product }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const hasDiscount = product.discountPercentage > 0;
-  const hasActiveDiscount = hasDiscount && product.discountEndDate;
   const originalPrice = hasDiscount ? product.originalPrice : product.price;
   const currentPrice = product.price;
   const isWishlisted = isInWishlist(product._id);
@@ -54,7 +52,6 @@ function ProductItem({ product }) {
     const productUrl = `${window.location.origin}/product/${product._id}`;
     const imageUrl = getImageUrl(product.images[0]);
     
-    // WhatsApp requires URL encoding and specific format for link previews
     const message = encodeURIComponent(
       `Check out this product: ${product.name}\n\n` +
       `${productUrl}\n\n` +
@@ -82,7 +79,6 @@ function ProductItem({ product }) {
   return (
     <Link to={`/product/${product._id}`} className="text-decoration-none">
       <div className="card h-100 product-card position-relative overflow-hidden shadow-sm">
-        {/* Status Overlays */}
         {product.soldOut && (
           <div
             className="position-absolute w-100 h-100"
@@ -95,21 +91,20 @@ function ProductItem({ product }) {
               pointerEvents: 'none'
             }}
           >
-            <div className="badge bg-danger px-3 py-2" style={{ fontSize: '1.1rem' }}>
+            <div className="badge bg-danger px-2 py-1 px-sm-3 py-sm-2" style={{ fontSize: '0.9rem' }}>
               <i className="fas fa-times-circle me-2"></i>
               Sold Out
             </div>
           </div>
         )}
 
-        {/* Discount Badge */}
         {hasDiscount && (
           <div
-            className="position-absolute start-0 top-0 m-2 py-1 px-2 bg-danger text-white"
+            className="position-absolute start-0 top-0 m-1 m-sm-2 py-1 px-2 bg-danger text-white"
             style={{
               zIndex: 3,
               borderRadius: '0 0 4px 0',
-              fontSize: '0.9rem'
+              fontSize: '0.8rem'
             }}
           >
             <i className="fas fa-tag me-1"></i>
@@ -117,59 +112,56 @@ function ProductItem({ product }) {
           </div>
         )}
 
-        {/* Wishlist Button */}
         <button
-          className={`position-absolute end-0 top-0 m-2 btn btn-light rounded-circle p-2 ${isWishlisted ? 'shadow' : ''}`}
+          className={`position-absolute end-0 top-0 m-1 m-sm-2 btn btn-light rounded-circle p-1 p-sm-2 ${isWishlisted ? 'shadow' : ''}`}
           onClick={handleWishlistClick}
-          style={{ zIndex: 5, width: '35px', height: '35px' }}
+          style={{ zIndex: 5, width: '30px', height: '30px' }}
         >
           <i className={`fas fa-heart ${isWishlisted ? 'text-danger' : 'text-secondary'}`}></i>
         </button>
 
-        {/* Product Image Section */}
-        <div className="product-image-container position-relative bg-light">
+        <div className="product-image-container position-relative bg-light ratio ratio-1x1">
           <img
             src={getImageUrl(product.images[currentImageIndex])}
-            className="card-img-top"
+            className="card-img-top p-2"
             alt={product.name}
-            style={{ height: '220px', objectFit: 'contain', padding: '10px' }}
+            style={{ objectFit: 'contain' }}
             onError={(e) => {
               e.target.src = 'https://placehold.co/300@3x.png';
             }}
           />
 
-          {/* Image Navigation */}
           {product.images.length > 1 && (
             <>
               <div className="image-navigation">
                 <button
-                  className="nav-button prev"
+                  className="nav-button prev btn btn-light btn-xs p-1"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     handleImageChange('prev');
                   }}
                 >
-                  <i className="fas fa-chevron-left"></i>
+                  <i className="fas fa-chevron-left fs-6"></i>
                 </button>
                 <button
-                  className="nav-button next"
+                  className="nav-button next btn btn-light btn-xs p-1"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     handleImageChange('next');
                   }}
                 >
-                  <i className="fas fa-chevron-right"></i>
+                  <i className="fas fa-chevron-right fs-6"></i>
                 </button>
               </div>
 
-              {/* Image Dots */}
-              <div className="image-dots position-absolute bottom-0 start-50 translate-middle-x mb-2">
+              <div className="image-dots position-absolute bottom-0 start-50 translate-middle-x mb-1">
                 {product.images.map((_, index) => (
                   <span
                     key={index}
                     className={`dot ${index === currentImageIndex ? 'active' : ''}`}
+                    style={{ width: '8px', height: '8px' }}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -182,47 +174,46 @@ function ProductItem({ product }) {
           )}
         </div>
 
-        {/* Product Details */}
-        <div className="card-body d-flex flex-column">
-          <div className="mb-2">
-            <h5 className="card-title mb-1 text-dark" style={{ fontSize: '1.1rem' }}>{product.name}</h5>
+        <div className="card-body d-flex flex-column p-2 p-sm-3">
+          <div className="mb-1">
+            <h5 className="card-title mb-0 text-dark fs-6 fs-md-5">{product.name}</h5>
           </div>
 
-          {/* Price Section */}
-          <div className="mb-3">
+          <div className="my-1">
             {hasDiscount ? (
-              <div className="d-flex align-items-center gap-2">
-                <span className="text-danger fw-bold h5 mb-0">
+              <div className="d-flex flex-wrap align-items-center gap-1">
+                <span className="text-danger fw-bold fs-6">
                   ${currentPrice.toFixed(2)}
                 </span>
-                <span className="text-decoration-line-through text-muted small">
+                <span className="text-decoration-line-through text-muted fs-7">
                   ${originalPrice.toFixed(2)}
                 </span>
               </div>
             ) : (
-              <span className="fw-bold text-dark h5 mb-0">
+              <span className="fw-bold text-dark fs-6">
                 ${currentPrice.toFixed(2)}
               </span>
             )}
           </div>
 
-          {/* Action Buttons */}
-          <div className="mt-auto d-grid gap-2">
+          <div className="mt-auto d-flex flex-column flex-sm-row gap-1">
             <button
               onClick={handleAddToCart}
-              className={`btn ${product.soldOut ? 'btn-secondary' : 'btn-primary'} btn-sm`}
+              className={`btn ${product.soldOut ? 'btn-secondary' : 'btn-primary'} btn-sm flex-grow-1`}
+              style={{ minWidth: '120px' }}
               disabled={product.soldOut}
             >
-              <i className={`fas ${product.soldOut ? 'fa-ban' : 'fa-shopping-cart'} me-2`}></i>
-              {product.soldOut ? 'Sold Out' : 'Add to Cart'}
+              <i className={`fas ${product.soldOut ? 'fa-ban' : 'fa-shopping-cart'} me-1`}></i>
+              {product.soldOut ? 'Sold Out' : 'Cart'}
             </button>
             <button
               onClick={handleWhatsAppClick}
-              className={`btn ${product.soldOut ? 'btn-secondary' : 'btn-success'} btn-sm`}
+              className={`btn ${product.soldOut ? 'btn-secondary' : 'btn-success'} btn-sm flex-grow-1`}
+              style={{ minWidth: '120px' }}
               disabled={product.soldOut}
             >
-              <i className="fab fa-whatsapp me-2"></i>
-              {product.soldOut ? 'Not Available' : 'Buy on WhatsApp'}
+              <i className="fab fa-whatsapp me-1"></i>
+              WhatsApp
             </button>
           </div>
         </div>
