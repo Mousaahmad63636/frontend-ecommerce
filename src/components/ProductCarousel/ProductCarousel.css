@@ -1,4 +1,4 @@
-/* src/components/ProductCarousel/ProductCarousel.css */
+
 .product-carousel-section {
   margin: 2rem 0;
 }
@@ -9,6 +9,12 @@
   align-items: center;
   margin-bottom: 1rem;
   padding: 0 1rem;
+}
+
+.section-header .btn-link {
+  text-decoration: none;
+  color: #007bff;
+  font-weight: 500;
 }
 
 .product-carousel-container {
@@ -46,6 +52,7 @@
   cursor: pointer;
   z-index: 2;
   transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .carousel-arrow:hover:not(:disabled) {
@@ -75,5 +82,9 @@
     width: 30px;
     height: 30px;
     font-size: 0.8rem;
+  }
+  
+  .carousel-item {
+    padding: 0 5px;
   }
 }
