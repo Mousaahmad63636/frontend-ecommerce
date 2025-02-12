@@ -186,7 +186,6 @@ function Home() {
             <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
               <DiscountedProducts />
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <SectionTitle>Explore Our Special Offers</SectionTitle>
                 <TimerDisplay />
               </div>
             </div>
