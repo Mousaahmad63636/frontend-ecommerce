@@ -47,7 +47,6 @@ function HeroSection() {
     }
   };
 
-// src/components/Admin/HeroSection.js
 
 const handleSubmit = async (e) => {
   e.preventDefault();
