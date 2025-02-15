@@ -515,15 +515,17 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                             order.products.map((item, index) => (
                               <div key={index} className="product-item mb-1">
                                 <div className="d-flex align-items-center">
-                                  <img
-                                    src={item.product ? getImageUrl(item.product.image) : '/images/placeholder.png'} // Use local placeholder
-                                    alt={item.product?.name || ''}
-                                    className="me-2 rounded"
-                                    style={{ width: '40px', height: '40px', objectFit: 'cover' }}
-                                    onError={(e) => {
-                                      e.target.src = 'https://placehold.co/60@3x.png';
-                                    }}
-                                  />
+                                <img
+  src={item.product?.images?.length > 0 
+    ? getImageUrl(item.product.images[0]) 
+    : 'https://placehold.co/60@3x.png'}
+  alt={item.product?.name || 'Product image'}
+  className="me-2 rounded"
+  style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+  onError={(e) => {
+    e.target.src = 'https://placehold.co/60@3x.png';
+  }}
+/>
                                   <div>
                                     <div className="small fw-bold">
                                       {item.product?.name || 'Unknown Product'}
