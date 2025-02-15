@@ -155,30 +155,30 @@ function Home() {
         />
       )}
 
-      <HeroSection>
-        <HeroMedia
-          style={{
-            backgroundImage: `url(${heroSettings.mediaUrl})`
-          }}
-          aria-label="Trendy E-commerce Store Hero Section"
-        >
-          {heroSettings.type === 'video' ? (
-            <video
-              src={heroSettings.mediaUrl}
-              autoPlay
-              loop
-              muted
-              playsInline
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              aria-label="Trendy products showcase video"
-            />
-          ) : null}
-        </HeroMedia>
-        <HeroContent>
-          <HeroTitle>{heroSettings.title}</HeroTitle>
-          <HeroSubtitle>{heroSettings.subtitle}</HeroSubtitle>
-        </HeroContent>
-      </HeroSection>
+<HeroSection>
+  <HeroMedia
+    style={{
+      backgroundImage: `url(${heroSettings.mediaUrl})`
+    }}
+    aria-label="Trendy E-commerce Store Hero Section"
+  >
+    {heroSettings.type === 'video' ? (
+      <video
+        src={heroSettings.mediaUrl}
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        aria-label="Trendy products showcase video"
+      />
+    ) : null}
+  </HeroMedia>
+  <HeroContent>
+    <HeroTitle>{heroSettings.title}</HeroTitle>
+    <HeroSubtitle>{heroSettings.subtitle}</HeroSubtitle>
+  </HeroContent>
+</HeroSection>
 
       {!searchQuery && (
         <>
