@@ -19,6 +19,12 @@ export const HeroMedia = styled.div`
   height: 100%;
   background-size: cover;
   background-position: center;
+  background-image: url(${props => {
+    console.log('Background Image URL:', props.backgroundImage);
+    return props.backgroundImage;
+  }});
+  // Hardcode the image URL for testing
+  // background-image: url('https://example.com/hero-image.jpg');
   
   &::after {
     content: '';
@@ -30,7 +36,6 @@ export const HeroMedia = styled.div`
     background: rgba(0, 0, 0, 0.4);
   }
 `;
-
 export const HeroContent = styled.div`
   position: absolute;
   top: 50%;
