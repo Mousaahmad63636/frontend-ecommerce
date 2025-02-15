@@ -117,8 +117,11 @@ const SideCart = ({ isOpen, onClose }) => {
               <div className="cart-items">
                 {cartItems.map(item => (
                   <div className="cart-item">
+                    {/* In SideCart.js - Update the image component */}
                     <img
-                      src={getImageUrl(item.image)}
+                      src={item.images?.length > 0
+                        ? getImageUrl(item.images[0])
+                        : 'https://placehold.co/60@3x.png'}
                       alt={item.name}
                       className="cart-item-image"
                       style={{
