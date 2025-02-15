@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { getImageUrl } from '../utils/imageUtils';
 import { Helmet } from 'react-helmet-async';
 import {
   HomeWrapper,
@@ -119,8 +120,33 @@ function Home() {
     <HomeWrapper>
       <Helmet>
         <title>Trendy E-commerce Store | Discover Amazing Products</title>
-        <meta property="og:image" content={heroSettings.mediaUrl} />
-        <meta name="twitter:image" content={heroSettings.mediaUrl} />
+        <meta name="description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices. Explore special offers, discounted products, and more." />
+        <meta name="keywords" content="e-commerce, trendy products, online shopping, special offers, discounted products, best selling, contact us" />
+        <meta property="og:title" content="Trendy E-commerce Store | Discover Amazing Products" />
+        <meta property="og:description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices. Explore special offers, discounted products, and more." />
+        <meta property="og:image" content="/hero.jpg" />
+        <meta property="og:url" content="https://www.yourstore.com" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Trendy E-commerce Store | Discover Amazing Products" />
+        <meta name="twitter:description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices. Explore special offers, discounted products, and more." />
+        <meta name="twitter:image" content="/hero.jpg" />
+        
+        <script type="application/ld+json">
+          {`
+            {
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "url": "https://www.yourstore.com",
+              "name": "Trendy E-commerce Store",
+              "description": "Discover amazing trendy products at great prices.",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://www.yourstore.com/search?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+              }
+            }
+          `}
+        </script>
       </Helmet>
 
       {blackFridayData && (
@@ -130,30 +156,87 @@ function Home() {
         />
       )}
 
-      <HeroSection>
-        <HeroMedia
-          style={{
-            backgroundImage: heroSettings.type === 'image' ? `url(${heroSettings.mediaUrl})` : 'none'
-          }}
-          aria-label="Trendy E-commerce Store Hero Section"
-        >
-          {heroSettings.type === 'video' && (
-            <video
-              src={heroSettings.mediaUrl}
-              autoPlay
-              loop
-              muted
-              playsInline
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              aria-label="Trendy products showcase video"
-            />
+<HeroSection>
+<HeroMedia
+  style={{
+    backgroundImage: `url(${getImageUrl(heroSettings.mediaUrl)})`
+  }}
+  aria-label="Trendy E-commerce Store Hero Section"
+>
+    {heroSettings.type === 'video' ? (
+      <video
+        src={heroSettings.mediaUrl}
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        aria-label="Trendy products showcase video"
+      />
+    ) : null}
+  </HeroMedia>
+  <HeroContent>
+    <HeroTitle>{heroSettings.title}</HeroTitle>
+    <HeroSubtitle>{heroSettings.subtitle}</HeroSubtitle>
+  </HeroContent>
+</HeroSection>
+
+      {!searchQuery && (
+        <>
+          <Section background="#f5f5f5">
+            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+              <DiscountedProducts />
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <TimerDisplay />
+              </div>
+            </div>
+          </Section>
+
+          <Section>
+            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+              <BestSelling />
+            </div>
+          </Section>
+        </>
+      )}
+
+      <Section background="#f5f5f5">
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <SectionTitle>
+            {searchQuery ? `Search Results for "${searchQuery}"` : 'Discover Our Trendy Products'}
+          </SectionTitle>
+
+          {!searchQuery && (
+            <CategorySelect
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              <option value="all">All Categories</option>
+              {categories.map(category => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </CategorySelect>
           )}
-        </HeroMedia>
-        <HeroContent>
-          <HeroTitle>{heroSettings.title}</HeroTitle>
-          <HeroSubtitle>{heroSettings.subtitle}</HeroSubtitle>
-        </HeroContent>
-      </HeroSection>
+
+          {error ? (
+            <NoResults>
+              <h3>Error</h3>
+              <p>{error}</p>
+            </NoResults>
+          ) : filteredProducts.length > 0 ? (
+            <ProductList products={filteredProducts} />
+          ) : (
+            <NoResults>
+              <h3>No Products Found</h3>
+              {searchQuery && (
+                <p>No results found for "{searchQuery}". Try a different search term or browse our trendy categories.</p>
+              )}
+            </NoResults>
+          )}
+        </div>
+      </Section>
 
       <ContactSection />
     </HomeWrapper>
