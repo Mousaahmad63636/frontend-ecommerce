@@ -130,7 +130,7 @@ function Home() {
         <meta name="twitter:title" content="Trendy E-commerce Store | Discover Amazing Products" />
         <meta name="twitter:description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices. Explore special offers, discounted products, and more." />
         <meta name="twitter:image" content="/hero.jpg" />
-        
+
         <script type="application/ld+json">
           {`
             {
@@ -156,30 +156,30 @@ function Home() {
         />
       )}
 
-<HeroSection>
-<HeroMedia
-  style={{
-    backgroundImage: `url(${getImageUrl(heroSettings.mediaUrl)})`
-  }}
-  aria-label="Trendy E-commerce Store Hero Section"
->
-    {heroSettings.type === 'video' ? (
-      <video
-        src={heroSettings.mediaUrl}
-        autoPlay
-        loop
-        muted
-        playsInline
-        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-        aria-label="Trendy products showcase video"
-      />
-    ) : null}
-  </HeroMedia>
-  <HeroContent>
-    <HeroTitle>{heroSettings.title}</HeroTitle>
-    <HeroSubtitle>{heroSettings.subtitle}</HeroSubtitle>
-  </HeroContent>
-</HeroSection>
+      <HeroSection>
+        <HeroMedia
+          style={{
+            backgroundImage: `url(${getImageUrl(heroSettings.mediaUrl)})`
+          }}
+          aria-label="Trendy E-commerce Store Hero Section"
+        >
+          {heroSettings.type === 'video' ? (
+            <video
+              src={getImageUrl(heroSettings.mediaUrl)}
+              autoPlay
+              loop
+              muted
+              playsInline
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              aria-label="Trendy products showcase video"
+            />
+          ) : null}
+        </HeroMedia>
+        <HeroContent>
+          <HeroTitle>{heroSettings.title}</HeroTitle>
+          <HeroSubtitle>{heroSettings.subtitle}</HeroSubtitle>
+        </HeroContent>
+      </HeroSection>
 
       {!searchQuery && (
         <>

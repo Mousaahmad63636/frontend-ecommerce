@@ -19,7 +19,7 @@ export const HeroMedia = styled.div`
   height: 100%;
   background-size: cover;
   background-position: center;
-  background-image: url(${props => props.backgroundImage});
+  background-repeat: no-repeat;
   
   &::after {
     content: '';
