@@ -176,10 +176,6 @@ function Home() {
       />
     ) : null}
   </HeroMedia>
-  <HeroContent>
-    <HeroTitle>{heroSettings.title}</HeroTitle>
-    <HeroSubtitle>{heroSettings.subtitle}</HeroSubtitle>
-  </HeroContent>
 </HeroSection>
 
       {!searchQuery && (
