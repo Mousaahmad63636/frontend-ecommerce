@@ -1,4 +1,5 @@
 export const getImageUrl = (imagePath) => {
     if (!imagePath) return 'https://placehold.co/300@3x.png';
-    return `https://backend-ecommerce-z7ih.onrender.com${imagePath}`;
+    if (imagePath.startsWith('http')) return imagePath;
+    return `${process.env.REACT_APP_UPLOAD_URL}${imagePath}`;
 };

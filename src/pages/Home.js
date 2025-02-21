@@ -12,20 +12,21 @@ function Home() {
 
   useEffect(() => {
     const fetchSettings = async () => {
-      try {
-        const response = await api.getSettings();
-        console.log('Settings Response:', response);
-        if (response?.heroSection) {
-          setHeroSettings(response.heroSection);
-          console.log('Hero Image URL:', getImageUrl(response.heroSection.mediaUrl));
+        try {
+            console.log('Fetching settings...');
+            const response = await api.getSettings();
+            console.log('Settings response:', response);
+            if (response?.heroSection) {
+                console.log('Hero image URL:', getImageUrl(response.heroSection.mediaUrl));
+                setHeroSettings(response.heroSection);
+            }
+        } catch (error) {
+            console.error('Error fetching hero settings:', error);
         }
-      } catch (error) {
-        console.error('Error fetching hero settings:', error);
-      }
     };
 
     fetchSettings();
-  }, []);
+}, []);
 
   return (
     <div>

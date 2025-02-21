@@ -26,10 +26,8 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(request => {
-    // Check if the route is public
     const isPublicRoute = publicRoutes.some(route => request.url.startsWith(route));
     
-    // Only add token for non-public routes
     if (!isPublicRoute) {
         const token = localStorage.getItem('token');
         if (token) {
@@ -40,7 +38,6 @@ axiosInstance.interceptors.request.use(request => {
 }, error => {
     return Promise.reject(error);
 });
-
 
 // Single Response Interceptor
 axiosInstance.interceptors.response.use(
