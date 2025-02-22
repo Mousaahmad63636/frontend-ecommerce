@@ -247,3 +247,13 @@ a:hover {
     padding: 0 1rem;
   }
 }
+/* src/App.css */
+.main-content {
+  flex: 1;
+  padding-top: 0; /* Changed from 80px to 0 */
+}
+
+/* Add this to ensure other pages (non-home) still have proper spacing */
+.main-content > *:not(.hero-section):first-child {
+  padding-top: 80px;
+}

@@ -14,7 +14,7 @@ const theme = {
 };
 
 export const HomeWrapper = styled.div`
-  margin-top: 60px;
+  margin-top: 0; // Changed from 60px to 0
   background-color: ${theme.background};
   min-height: 100vh;
 `;
@@ -22,11 +22,13 @@ export const HomeWrapper = styled.div`
 export const HeroSection = styled.section`
   position: relative;
   width: 100%;
-  height: 70vh;
-  min-height: 500px;
+  height: 80vh; // Increased from 70vh for fuller screen coverage
+  min-height: 600px;
   background-color: ${theme.white};
   margin-bottom: 40px;
   overflow: hidden;
+  margin-top: -80px; // Added to compensate for header space
+  padding-top: 80px; // Added to ensure content doesn't go under header
   
   &::after {
     content: '';
