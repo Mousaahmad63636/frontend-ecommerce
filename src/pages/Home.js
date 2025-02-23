@@ -114,7 +114,7 @@ function Home() {
       {/* Hero Section with Responsive Height */}
       <section className="w-full relative mt-[60px] md:mt-[80px]">
         <div className="w-full relative overflow-hidden" style={{ 
-          paddingTop: '56.25%',  // 16:9 aspect ratio as default
+          paddingTop: '60.25%',  // 16:9 aspect ratio as default
           maxHeight: '600px'      // Max height to prevent excessive stretching
         }}> 
           <div 
