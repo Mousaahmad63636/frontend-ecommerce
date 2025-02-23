@@ -1,15 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import {
-  FooterWrapper,
-  FooterContainer,
-  FooterGrid,
-  FooterSection,
-  SocialLinks,
-  ContactInfo,
-  Divider,
-  Copyright,
-  ScrollToTop
-} from '../styles/FooterStyles';
 
 function Footer() {
   const [showScroll, setShowScroll] = useState(false);
@@ -32,66 +21,81 @@ function Footer() {
   };
 
   return (
-    <FooterWrapper>
-      <FooterContainer>
-        <FooterGrid>
-          <FooterSection>
-            <h5>Follow Us</h5>
-            <SocialLinks>
+    <footer className="bg-gray-900 text-white">
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <h5 className="text-xl font-semibold mb-4">Follow Us</h5>
+            <div className="flex space-x-4">
               <a 
                 href="https://instagram.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 aria-label="Follow us on Instagram"
+                className="text-white hover:text-pink-500 transition-colors"
               >
-                <i className="fab fa-instagram"></i>
+                <i className="fab fa-instagram text-2xl"></i>
               </a>
               <a 
                 href="https://facebook.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 aria-label="Follow us on Facebook"
+                className="text-white hover:text-blue-500 transition-colors"
               >
-                <i className="fab fa-facebook"></i>
+                <i className="fab fa-facebook text-2xl"></i>
               </a>
               <a 
                 href="https://tiktok.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 aria-label="Follow us on TikTok"
+                className="text-white hover:text-gray-400 transition-colors"
               >
-                <i className="fab fa-tiktok"></i>
+                <i className="fab fa-tiktok text-2xl"></i>
               </a>
-            </SocialLinks>
-          </FooterSection>
+            </div>
+          </div>
 
-          <FooterSection>
-            <h5>Contact Us</h5>
-            <ContactInfo>
-              <p>Email: support@example.com</p>
-              <p>Phone: +1 234 567 890</p>
-              <p>Address: 123 Street Name, City, Country</p>
-            </ContactInfo>
-          </FooterSection>
-        </FooterGrid>
+          <div>
+            <h5 className="text-xl font-semibold mb-4">Contact Us</h5>
+            <div className="space-y-2">
+              <p className="flex items-center">
+                <i className="far fa-envelope mr-2"></i>
+                support@example.com
+              </p>
+              <p className="flex items-center">
+                <i className="fas fa-phone mr-2"></i>
+                +1 234 567 890
+              </p>
+              <p className="flex items-center">
+                <i className="fas fa-map-marker-alt mr-2"></i>
+                123 Street Name, City, Country
+              </p>
+            </div>
+          </div>
+        </div>
 
-        <Divider />
-
-        <Copyright>
-          <p>&copy; {new Date().getFullYear()} Your E-commerce Store. All rights reserved.</p>
-        </Copyright>
-      </FooterContainer>
+        <div className="border-t border-gray-700 mt-8 pt-8">
+          <p className="text-center text-gray-400">
+            &copy; {new Date().getFullYear()} Your E-commerce Store. All rights reserved.
+          </p>
+        </div>
+      </div>
 
       {showScroll && (
-        <ScrollToTop 
+        <button 
           onClick={scrollTop}
+          className="fixed bottom-8 right-8 bg-primary-600 text-white w-10 h-10 rounded-full 
+            flex items-center justify-center shadow-lg hover:bg-primary-700 
+            transition-colors duration-200"
           role="button"
           aria-label="Scroll to top"
         >
           <i className="fas fa-arrow-up"></i>
-        </ScrollToTop>
+        </button>
       )}
-    </FooterWrapper>
+    </footer>
   );
 }
 
