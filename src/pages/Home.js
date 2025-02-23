@@ -26,7 +26,7 @@ function Home() {
   const [heroSettings, setHeroSettings] = useState({
     type: 'image',
     mediaUrl: '/hero.jpg',
-    title: 'Welcome to Our Trendy E-commerce Store',
+    title: 'Just Trendy - Where Trends Meet Need!',
     subtitle: 'Discover Amazing Products at Great Prices'
   });
 
@@ -108,53 +108,100 @@ function Home() {
     <div className="min-h-screen bg-gray-50">
       <Helmet>
         <title>Trendy E-commerce Store | Discover Amazing Products</title>
-        <meta name="description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices. Explore special offers, discounted products, and more." />
-        {/* ... rest of your meta tags ... */}
+        <meta name="description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices." />
       </Helmet>
 
-      {blackFridayData && (
-        <BlackFridayBanner
-          endDate={blackFridayData.endDate}
-          discount={blackFridayData.discount}
-        />
-      )}
+      {/* Hero Section with Fixed Aspect Ratio */}
+      <section className="w-full relative mt-[60px] md:mt-[80px]">
+        <div className="w-full relative" style={{ paddingTop: '42.85%' }}> {/* 21:9 Aspect Ratio */}
+          <div 
+            className="absolute top-0 left-0 w-full h-full bg-cover bg-center"
+            style={{
+              backgroundImage: `url(${getImageUrl(heroSettings.mediaUrl)})`,
+            }}
+          >
+            {heroSettings.type === 'video' && (
+              <video
+                src={getImageUrl(heroSettings.mediaUrl)}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute top-0 left-0 w-full h-full object-cover"
+                aria-label="Trendy products showcase video"
+              />
+            )}
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
 
-      {/* Hero Section */}
-      <section className="relative h-[80vh] overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: `url(${getImageUrl(heroSettings.mediaUrl)})`,
-          }}
-        >
-          {heroSettings.type === 'video' && (
-            <video
-              src={getImageUrl(heroSettings.mediaUrl)}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-full object-cover"
-              aria-label="Trendy products showcase video"
-            />
-          )}
-          <div className="absolute inset-0 bg-black/40" /> {/* Overlay */}
+            {/* Content */}
+            <div className="absolute inset-0 flex items-center">
+              <div className="container mx-auto px-4">
+                <div className="max-w-2xl">
+                  <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">
+                    {heroSettings.title}
+                  </h1>
+                  <p className="text-lg md:text-xl text-white/90 mb-8">
+                    {heroSettings.subtitle}
+                  </p>
+                  <button className="bg-primary-600 text-white px-8 py-3 rounded-full hover:bg-primary-700 transition-all duration-300">
+                    Shop Now
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      
       </section>
+
+      {/* Black Friday Banner */}
+      {blackFridayData && (
+        <div className="bg-black text-white py-3">
+          <div className="container mx-auto px-4">
+            <BlackFridayBanner
+              endDate={blackFridayData.endDate}
+              discount={blackFridayData.discount}
+            />
+          </div>
+        </div>
+      )}
 
       {!searchQuery && (
         <>
+          {/* Featured Categories */}
           <section className="py-16 bg-white">
             <div className="container mx-auto px-4">
-              <DiscountedProducts />
-              <div className="flex justify-between items-center mb-8">
-                <TimerDisplay />
+              <h2 className="text-3xl font-bold text-center mb-8">Featured Categories</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {categories.slice(0, 4).map(category => (
+                  <button
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    className="relative overflow-hidden rounded-lg aspect-square group"
+                  >
+                    <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-white text-lg md:text-xl font-medium">{category}</span>
+                    </div>
+                  </button>
+                ))}
               </div>
             </div>
           </section>
 
+          {/* Discounted Products */}
           <section className="py-16">
+            <div className="container mx-auto px-4">
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-3xl font-bold">Special Offers</h2>
+                <TimerDisplay />
+              </div>
+              <DiscountedProducts />
+            </div>
+          </section>
+
+          {/* Best Selling Products */}
+          <section className="py-16 bg-white">
             <div className="container mx-auto px-4">
               <BestSelling />
             </div>
@@ -162,10 +209,11 @@ function Home() {
         </>
       )}
 
-      <section className="py-16 bg-white">
+      {/* Main Products Section */}
+      <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">
-            {searchQuery ? `Search Results for "${searchQuery}"` : 'Discover Our Trendy Products'}
+            {searchQuery ? `Search Results for "${searchQuery}"` : 'All Products'}
           </h2>
 
           {!searchQuery && (
@@ -200,7 +248,7 @@ function Home() {
                 <h3 className="text-xl mb-2">No Products Found</h3>
                 {searchQuery && (
                   <p className="text-gray-600">
-                    No results found for "{searchQuery}". Try a different search term or browse our trendy categories.
+                    No results found for "{searchQuery}". Try a different search term or browse our categories.
                   </p>
                 )}
               </div>
