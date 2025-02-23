@@ -1,6 +1,5 @@
 import React, { useEffect, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-//import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
@@ -18,12 +17,20 @@ import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import AdminRoute from './components/Auth/AdminRoute';
-import Loading from './components/Loading/Loading';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ConsultingFloat from './components/ConsultingFloat/ConsultingFloat';
 
-// Lazy loaded pages
+// Loading Spinner Component
+function LoadingSpinner() {
+  return (
+    <div className="flex justify-center items-center min-h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
+    </div>
+  );
+}
+
+// Lazy loaded pages with modern suspense boundaries
 const Home = React.lazy(() => import('./pages/Home'));
 const ProductDetail = React.lazy(() => import('./pages/ProductDetail'));
 const WishlistPage = React.lazy(() => import('./pages/WishlistPage'));
@@ -68,17 +75,17 @@ function AppContent() {
   };
 
   if (!initialized) {
-    return <Loading />;
+    return <LoadingSpinner />;
   }
 
   return (
     <CheckoutStepsContext.Provider value={checkoutStepsValue}>
-      <div className="app-wrapper">
+      <div className="min-h-screen flex flex-col bg-gray-50">
         <Header />
-        <main className="main-content">
-          <Suspense fallback={<Loading />}>
+        <main className="flex-grow">
+          <Suspense fallback={<LoadingSpinner />}>
             <Routes>
-              {/* Public Routes - No Authentication Required */}
+              {/* Public Routes */}
               <Route path="/" element={<Home />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/category/:categoryName" element={<Home />} />
@@ -86,67 +93,95 @@ function AppContent() {
               <Route path="/wishlist" element={<WishlistPage />} />
 
               {/* Auth Routes */}
-              <Route path="/login" element={
-                isAuthenticated ? 
-                <Navigate to="/" replace /> : 
-                <LoginModal 
-                  onClose={() => {
-                    const returnUrl = new URLSearchParams(window.location.search).get('returnUrl');
-                    navigate(returnUrl || '/');
-                  }}
-                  onSuccess={() => {
-                    const returnUrl = new URLSearchParams(window.location.search).get('returnUrl');
-                    navigate(returnUrl || '/');
-                  }}
-                  initialMode="login"
-                />
-              } />
-              <Route path="/register" element={
-                isAuthenticated ? 
-                <Navigate to="/" replace /> : 
-                <LoginModal 
-                  onClose={() => navigate('/')}
-                  onSuccess={() => navigate('/')}
-                  initialMode="register"
-                />
-              } />
+              <Route
+                path="/login"
+                element={
+                  isAuthenticated ? (
+                    <Navigate to="/" replace />
+                  ) : (
+                    <LoginModal
+                      onClose={() => {
+                        const returnUrl = new URLSearchParams(window.location.search).get('returnUrl');
+                        navigate(returnUrl || '/');
+                      }}
+                      onSuccess={() => {
+                        const returnUrl = new URLSearchParams(window.location.search).get('returnUrl');
+                        navigate(returnUrl || '/');
+                      }}
+                      initialMode="login"
+                    />
+                  )
+                }
+              />
 
-<Route path="/checkout" element={<CheckoutPage />} />
-<Route path="/checkout/delivery" element={<DeliveryPage />} />
-<Route path="/checkout/payment" element={<PaymentPage />} />
+              <Route
+                path="/register"
+                element={
+                  isAuthenticated ? (
+                    <Navigate to="/" replace />
+                  ) : (
+                    <LoginModal
+                      onClose={() => navigate('/')}
+                      onSuccess={() => navigate('/')}
+                      initialMode="register"
+                    />
+                  )
+                }
+              />
 
-              <Route path="/profile" element={
-                <ProtectedRoute requireAuth={true}>
-                  {isAdmin ? <Navigate to="/admin" replace /> : <ProfilePage />}
-                </ProtectedRoute>
-              } />
-              <Route path="/orders" element={
-                <ProtectedRoute>
-                  <OrdersPage />
-                </ProtectedRoute>
-              } />
-          <Route path="/order-confirmation/:orderId" element={<OrderConfirmationPage />} />
+              {/* Checkout Routes */}
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/checkout/delivery" element={<DeliveryPage />} />
+              <Route path="/checkout/payment" element={<PaymentPage />} />
+
+              {/* Protected Routes */}
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute requireAuth={true}>
+                    {isAdmin ? <Navigate to="/admin" replace /> : <ProfilePage />}
+                  </ProtectedRoute>
+                }
+              />
+              
+              <Route
+                path="/orders"
+                element={
+                  <ProtectedRoute>
+                    <OrdersPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route path="/order-confirmation/:orderId" element={<OrderConfirmationPage />} />
 
               {/* Admin Routes */}
-              <Route path="/admin/*" element={
-                <AdminRoute>
-                  <AdminPage />
-                </AdminRoute>
-              } />
+              <Route
+                path="/admin/*"
+                element={
+                  <AdminRoute>
+                    <AdminPage />
+                  </AdminRoute>
+                }
+              />
 
               {/* 404 Route */}
-              <Route path="*" element={
-                <div className="container mt-5 text-center">
-                  <h1>404 - Page Not Found</h1>
-                  <p>The page you're looking for doesn't exist.</p>
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => window.history.back()}
-                  >
-                    Go Back
-                  </button>
-                </div>
-              } />
+              <Route
+                path="*"
+                element={
+                  <div className="container mx-auto px-4 py-16 text-center">
+                    <h1 className="text-4xl font-bold text-gray-900 mb-4">404 - Page Not Found</h1>
+                    <p className="text-gray-600 mb-8">The page you're looking for doesn't exist.</p>
+                    <button
+                      className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 
+                        transition-colors duration-200"
+                      onClick={() => window.history.back()}
+                    >
+                      Go Back
+                    </button>
+                  </div>
+                }
+              />
             </Routes>
           </Suspense>
         </main>
@@ -160,20 +195,20 @@ function AppContent() {
 function App() {
   return (
     <HelmetProvider>
-    <Router>
-      <ErrorBoundary>
-        <NotificationProvider>
-          <AuthProvider>
-            <WishlistProvider>
-              <CartProvider>
-                <ScrollToTop />
-                <AppContent />
-              </CartProvider>
-            </WishlistProvider>
-          </AuthProvider>
-        </NotificationProvider>
-      </ErrorBoundary>
-    </Router>
+      <Router>
+        <ErrorBoundary>
+          <NotificationProvider>
+            <AuthProvider>
+              <WishlistProvider>
+                <CartProvider>
+                  <ScrollToTop />
+                  <AppContent />
+                </CartProvider>
+              </WishlistProvider>
+            </AuthProvider>
+          </NotificationProvider>
+        </ErrorBoundary>
+      </Router>
     </HelmetProvider>
   );
 }
