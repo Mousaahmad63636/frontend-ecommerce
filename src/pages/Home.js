@@ -149,12 +149,6 @@ function Home() {
         
         <div className="relative z-10 container mx-auto h-full flex items-center">
           <div className="max-w-3xl px-4 py-12 md:py-20">
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight animate-fade-in">
-              {heroSettings.title}
-            </h1>
-            <p className="text-lg md:text-xl text-white/90 mb-8 animate-fade-in-delay">
-              {heroSettings.subtitle}
-            </p>
             <button 
               className="bg-primary-600 text-white px-8 py-3 rounded-full hover:bg-primary-700 
                 transition-all duration-300 transform hover:scale-105 animate-fade-in-delay-2"
