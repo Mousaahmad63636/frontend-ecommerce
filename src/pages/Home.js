@@ -1,20 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 import { getImageUrl } from '../utils/imageUtils';
+import { Helmet } from 'react-helmet-async';
+import {
+  HomeWrapper,
+  HeroSection,
+  HeroMedia,
+  HeroContent,
+  HeroTitle,
+  HeroSubtitle,
+  Section,
+  SectionTitle,
+  CategorySelect,
+  NoResults,
+  LoadingWrapper
+} from '../styles/HomeStyles';
 
-// Component imports
 import BestSelling from '../components/BestSelling';
 import ProductList from '../components/ProductList';
 import ContactSection from '../components/ContactSection';
 import BlackFridayBanner from '../components/BlackFridayBanner/BlackFridayBanner';
+import Loading from '../components/Loading/Loading';
 import TimerDisplay from '../components/Admin/TimerDisplay';
 import DiscountedProducts from '../components/DiscountedProducts';
-import ScrollableSection from '../components/ScrollableSection/ScrollableSection';
 import api from '../api/api';
 
 function Home() {
-  // State Management
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +42,6 @@ function Home() {
     subtitle: 'Discover Amazing Products at Great Prices'
   });
 
-  // Fetch Settings
   useEffect(() => {
     const fetchSettings = async () => {
       try {
@@ -47,7 +57,6 @@ function Home() {
     fetchSettings();
   }, []);
 
-  // Fetch Products and Categories
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -82,7 +91,6 @@ function Home() {
     fetchData();
   }, []);
 
-  // Filter Products
   useEffect(() => {
     let filtered = products;
 
@@ -90,7 +98,7 @@ function Home() {
       const searchLower = searchQuery.toLowerCase();
       filtered = filtered.filter(product =>
         product.name.toLowerCase().includes(searchLower) ||
-        product.description?.toLowerCase().includes(searchLower) ||
+        product.description.toLowerCase().includes(searchLower) ||
         product.category.toLowerCase().includes(searchLower)
       );
     } else if (selectedCategory !== 'all') {
@@ -102,177 +110,135 @@ function Home() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
-      </div>
+      <LoadingWrapper>
+        <Loading />
+      </LoadingWrapper>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <HomeWrapper>
       <Helmet>
         <title>Trendy E-commerce Store | Discover Amazing Products</title>
-        <meta name="description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices." />
+        <meta name="description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices. Explore special offers, discounted products, and more." />
+        <meta name="keywords" content="e-commerce, trendy products, online shopping, special offers, discounted products, best selling, contact us" />
+        <meta property="og:title" content="Trendy E-commerce Store | Discover Amazing Products" />
+        <meta property="og:description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices. Explore special offers, discounted products, and more." />
+        <meta property="og:image" content="/hero.jpg" />
+        <meta property="og:url" content="https://www.yourstore.com" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Trendy E-commerce Store | Discover Amazing Products" />
+        <meta name="twitter:description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices. Explore special offers, discounted products, and more." />
+        <meta name="twitter:image" content="/hero.jpg" />
+        
+        <script type="application/ld+json">
+          {`
+            {
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "url": "https://www.yourstore.com",
+              "name": "Trendy E-commerce Store",
+              "description": "Discover amazing trendy products at great prices.",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://www.yourstore.com/search?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+              }
+            }
+          `}
+        </script>
       </Helmet>
 
-      {/* Top Banner */}
       {blackFridayData && (
-        <div className="pt-[136px] md:pt-[120px]">
-          <BlackFridayBanner
-            endDate={blackFridayData.endDate}
-            discount={blackFridayData.discount}
-          />
-        </div>
+        <BlackFridayBanner
+          endDate={blackFridayData.endDate}
+          discount={blackFridayData.discount}
+        />
       )}
 
-      {/* Hero Section */}
-      <section className="relative min-h-[60vh] md:min-h-[80vh] mt-[136px] md:mt-[120px]">
-        <div 
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-300"
-          style={{
-            backgroundImage: `url(${getImageUrl(heroSettings.mediaUrl)})`,
-          }}
-        >
-          {heroSettings.type === 'video' && (
-            <video
-              src={getImageUrl(heroSettings.mediaUrl)}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-full object-cover"
-              aria-label="Trendy products showcase video"
-            />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/70" />
-        </div>
-        
-        <div className="relative z-10 container mx-auto h-full flex items-center">
-          <div className="max-w-3xl px-4 py-12 md:py-20">
-            <button 
-              className="bg-primary-600 text-white px-8 py-3 rounded-full hover:bg-primary-700 
-                transition-all duration-300 transform hover:scale-105 animate-fade-in-delay-2"
-            >
-              Shop Now
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Categories */}
-      <section className="py-8 md:py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
-            Featured Categories
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {categories.slice(0, 4).map(category => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className="relative overflow-hidden rounded-lg aspect-square group"
-              >
-                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 
-                  transition-colors duration-300" />
-                <div className="absolute inset-0 flex items-center justify-center 
-                  transform group-hover:scale-105 transition-transform duration-300">
-                  <span className="text-white text-lg md:text-xl font-medium">
-                    {category}
-                  </span>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
+<HeroSection>
+  <HeroMedia
+    style={{
+      backgroundImage: `url(${getImageUrl(heroSettings.mediaUrl)})`,
+      backgroundColor: '#f5f5f5' // Fallback background color
+    }}
+    aria-label="Trendy E-commerce Store Hero Section"
+  >
+    {heroSettings.type === 'video' ? (
+      <video
+        src={getImageUrl(heroSettings.mediaUrl)}
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        aria-label="Trendy products showcase video"
+      />
+    ) : null}
+  </HeroMedia>
+</HeroSection>
 
       {!searchQuery && (
         <>
-          {/* Discounted Products Section */}
-          <ScrollableSection title="Special Offers">
-            <div className="container mx-auto px-4">
-              <div className="flex justify-between items-center mb-8">
+          <Section background="#f5f5f5">
+            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+              <DiscountedProducts />
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                 <TimerDisplay />
               </div>
-              <DiscountedProducts />
             </div>
-          </ScrollableSection>
+          </Section>
 
-          {/* Best Selling Section */}
-          <ScrollableSection title="Best Selling Products">
-            <div className="container mx-auto px-4">
+          <Section>
+            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
               <BestSelling />
             </div>
-          </ScrollableSection>
+          </Section>
         </>
       )}
 
-      {/* Main Products Section */}
-      <section className="py-8 md:py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
-            {searchQuery ? `Search Results for "${searchQuery}"` : 'Discover Our Products'}
-          </h2>
+      <Section background="#f5f5f5">
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <SectionTitle>
+            {searchQuery ? `Search Results for "${searchQuery}"` : 'Discover Our Trendy Products'}
+          </SectionTitle>
 
           {!searchQuery && (
-            <div className="max-w-xs mx-auto mb-8">
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 
-                  focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              >
-                <option value="all">All Categories</option>
-                {categories.map(category => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <CategorySelect
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              <option value="all">All Categories</option>
+              {categories.map(category => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </CategorySelect>
           )}
 
-          <ProductList 
-            products={filteredProducts}
-            loading={loading}
-            error={error}
-          />
-
-          <div className="text-center mt-4 text-sm text-gray-500">
-            Showing {filteredProducts.length} products
-          </div>
+          {error ? (
+            <NoResults>
+              <h3>Error</h3>
+              <p>{error}</p>
+            </NoResults>
+          ) : filteredProducts.length > 0 ? (
+            <ProductList products={filteredProducts} />
+          ) : (
+            <NoResults>
+              <h3>No Products Found</h3>
+              {searchQuery && (
+                <p>No results found for "{searchQuery}". Try a different search term or browse our trendy categories.</p>
+              )}
+            </NoResults>
+          )}
+          
         </div>
-      </section>
+      </Section>
 
       <ContactSection />
-    </div>
+    </HomeWrapper>
   );
 }
-
-// Add these animations to your global CSS or tailwind.config.js
-const animations = {
-  '.animate-fade-in': {
-    opacity: 0,
-    animation: 'fadeIn 0.8s ease-out forwards',
-  },
-  '.animate-fade-in-delay': {
-    opacity: 0,
-    animation: 'fadeIn 0.8s ease-out 0.3s forwards',
-  },
-  '.animate-fade-in-delay-2': {
-    opacity: 0,
-    animation: 'fadeIn 0.8s ease-out 0.6s forwards',
-  },
-  '@keyframes fadeIn': {
-    '0%': { 
-      opacity: 0,
-      transform: 'translateY(20px)',
-    },
-    '100%': { 
-      opacity: 1,
-      transform: 'translateY(0)',
-    },
-  },
-};
 
 export default Home;
