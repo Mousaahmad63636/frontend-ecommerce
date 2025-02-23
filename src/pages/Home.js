@@ -140,17 +140,7 @@ function Home() {
           )}
           <div className="absolute inset-0 bg-black/40" /> {/* Overlay */}
         </div>
-        
-        <div className="relative z-10 container mx-auto h-full flex items-center justify-center text-center px-4">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-              {heroSettings.title}
-            </h1>
-            <p className="text-xl text-white/90">
-              {heroSettings.subtitle}
-            </p>
-          </div>
-        </div>
+      
       </section>
 
       {!searchQuery && (
