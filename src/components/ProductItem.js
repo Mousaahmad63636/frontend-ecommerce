@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Card, Badge } from 'flowbite-react';
 import { ShoppingCartIcon, HeartIcon } from '@heroicons/react/24/outline';
+import { useCart } from '../contexts/CartContext';
+import { useWishlist } from '../contexts/WishlistContext';
+import { useNotification } from '../components/Notification/NotificationProvider';
 import { getImageUrl } from '../utils/imageUtils';
 
 function ProductItem({ product }) {
