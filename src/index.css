@@ -51,3 +51,49 @@
     background-color: rgba(0, 0, 0, 0.7);
     transform: scale(1.2);
   }
+  /* Add to src/index.css or create ProductStyles.css */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+/* Flash Sales Timer Styling */
+.flash-sales-timer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.timer-block {
+  background: #000;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-weight: bold;
+  min-width: 40px;
+  text-align: center;
+}
+
+.timer-separator {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.timer-label {
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+  margin-top: 4px;
+}
