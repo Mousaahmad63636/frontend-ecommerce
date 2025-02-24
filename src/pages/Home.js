@@ -113,43 +113,44 @@ function Home() {
         <meta name="description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices." />
       </Helmet>
 
-      {/* Hero Section - Full Height and Width */}
-      <section className="w-full relative mt-[60px] md:mt-[80px]">
-        <div className="hero-container w-full h-[70vh] min-h-[400px] relative overflow-hidden">
-          {heroSettings.type === 'image' ? (
-            <div 
-              className="absolute inset-0 bg-cover bg-center w-full h-full" 
-              style={{ 
-                backgroundImage: `url(${getImageUrl(heroSettings.mediaUrl)})`,
-              }}
-            />
-          ) : (
-            <video 
-              src={getImageUrl(heroSettings.mediaUrl)} 
-              autoPlay 
-              loop 
-              muted 
-              playsInline 
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          )}
-          
-          {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
-          
-          {/* Content */}
-          <div className="absolute inset-0 flex items-center">
-            <div className="container mx-auto px-4">
-              <div className="max-w-2xl">
-                <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 leading-tight">
-                  {heroSettings.title}
-                </h1>
-                <p className="text-base md:text-xl text-white/90 mb-6">
-                  {heroSettings.subtitle}
-                </p>
-                <button className="bg-primary-600 text-white px-6 py-2 md:px-8 md:py-3 rounded-full hover:bg-primary-700 transition-all duration-300">
-                  Shop Now
-                </button>
+      {/* Hero Section - Consistent for mobile and desktop */}
+      <section className="mt-[60px] md:mt-[80px]">
+        <div className="w-full overflow-hidden">
+          <div className="relative">
+            {heroSettings.type === 'image' ? (
+              <img 
+                src={getImageUrl(heroSettings.mediaUrl)} 
+                alt="Hero banner"
+                className="w-full h-auto"
+              />
+            ) : (
+              <video 
+                src={getImageUrl(heroSettings.mediaUrl)} 
+                autoPlay 
+                loop 
+                muted 
+                playsInline 
+                className="w-full h-auto"
+              />
+            )}
+            
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+            
+            {/* Content */}
+            <div className="absolute inset-0 flex items-center">
+              <div className="container mx-auto px-4">
+                <div className="max-w-2xl">
+                  <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 leading-tight">
+                    {heroSettings.title}
+                  </h1>
+                  <p className="text-base md:text-xl text-white/90 mb-6">
+                    {heroSettings.subtitle}
+                  </p>
+                  <button className="bg-primary-600 text-white px-6 py-2 md:px-8 md:py-3 rounded-full hover:bg-primary-700 transition-all duration-300">
+                    Shop Now
+                  </button>
+                </div>
               </div>
             </div>
           </div>
