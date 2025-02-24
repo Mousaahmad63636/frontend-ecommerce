@@ -21,6 +21,12 @@ function Header() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
+  // Debug authentication state
+  useEffect(() => {
+    console.log('Authentication state:', { isAuthenticated, user });
+  }, [isAuthenticated, user]);
 
   // Handle scroll effect
   useEffect(() => {
@@ -35,7 +41,22 @@ function Header() {
   useEffect(() => {
     setShowMobileMenu(false);
     setShowSearch(false);
+    setShowUserMenu(false);
   }, [location]);
+
+  // Close user menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showUserMenu && !event.target.closest('.user-menu-container')) {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showUserMenu]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -52,6 +73,7 @@ function Header() {
       await logout();
       navigate('/');
       setShowMobileMenu(false);
+      setShowUserMenu(false);
     } catch (error) {
       showNotification('Error logging out', 'error');
     }
@@ -135,14 +157,57 @@ function Header() {
 
               {/* User Menu */}
               {isAuthenticated ? (
-                <div className="relative hidden md:block">
+                <div className="relative hidden md:block user-menu-container">
                   <button 
                     className="flex items-center space-x-2 text-gray-700 hover:text-primary-600"
-                    onClick={() => setShowMobileMenu(!showMobileMenu)}
+                    onClick={() => setShowUserMenu(!showUserMenu)}
                   >
-                    <span className="hidden lg:block">{user?.name?.split(' ')[0]}</span>
+                    <span className="hidden lg:block">{user?.name?.split(' ')[0] || 'User'}</span>
                     <i className="fas fa-user-circle text-xl"></i>
                   </button>
+                  
+                  {/* User dropdown menu */}
+                  {showUserMenu && (
+                    <div className="absolute right-0 mt-2 w-48 py-2 bg-white rounded-md shadow-xl z-20">
+                      <Link 
+                        to="/profile" 
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        My Profile
+                      </Link>
+                      <Link 
+                        to="/orders" 
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        My Orders
+                      </Link>
+                      <Link 
+                        to="/wishlist" 
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        My Wishlist
+                      </Link>
+                      {user?.role === 'admin' && (
+                        <Link 
+                          to="/admin" 
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          onClick={() => setShowUserMenu(false)}
+                        >
+                          Admin Dashboard
+                        </Link>
+                      )}
+                      <hr className="my-1 border-gray-200" />
+                      <button
+                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                        onClick={handleLogout}
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="hidden md:block">
@@ -195,6 +260,9 @@ function Header() {
               {isAuthenticated ? (
                 <>
                   <Link to="/profile" className="block text-gray-700 hover:text-primary-600">My Profile</Link>
+                  {user?.role === 'admin' && (
+                    <Link to="/admin" className="block text-gray-700 hover:text-primary-600">Admin Dashboard</Link>
+                  )}
                   <button 
                     onClick={handleLogout}
                     className="block w-full text-left text-red-600 hover:text-red-700"
