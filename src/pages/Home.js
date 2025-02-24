@@ -113,8 +113,8 @@ function Home() {
         <meta name="description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices." />
       </Helmet>
 
-      {/* Hero Section - Consistent for mobile and desktop */}
-      <section className="mt-[60px] md:mt-[80px]">
+      {/* Hero Section - With proper padding to account for fixed header */}
+      <section className="pt-[130px] md:pt-[140px]"> {/* Adjusted padding-top to account for header height */}
         <div className="w-full overflow-hidden">
           <div className="relative">
             {heroSettings.type === 'image' ? (
