@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Spinner, Select } from 'flowbite-react';
 import { getImageUrl } from '../utils/imageUtils';
+import { useAuth } from '../contexts/AuthContext';
 
 // Component imports
 import BestSelling from '../components/BestSelling';
@@ -22,6 +23,7 @@ function Home() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [blackFridayData, setBlackFridayData] = useState(null);
   const [searchParams] = useSearchParams();
+  const { user } = useAuth(); 
   const searchQuery = searchParams.get('q');
   const [heroSettings, setHeroSettings] = useState({
     type: 'image',
@@ -111,61 +113,79 @@ function Home() {
         <meta name="description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices." />
       </Helmet>
 
-    {/* Hero Section with Responsive Height */}
-<section className="w-full relative mt-[60px] md:mt-[80px]">
-  <div 
-    className="w-full relative overflow-hidden" 
-    style={{ 
-      paddingTop: '42.85%', // Wider aspect ratio (21:9)
-      maxHeight: '700px',   // Increased max height
-      minHeight: '300px'    // Minimum height for small screens
-    }}
-  > 
-    <div 
-      className="absolute top-0 left-0 w-full h-full bg-cover bg-center" 
-      style={{ 
-        backgroundImage: `url(${getImageUrl(heroSettings.mediaUrl)})`,
-        backgroundPosition: 'center center',
-        backgroundSize: 'cover' // Ensures full image is visible
-      }} 
-    >
-      {heroSettings.type === 'video' && (
-        <video 
-          src={getImageUrl(heroSettings.mediaUrl)} 
-          autoPlay 
-          loop 
-          muted 
-          playsInline 
-          className="absolute top-0 left-0 w-full h-full object-cover" 
+      {/* Hero Section with Responsive Height */}
+      <section className="w-full relative mt-[60px] md:mt-[80px]">
+        <div 
+          className="w-full relative overflow-hidden" 
           style={{ 
-            objectPosition: 'center center',
-            objectFit: 'cover' // Ensures full video is visible
-          }} 
-          aria-label="Trendy products showcase video" 
-        />
-      )}
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
-      
-      {/* Content */}
-      <div className="absolute inset-0 flex items-center">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl">
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 leading-tight">
-              {heroSettings.title}
-            </h1>
-            <p className="text-base md:text-xl text-white/90 mb-6">
-              {heroSettings.subtitle}
-            </p>
-            <button className="bg-primary-600 text-white px-6 py-2 md:px-8 md:py-3 rounded-full hover:bg-primary-700 transition-all duration-300">
-              Shop Now
-            </button>
+            paddingTop: '42.85%', // Wider aspect ratio (21:9)
+            maxHeight: '700px',   // Increased max height
+            minHeight: '300px'    // Minimum height for small screens
+          }}
+        > 
+          <div 
+            className="absolute top-0 left-0 w-full h-full bg-cover bg-center" 
+            style={{ 
+              backgroundImage: `url(${getImageUrl(heroSettings.mediaUrl)})`,
+              backgroundPosition: 'center center',
+              backgroundSize: 'cover' // Ensures full image is visible
+            }} 
+          >
+            {heroSettings.type === 'video' && (
+              <video 
+                src={getImageUrl(heroSettings.mediaUrl)} 
+                autoPlay 
+                loop 
+                muted 
+                playsInline 
+                className="absolute top-0 left-0 w-full h-full object-cover" 
+                style={{ 
+                  objectPosition: 'center center',
+                  objectFit: 'cover' // Ensures full video is visible
+                }} 
+                aria-label="Trendy products showcase video" 
+              />
+            )}
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+            
+            {/* Content */}
+            <div className="absolute inset-0 flex items-center">
+              <div className="container mx-auto px-4">
+                <div className="max-w-2xl">
+                  <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 leading-tight">
+                    {heroSettings.title}
+                  </h1>
+                  <p className="text-base md:text-xl text-white/90 mb-6">
+                    {heroSettings.subtitle}
+                  </p>
+                  <button className="bg-primary-600 text-white px-6 py-2 md:px-8 md:py-3 rounded-full hover:bg-primary-700 transition-all duration-300">
+                    Shop Now
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
+      </section>
+
+      {/* Admin Panel Section */}
+      {user && user.role === 'admin' && (
+        <section className="py-8 bg-gray-100">
+          <div className="container mx-auto px-4">
+            <div className="bg-white rounded-lg shadow-md p-6 text-center">
+              <h3 className="text-2xl font-bold mb-4">Admin Panel</h3>
+              <p className="mb-4">Manage your store, products, and orders</p>
+              <Link 
+                to="/admin" 
+                className="bg-primary-600 text-white px-6 py-2 rounded-full hover:bg-primary-700 transition-all duration-300"
+              >
+                Go to Admin Dashboard
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Black Friday Banner */}
       {blackFridayData && (
@@ -178,7 +198,6 @@ function Home() {
           </div>
         </div>
       )}
-
       {!searchQuery && (
         <>
           {/* Featured Categories */}
