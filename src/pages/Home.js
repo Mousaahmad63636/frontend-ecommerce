@@ -239,10 +239,11 @@ function Home() {
                 </select>
               </div>
               
-              {/* Products Grid */}
+              {/* Products Grid - Mobile: 1 per row, Tablet: 2 per row, Desktop: 4-5 per row */}
               <ProductList 
                 products={selectedCategory === 'all' ? products : products.filter(p => p.category === selectedCategory)} 
                 scrollable={false} // Grid view for all products
+                mobileColumns={1} // 1 column for mobile view
               />
             </div>
           </section>
@@ -268,6 +269,7 @@ function Home() {
               <ProductList 
                 products={filteredProducts} 
                 scrollable={false} // Grid view for search results
+                mobileColumns={1} // 1 column for mobile view in search results too
               />
             ) : (
               <div className="text-center py-8">

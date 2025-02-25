@@ -3,7 +3,7 @@ import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import ProductItem from './ProductItem';
 
-function ProductList({ title, products, loading, error, scrollable = true }) {
+function ProductList({ title, products, loading, error, scrollable = true, mobileColumns = 2 }) {
   const scrollContainerRef = useRef(null);
 
   const scroll = (direction) => {
@@ -40,6 +40,9 @@ function ProductList({ title, products, loading, error, scrollable = true }) {
     );
   }
 
+  // Determine the grid columns class based on mobileColumns prop
+  const gridColumnsClass = `grid grid-cols-${mobileColumns} md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4`;
+
   return (
     <div className="mb-10">
       {title && (
@@ -61,7 +64,7 @@ function ProductList({ title, products, loading, error, scrollable = true }) {
       {scrollable ? (
         <div 
           ref={scrollContainerRef}
-          className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide scroll-smooth pl-2 pr-2" // Added pl-2 pr-2 to reduce padding
+          className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide scroll-smooth pl-2 pr-2"
           style={{ scrollbarWidth: 'none' }}
         >
           {products.map(product => (
@@ -71,7 +74,7 @@ function ProductList({ title, products, loading, error, scrollable = true }) {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className={mobileColumns === 1 ? "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" : "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"}>
           {products.map(product => (
             <ProductItem key={product._id} product={product} />
           ))}
@@ -87,6 +90,7 @@ ProductList.propTypes = {
   loading: PropTypes.bool,
   error: PropTypes.string,
   scrollable: PropTypes.bool,
+  mobileColumns: PropTypes.number,
 };
 
 export default ProductList;
