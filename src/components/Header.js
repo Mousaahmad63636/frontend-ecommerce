@@ -91,7 +91,7 @@ function Header() {
 
       {/* Main Header */}
       <header className={`bg-white/95 backdrop-blur-sm transition-all duration-300 ${isScrolled ? 'py-2' : 'py-4'}`}>
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-5">
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
