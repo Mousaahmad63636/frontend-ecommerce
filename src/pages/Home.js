@@ -114,32 +114,31 @@ function Home() {
       </Helmet>
 
       {/* Hero Section - With proper padding to account for fixed header */}
-      <section className="pt-[130px] md:pt-[140px]"> {/* Adjusted padding-top to account for header height */}
-        <div className="w-full overflow-hidden">
-          <div className="relative">
-            {heroSettings.type === 'image' ? (
-              <img
-                src={getImageUrl(heroSettings.mediaUrl)}
-                alt="Hero banner"
-                className="w-full h-auto"
-              />
-            ) : (
-              <video
-                src={getImageUrl(heroSettings.mediaUrl)}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-auto"
-              />
-            )}
+      <section className="pt-0"> {/* Changed from pt-[130px] md:pt-[140px] to pt-0 */}
+  <div className="w-full overflow-hidden">
+    <div className="relative">
+      {heroSettings.type === 'image' ? (
+        <img
+          src={getImageUrl(heroSettings.mediaUrl)}
+          alt="Hero banner"
+          className="w-full h-auto"
+        />
+      ) : (
+        <video
+          src={getImageUrl(heroSettings.mediaUrl)}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-auto"
+        />
+      )}
 
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
-
-          </div>
-        </div>
-      </section>
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+    </div>
+  </div>
+</section>
 
       {/* Admin Panel Section */}
       {user && user.role === 'admin' && (
