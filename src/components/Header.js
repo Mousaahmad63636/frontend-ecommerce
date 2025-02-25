@@ -14,7 +14,7 @@ function Header() {
   const { showNotification } = useNotification();
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const [searchQuery, setSearchQuery] = useState('');
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSideCart, setShowSideCart] = useState(false);
@@ -95,12 +95,12 @@ function Header() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 md:w-10 md:h-10 bg-red-500 rounded-full flex items-center justify-center transform hover:rotate-12 transition-transform">
-                <i className="fas fa-fire text-white text-lg md:text-xl"></i>
-              </div>
-              <span className="text-lg md:text-xl font-bold">Exclusive</span>
+              <img
+                src="/logo.png"
+                alt="Logo"
+                className="h-10 w-auto"
+              />
             </Link>
-
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-8">
               <Link to="/" className="nav-link">Home</Link>
@@ -126,7 +126,7 @@ function Header() {
               </form>
 
               {/* Mobile Search Toggle */}
-              <button 
+              <button
                 className="md:hidden text-gray-700 hover:text-primary-600"
                 onClick={() => setShowSearch(!showSearch)}
               >
@@ -143,8 +143,8 @@ function Header() {
                 )}
               </Link>
 
-              <button 
-                onClick={() => setShowSideCart(true)} 
+              <button
+                onClick={() => setShowSideCart(true)}
                 className="relative text-gray-700 hover:text-primary-600"
               >
                 <i className="fas fa-shopping-cart text-xl"></i>
@@ -156,71 +156,71 @@ function Header() {
               </button>
 
               {/* User Menu */}
-{isAuthenticated ? (
-  <div className="relative hidden md:block user-menu-container">
-    <button 
-      className="flex items-center space-x-2 text-gray-700 hover:text-primary-600"
-      onClick={() => setShowUserMenu(!showUserMenu)}
-    >
-      <span className="hidden lg:block">{user?.name?.split(' ')[0] || 'User'}</span>
-      <i className="fas fa-user-circle text-xl"></i>
-    </button>
-    
-    {/* User dropdown menu */}
-    {showUserMenu && (
-      <div className="absolute right-0 mt-2 w-48 py-2 bg-white rounded-md shadow-xl z-20">
-        <Link 
-          to="/profile" 
-          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-          onClick={() => setShowUserMenu(false)}
-        >
-          My Profile
-        </Link>
-        <Link 
-          to="/orders" 
-          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-          onClick={() => setShowUserMenu(false)}
-        >
-          My Orders
-        </Link>
-        <Link 
-          to="/wishlist" 
-          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-          onClick={() => setShowUserMenu(false)}
-        >
-          My Wishlist
-        </Link>
-        {user?.role === 'admin' && (
-          <Link 
-            to="/admin" 
-            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            onClick={() => setShowUserMenu(false)}
-          >
-            Admin Dashboard
-          </Link>
-        )}
-        <hr className="my-1 border-gray-200" />
-        <button
-          className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-          onClick={handleLogout}
-        >
-          Sign Out
-        </button>
-      </div>
-    )}
-  </div>
-) : (
-  <div className="hidden md:block">
-    <button 
-      onClick={() => setShowLoginModal(true)}
-      className="text-gray-700 hover:text-primary-600"
-    >
-      <i className="fas fa-user-circle text-xl"></i>
-    </button>
-  </div>
-)}
+              {isAuthenticated ? (
+                <div className="relative hidden md:block user-menu-container">
+                  <button
+                    className="flex items-center space-x-2 text-gray-700 hover:text-primary-600"
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                  >
+                    <span className="hidden lg:block">{user?.name?.split(' ')[0] || 'User'}</span>
+                    <i className="fas fa-user-circle text-xl"></i>
+                  </button>
+
+                  {/* User dropdown menu */}
+                  {showUserMenu && (
+                    <div className="absolute right-0 mt-2 w-48 py-2 bg-white rounded-md shadow-xl z-20">
+                      <Link
+                        to="/profile"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        My Profile
+                      </Link>
+                      <Link
+                        to="/orders"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        My Orders
+                      </Link>
+                      <Link
+                        to="/wishlist"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        My Wishlist
+                      </Link>
+                      {user?.role === 'admin' && (
+                        <Link
+                          to="/admin"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          onClick={() => setShowUserMenu(false)}
+                        >
+                          Admin Dashboard
+                        </Link>
+                      )}
+                      <hr className="my-1 border-gray-200" />
+                      <button
+                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                        onClick={handleLogout}
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="hidden md:block">
+                  <button
+                    onClick={() => setShowLoginModal(true)}
+                    className="text-gray-700 hover:text-primary-600"
+                  >
+                    <i className="fas fa-user-circle text-xl"></i>
+                  </button>
+                </div>
+              )}
               {/* Mobile Menu Toggle */}
-              <button 
+              <button
                 className="lg:hidden text-gray-700 hover:text-primary-600"
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
               >
@@ -262,7 +262,7 @@ function Header() {
                   {user?.role === 'admin' && (
                     <Link to="/admin" className="block text-gray-700 hover:text-primary-600">Admin Dashboard</Link>
                   )}
-                  <button 
+                  <button
                     onClick={handleLogout}
                     className="block w-full text-left text-red-600 hover:text-red-700"
                   >
@@ -270,7 +270,7 @@ function Header() {
                   </button>
                 </>
               ) : (
-                <button 
+                <button
                   onClick={() => {
                     setShowLoginModal(true);
                     setShowMobileMenu(false);
