@@ -6,7 +6,7 @@ import { getImageUrl } from '../utils/imageUtils';
 import { useAuth } from '../contexts/AuthContext';
 
 // Component imports
-import BestSelling from '../components/BestSelling';
+// import BestSelling from '../components/BestSelling'; // Commented out
 import ProductList from '../components/ProductList';
 import ContactSection from '../components/ContactSection';
 import BlackFridayBanner from '../components/BlackFridayBanner/BlackFridayBanner';
@@ -201,28 +201,26 @@ function Home() {
         </div>
       )}
 
-{!searchQuery && (
-  <>
-    {/* Discounted Products */}
-    <section className="py-16">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold">Special Offers</h2>
-          <TimerDisplay />
-        </div>
-        {/* Commented out DiscountedProducts component */}
-        {/* <DiscountedProducts /> */}
-      </div>
-    </section>
+      {!searchQuery && (
+        <>
+          {/* Special Offers Section (Only the title) */}
+          <section className="py-16">
+            <div className="container mx-auto px-4">
+              <div className="mb-8">
+                <h2 className="text-3xl font-bold">Special Offers</h2>
+              </div>
+              <DiscountedProducts />
+            </div>
+          </section>
 
-    {/* Best Selling Products */}
-    <section className="py-16 bg-white">
-      <div className="container mx-auto px-4">
-        <BestSelling />
-      </div>
-    </section>
-  </>
-)}
+          {/* Best Selling Products (commented out) */}
+          {/* <section className="py-16 bg-white">
+            <div className="container mx-auto px-4">
+              <BestSelling />
+            </div>
+          </section> */}
+        </>
+      )}
 
       {/* Main Products Section */}
       <section className="py-16 bg-gray-50">
