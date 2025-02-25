@@ -9,7 +9,6 @@ import { useAuth } from '../contexts/AuthContext';
 import ProductList from '../components/ProductList';
 import ContactSection from '../components/ContactSection';
 import BlackFridayBanner from '../components/BlackFridayBanner/BlackFridayBanner';
-import DiscountedProducts from '../components/DiscountedProducts';
 import api from '../api/api';
 
 function Home() {
@@ -127,24 +126,6 @@ function Home() {
     );
   }
 
-  // Function to create category-based product sections
-  const renderCategorySection = (categoryName) => {
-    const categoryProducts = products.filter(product => product.category === categoryName);
-    if (categoryProducts.length === 0) return null;
-    
-    return (
-      <section className="py-8" key={categoryName}>
-        <div className="container mx-auto px-4">
-          <ProductList 
-            title={categoryName} 
-            products={categoryProducts} 
-            scrollable={true}
-          />
-        </div>
-      </section>
-    );
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Helmet>
@@ -186,8 +167,8 @@ function Home() {
       {/* Admin Panel Section */}
       {user && user.role === 'admin' && (
         <section className="py-8 bg-gray-100">
-          <div className="container mx-auto px-4">
-            <div className="bg-white rounded-lg shadow-md p-6 text-center">
+          <div className="container mx-auto px-0">
+            <div className="bg-white rounded-lg shadow-md p-6 text-center mx-4">
               <h3 className="text-2xl font-bold mb-4">Admin Panel</h3>
               <p className="mb-4">Manage your store, products, and orders</p>
               <Link
@@ -204,24 +185,26 @@ function Home() {
       {/* Black Friday Banner */}
       {blackFridayData && (
         <div className="bg-black text-white py-3">
-          <div className="container mx-auto px-4">
-            <BlackFridayBanner
-              endDate={blackFridayData.endDate}
-              discount={blackFridayData.discount}
-            />
+          <div className="container mx-auto px-0">
+            <div className="mx-4">
+              <BlackFridayBanner
+                endDate={blackFridayData.endDate}
+                discount={blackFridayData.discount}
+              />
+            </div>
           </div>
         </div>
       )}
 
       {!searchQuery && (
         <>
-          {/* Special Offers Section (only centered h2 title) */}
+          {/* Special Offers Section */}
           <section className="py-10">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-0"> 
               <div className="mb-2 text-center">
                 <h2 className="text-3xl font-bold">Special Offers</h2>
               </div>
-              <div className="container mx-auto px-4">
+              <div>
                 {products.filter(p => p.discountPercentage > 0).length > 0 && (
                   <ProductList 
                     title="Discounted Products" 
@@ -234,32 +217,49 @@ function Home() {
           </section>
 
           {/* Category-based Sections */}
-          {categories.map(category => renderCategorySection(category))}
+          {categories.map(category => {
+            const categoryProducts = products.filter(product => product.category === category);
+            if (categoryProducts.length === 0) return null;
+            
+            return (
+              <section className="py-4" key={category}>
+                <div className="container mx-auto px-0">
+                  <ProductList 
+                    title={category} 
+                    products={categoryProducts} 
+                    scrollable={true}
+                  />
+                </div>
+              </section>
+            );
+          })}
         </>
       )}
 
       {/* Search Results Section */}
       {searchQuery && (
         <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto px-0">
             <h2 className="text-3xl font-bold text-center mb-8">
               Search Results for "{searchQuery}"
             </h2>
 
             {error ? (
-              <div className="text-center py-8">
+              <div className="text-center py-8 mx-4">
                 <div className="bg-red-50 p-6 rounded-lg">
                   <h3 className="text-red-600 text-xl mb-2">Error</h3>
                   <p className="text-red-700">{error}</p>
                 </div>
               </div>
             ) : filteredProducts.length > 0 ? (
-              <ProductList 
-                products={filteredProducts} 
-                scrollable={false} // Grid view for search results
-              />
+              <div className="mx-4">
+                <ProductList 
+                  products={filteredProducts} 
+                  scrollable={false} // Grid view for search results
+                />
+              </div>
             ) : (
-              <div className="text-center py-8">
+              <div className="text-center py-8 mx-4">
                 <div className="bg-gray-50 p-6 rounded-lg">
                   <h3 className="text-xl mb-2">No Products Found</h3>
                   <p className="text-gray-600">

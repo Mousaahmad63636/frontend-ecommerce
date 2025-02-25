@@ -3,7 +3,7 @@ import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import ProductItem from './ProductItem';
 
-function ProductList({ title, products, loading, error, scrollable = true }) {  // Changed default to true
+function ProductList({ title, products, loading, error, scrollable = true }) {
   const scrollContainerRef = useRef(null);
 
   const scroll = (direction) => {
@@ -43,7 +43,7 @@ function ProductList({ title, products, loading, error, scrollable = true }) {  
   return (
     <div className="mb-10">
       {title && (
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-6 px-2">
           <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
           {scrollable && (
             <div className="flex gap-2">
@@ -61,7 +61,7 @@ function ProductList({ title, products, loading, error, scrollable = true }) {  
       {scrollable ? (
         <div 
           ref={scrollContainerRef}
-          className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide scroll-smooth"
+          className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide scroll-smooth pl-2 pr-2" // Added pl-2 pr-2 to reduce padding
           style={{ scrollbarWidth: 'none' }}
         >
           {products.map(product => (
