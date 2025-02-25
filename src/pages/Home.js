@@ -34,7 +34,7 @@ function Home() {
     subtitle: 'Discover Amazing Products at Great Prices'
   });
 
-  // Calculate header height on mount and when window resizes
+  // Calculate header height on mount and when window resizes (not on scroll)
   useEffect(() => {
     const updateHeaderHeight = () => {
       const header = document.querySelector('header')?.parentElement;
@@ -47,15 +47,11 @@ function Home() {
     // Initial calculation
     updateHeaderHeight();
 
-    // Update on resize
+    // Update only on resize, not on scroll
     window.addEventListener('resize', updateHeaderHeight);
-
-    // Update when scroll position changes (header might shrink/expand)
-    window.addEventListener('scroll', updateHeaderHeight);
 
     return () => {
       window.removeEventListener('resize', updateHeaderHeight);
-      window.removeEventListener('scroll', updateHeaderHeight);
     };
   }, []);
 
@@ -140,7 +136,7 @@ function Home() {
         <meta name="description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices." />
       </Helmet>
 
-      {/* Hero Section - Dynamically positioned based on header height */}
+      {/* Hero Section - Fixed positioning based on initial header height */}
       <section 
         ref={heroRef} 
         className="w-full" 
@@ -201,26 +197,27 @@ function Home() {
         </div>
       )}
 
-{!searchQuery && (
-  <>
-    {/* Special Offers Section (only centered h2 title) */}
-    <section className="py-16">
-      <div className="container mx-auto px-4">
-        <div className="mb-8 text-center"> {/* Added text-center class */}
-          <h2 className="text-3xl font-bold">Special Offers</h2>
-        </div>
-        <DiscountedProducts />
-      </div>
-    </section>
+      {!searchQuery && (
+        <>
+          {/* Special Offers Section (only centered h2 title) */}
+          <section className="py-16">
+            <div className="container mx-auto px-4">
+              <div className="mb-8 text-center">
+                <h2 className="text-3xl font-bold">Special Offers</h2>
+              </div>
+              <DiscountedProducts />
+            </div>
+          </section>
 
-    {/* Best Selling Products (commented out) */}
-    {/* <section className="py-16 bg-white">
-      <div className="container mx-auto px-4">
-        <BestSelling />
-      </div>
-    </section> */}
-  </>
-)}
+          {/* Best Selling Products (commented out) */}
+          {/* <section className="py-16 bg-white">
+            <div className="container mx-auto px-4">
+              <BestSelling />
+            </div>
+          </section> */}
+        </>
+      )}
+
       {/* Main Products Section */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
@@ -230,10 +227,10 @@ function Home() {
 
           {!searchQuery && (
             <div className="max-w-md mx-auto mb-8">
-              <Select
+              <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full"
+                className="w-full border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
               >
                 <option value="all">All Categories</option>
                 {categories.map(category => (
@@ -241,7 +238,7 @@ function Home() {
                     {category}
                   </option>
                 ))}
-              </Select>
+              </select>
             </div>
           )}
 
