@@ -201,27 +201,26 @@ function Home() {
         </div>
       )}
 
-      {!searchQuery && (
-        <>
-          {/* Special Offers Section (Only the title) */}
-          <section className="py-16">
-            <div className="container mx-auto px-4">
-              <div className="mb-8">
-                <h2 className="text-3xl font-bold">Special Offers</h2>
-              </div>
-              <DiscountedProducts />
-            </div>
-          </section>
+{!searchQuery && (
+  <>
+    {/* Special Offers Section (only centered h2 title) */}
+    <section className="py-16">
+      <div className="container mx-auto px-4">
+        <div className="mb-8 text-center"> {/* Added text-center class */}
+          <h2 className="text-3xl font-bold">Special Offers</h2>
+        </div>
+        <DiscountedProducts />
+      </div>
+    </section>
 
-          {/* Best Selling Products (commented out) */}
-          {/* <section className="py-16 bg-white">
-            <div className="container mx-auto px-4">
-              <BestSelling />
-            </div>
-          </section> */}
-        </>
-      )}
-
+    {/* Best Selling Products (commented out) */}
+    {/* <section className="py-16 bg-white">
+      <div className="container mx-auto px-4">
+        <BestSelling />
+      </div>
+    </section> */}
+  </>
+)}
       {/* Main Products Section */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
