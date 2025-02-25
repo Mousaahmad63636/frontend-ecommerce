@@ -94,7 +94,7 @@ function Header() {
         <div className="container mx-auto px-5">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-1">
+            <Link to="/" className="flex items-center space-x-2 -ml-2"> {/* Added -ml-2 to move left */}
               <img
                 src="/logo.png"
                 alt="Logo"
