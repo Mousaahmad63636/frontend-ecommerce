@@ -14,13 +14,16 @@ function ProductItem({ product }) {
 
   const isWishlisted = isInWishlist(product._id);
   const hasDiscount = product.discountPercentage > 0;
+  
+  // Calculate the dollar amount saved if there's a discount
+  const savedAmount = hasDiscount ? (product.originalPrice - product.price).toFixed(2) : 0;
 
   return (
     <div className="product-card bg-white rounded-lg shadow-sm overflow-hidden transition-all hover:shadow-md relative">
-      {/* Discount Badge */}
+      {/* Discount Badge - Now showing dollar amount saved */}
       {hasDiscount && (
         <div className="absolute top-0 left-0 bg-red-500 text-white px-2 py-1 text-sm font-medium z-10">
-          -{product.discountPercentage}%
+          Save ${savedAmount}
         </div>
       )}
       
