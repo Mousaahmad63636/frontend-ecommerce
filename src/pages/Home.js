@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Spinner, Select } from 'flowbite-react';
@@ -25,12 +25,39 @@ function Home() {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const searchQuery = searchParams.get('q');
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const heroRef = useRef(null);
   const [heroSettings, setHeroSettings] = useState({
     type: 'image',
     mediaUrl: '/hero.jpg',
     title: 'Just Trendy - Where Trends Meet Need!',
     subtitle: 'Discover Amazing Products at Great Prices'
   });
+
+  // Calculate header height on mount and when window resizes
+  useEffect(() => {
+    const updateHeaderHeight = () => {
+      const header = document.querySelector('header')?.parentElement;
+      if (header) {
+        const height = header.offsetHeight;
+        setHeaderHeight(height);
+      }
+    };
+
+    // Initial calculation
+    updateHeaderHeight();
+
+    // Update on resize
+    window.addEventListener('resize', updateHeaderHeight);
+
+    // Update when scroll position changes (header might shrink/expand)
+    window.addEventListener('scroll', updateHeaderHeight);
+
+    return () => {
+      window.removeEventListener('resize', updateHeaderHeight);
+      window.removeEventListener('scroll', updateHeaderHeight);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -113,32 +140,36 @@ function Home() {
         <meta name="description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices." />
       </Helmet>
 
-      {/* Hero Section - With proper padding to account for fixed header */}
-      <section className="pt-0"> {/* Changed from pt-[130px] md:pt-[140px] to pt-0 */}
-  <div className="w-full overflow-hidden">
-    <div className="relative">
-      {heroSettings.type === 'image' ? (
-        <img
-          src={getImageUrl(heroSettings.mediaUrl)}
-          alt="Hero banner"
-          className="w-full h-auto"
-        />
-      ) : (
-        <video
-          src={getImageUrl(heroSettings.mediaUrl)}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-auto"
-        />
-      )}
+      {/* Hero Section - Dynamically positioned based on header height */}
+      <section 
+        ref={heroRef} 
+        className="w-full" 
+        style={{ marginTop: `${headerHeight}px` }}
+      >
+        <div className="w-full overflow-hidden">
+          <div className="relative">
+            {heroSettings.type === 'image' ? (
+              <img
+                src={getImageUrl(heroSettings.mediaUrl)}
+                alt="Hero banner"
+                className="w-full h-auto"
+              />
+            ) : (
+              <video
+                src={getImageUrl(heroSettings.mediaUrl)}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-auto"
+              />
+            )}
 
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
-    </div>
-  </div>
-</section>
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+          </div>
+        </div>
+      </section>
 
       {/* Admin Panel Section */}
       {user && user.role === 'admin' && (
@@ -169,6 +200,7 @@ function Home() {
           </div>
         </div>
       )}
+
       {!searchQuery && (
         <>
           {/* Discounted Products */}
