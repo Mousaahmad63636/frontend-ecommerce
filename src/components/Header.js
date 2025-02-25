@@ -156,70 +156,69 @@ function Header() {
               </button>
 
               {/* User Menu */}
-              {isAuthenticated ? (
-                <div className="relative hidden md:block user-menu-container">
-                  <button 
-                    className="flex items-center space-x-2 text-gray-700 hover:text-primary-600"
-                    onClick={() => setShowUserMenu(!showUserMenu)}
-                  >
-                    <span className="hidden lg:block">{user?.name?.split(' ')[0] || 'User'}</span>
-                    <i className="fas fa-user-circle text-xl"></i>
-                  </button>
-                  
-                  {/* User dropdown menu */}
-                  {showUserMenu && (
-                    <div className="absolute right-0 mt-2 w-48 py-2 bg-white rounded-md shadow-xl z-20">
-                      <Link 
-                        to="/profile" 
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setShowUserMenu(false)}
-                      >
-                        My Profile
-                      </Link>
-                      <Link 
-                        to="/orders" 
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setShowUserMenu(false)}
-                      >
-                        My Orders
-                      </Link>
-                      <Link 
-                        to="/wishlist" 
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setShowUserMenu(false)}
-                      >
-                        My Wishlist
-                      </Link>
-                      {user?.role === 'admin' && (
-                        <Link 
-                          to="/admin" 
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          onClick={() => setShowUserMenu(false)}
-                        >
-                          Admin Dashboard
-                        </Link>
-                      )}
-                      <hr className="my-1 border-gray-200" />
-                      <button
-                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                        onClick={handleLogout}
-                      >
-                        Sign Out
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="hidden md:block">
-                  <button 
-                    onClick={() => setShowLoginModal(true)}
-                    className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm"
-                  >
-                    Sign In
-                  </button>
-                </div>
-              )}
-
+{isAuthenticated ? (
+  <div className="relative hidden md:block user-menu-container">
+    <button 
+      className="flex items-center space-x-2 text-gray-700 hover:text-primary-600"
+      onClick={() => setShowUserMenu(!showUserMenu)}
+    >
+      <span className="hidden lg:block">{user?.name?.split(' ')[0] || 'User'}</span>
+      <i className="fas fa-user-circle text-xl"></i>
+    </button>
+    
+    {/* User dropdown menu */}
+    {showUserMenu && (
+      <div className="absolute right-0 mt-2 w-48 py-2 bg-white rounded-md shadow-xl z-20">
+        <Link 
+          to="/profile" 
+          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          onClick={() => setShowUserMenu(false)}
+        >
+          My Profile
+        </Link>
+        <Link 
+          to="/orders" 
+          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          onClick={() => setShowUserMenu(false)}
+        >
+          My Orders
+        </Link>
+        <Link 
+          to="/wishlist" 
+          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          onClick={() => setShowUserMenu(false)}
+        >
+          My Wishlist
+        </Link>
+        {user?.role === 'admin' && (
+          <Link 
+            to="/admin" 
+            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => setShowUserMenu(false)}
+          >
+            Admin Dashboard
+          </Link>
+        )}
+        <hr className="my-1 border-gray-200" />
+        <button
+          className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+          onClick={handleLogout}
+        >
+          Sign Out
+        </button>
+      </div>
+    )}
+  </div>
+) : (
+  <div className="hidden md:block">
+    <button 
+      onClick={() => setShowLoginModal(true)}
+      className="text-gray-700 hover:text-primary-600"
+    >
+      <i className="fas fa-user-circle text-xl"></i>
+    </button>
+  </div>
+)}
               {/* Mobile Menu Toggle */}
               <button 
                 className="lg:hidden text-gray-700 hover:text-primary-600"
