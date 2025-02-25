@@ -224,7 +224,6 @@ function Home() {
               <section className="py-4" key={category}>
                 <div className="container mx-auto px-0">
                   <ProductList 
-                    title={category} 
                     products={categoryProducts} 
                     scrollable={true}
                   />
