@@ -198,7 +198,7 @@ function Home() {
 
       {!searchQuery && (
         <>
-          {/* Special Offers Section */}
+          {/* Special Offers Section - Horizontal Scrollable Row */}
           <section className="py-10">
             <div className="container mx-auto px-0"> 
               <div className="mb-2 text-center">
@@ -207,6 +207,7 @@ function Home() {
               <div>
                 {products.filter(p => p.discountPercentage > 0).length > 0 && (
                   <ProductList 
+                    title="Discounted Products" 
                     products={products.filter(p => p.discountPercentage > 0)} 
                     scrollable={true}
                   />
@@ -215,49 +216,61 @@ function Home() {
             </div>
           </section>
 
-          {/* Category-based Sections */}
-          {categories.map(category => {
-            const categoryProducts = products.filter(product => product.category === category);
-            if (categoryProducts.length === 0) return null;
-            
-            return (
-              <section className="py-4" key={category}>
-                <div className="container mx-auto px-0">
-                  <ProductList 
-                    products={categoryProducts} 
-                    scrollable={true}
-                  />
-                </div>
-              </section>
-            );
-          })}
+          {/* All Products Section - Grid Layout */}
+          <section className="py-10">
+            <div className="container mx-auto px-4">
+              <div className="mb-6 text-center">
+                <h2 className="text-3xl font-bold">All Products</h2>
+              </div>
+              
+              {/* Category Filter */}
+              <div className="max-w-md mx-auto mb-8">
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="w-full border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                >
+                  <option value="all">All Categories</option>
+                  {categories.map(category => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              {/* Products Grid */}
+              <ProductList 
+                products={selectedCategory === 'all' ? products : products.filter(p => p.category === selectedCategory)} 
+                scrollable={false} // Grid view for all products
+              />
+            </div>
+          </section>
         </>
       )}
 
       {/* Search Results Section */}
       {searchQuery && (
         <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-0">
+          <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center mb-8">
               Search Results for "{searchQuery}"
             </h2>
 
             {error ? (
-              <div className="text-center py-8 mx-4">
+              <div className="text-center py-8">
                 <div className="bg-red-50 p-6 rounded-lg">
                   <h3 className="text-red-600 text-xl mb-2">Error</h3>
                   <p className="text-red-700">{error}</p>
                 </div>
               </div>
             ) : filteredProducts.length > 0 ? (
-              <div className="mx-4">
-                <ProductList 
-                  products={filteredProducts} 
-                  scrollable={false} // Grid view for search results
-                />
-              </div>
+              <ProductList 
+                products={filteredProducts} 
+                scrollable={false} // Grid view for search results
+              />
             ) : (
-              <div className="text-center py-8 mx-4">
+              <div className="text-center py-8">
                 <div className="bg-gray-50 p-6 rounded-lg">
                   <h3 className="text-xl mb-2">No Products Found</h3>
                   <p className="text-gray-600">
