@@ -40,21 +40,18 @@ function ProductList({ title, products, loading, error, scrollable = true, mobil
     );
   }
 
-  // Determine the grid columns class based on mobileColumns prop
-  const gridColumnsClass = `grid grid-cols-${mobileColumns} md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4`;
-
   return (
     <div className="mb-10">
       {title && (
-        <div className="flex justify-between items-center mb-6 px-2">
+        <div className="flex justify-between items-center mb-4 px-2">
           <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
           {scrollable && (
             <div className="flex gap-2">
-              <button onClick={() => scroll('left')} className="bg-white shadow-md rounded-full w-8 h-8 flex items-center justify-center">
-                <i className="fas fa-chevron-left"></i>
+              <button onClick={() => scroll('left')} className="bg-white shadow-sm rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-50">
+                <i className="fas fa-chevron-left text-sm"></i>
               </button>
-              <button onClick={() => scroll('right')} className="bg-white shadow-md rounded-full w-8 h-8 flex items-center justify-center">
-                <i className="fas fa-chevron-right"></i>
+              <button onClick={() => scroll('right')} className="bg-white shadow-sm rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-50">
+                <i className="fas fa-chevron-right text-sm"></i>
               </button>
             </div>
           )}
@@ -64,17 +61,20 @@ function ProductList({ title, products, loading, error, scrollable = true, mobil
       {scrollable ? (
         <div 
           ref={scrollContainerRef}
-          className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide scroll-smooth pl-2 pr-2"
+          className="flex overflow-x-auto gap-3 pb-4 scrollbar-hide scroll-smooth pl-2 pr-2"
           style={{ scrollbarWidth: 'none' }}
         >
           {products.map(product => (
-            <div key={product._id} className="min-w-[250px] max-w-[250px]">
+            <div key={product._id} className="min-w-[200px] max-w-[200px]">
               <ProductItem product={product} />
             </div>
           ))}
         </div>
       ) : (
-        <div className={mobileColumns === 1 ? "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" : "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"}>
+        <div className={mobileColumns === 1 
+          ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3" 
+          : "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3"
+        }>
           {products.map(product => (
             <ProductItem key={product._id} product={product} />
           ))}

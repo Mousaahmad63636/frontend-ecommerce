@@ -19,23 +19,23 @@ function ProductItem({ product }) {
   const savedAmount = hasDiscount ? (product.originalPrice - product.price).toFixed(2) : 0;
 
   return (
-    <div className="product-card bg-white rounded-lg shadow-sm overflow-hidden transition-all hover:shadow-md relative">
+    <div className="product-card bg-white rounded-xl shadow-sm overflow-hidden transition-all hover:shadow-md relative border border-gray-100">
       {/* Discount Badge - Now showing dollar amount saved */}
       {hasDiscount && (
-        <div className="absolute top-0 left-0 bg-red-500 text-white px-2 py-1 text-sm font-medium z-10">
+        <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 text-xs font-medium z-10 rounded-full">
           Save ${savedAmount}
         </div>
       )}
       
       {/* Product Image Container */}
-      <div className="relative aspect-square overflow-hidden">
+      <div className="relative aspect-square overflow-hidden bg-gray-50">
         <Link to={`/product/${product._id}`}>
           <img
             src={product.images && product.images.length > 0 
               ? getImageUrl(product.images[currentImageIndex]) 
               : '/placeholder.jpg'}
             alt={product.name}
-            className="w-full h-full object-cover transition-transform hover:scale-105"
+            className="w-full h-full object-contain p-2 transition-transform hover:scale-105"
             onError={(e) => {
               e.target.src = '/placeholder.jpg';
             }}
@@ -48,19 +48,19 @@ function ProductItem({ product }) {
             e.preventDefault();
             isWishlisted ? removeFromWishlist(product._id) : addToWishlist(product);
           }}
-          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white"
+          className="absolute top-2 right-2 z-10 w-7 h-7 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white"
         >
-          <i className={`${isWishlisted ? 'fas' : 'far'} fa-heart ${isWishlisted ? 'text-red-500' : 'text-gray-700'}`}></i>
+          <i className={`${isWishlisted ? 'fas' : 'far'} fa-heart ${isWishlisted ? 'text-red-500' : 'text-gray-700'} text-sm`}></i>
         </button>
         
         {/* Image Navigation Dots */}
         {product.images && product.images.length > 1 && (
-          <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
+          <div className="absolute bottom-1 left-0 right-0 flex justify-center gap-1">
             {product.images.map((_, idx) => (
               <button
                 key={idx}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  idx === currentImageIndex ? 'bg-gray-800 w-4' : 'bg-gray-400'
+                className={`w-1.5 h-1.5 rounded-full transition-all ${
+                  idx === currentImageIndex ? 'bg-gray-800 w-3' : 'bg-gray-400'
                 }`}
                 onClick={(e) => {
                   e.preventDefault();
@@ -73,34 +73,33 @@ function ProductItem({ product }) {
       </div>
       
       {/* Product Info */}
-      <div className="p-4">
+      <div className="p-3">
         <Link to={`/product/${product._id}`} className="block">
-          <h3 className="text-lg font-medium text-gray-900 line-clamp-1 mb-2">{product.name}</h3>
+          <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-1">{product.name}</h3>
         </Link>
         
-        <div className="flex items-baseline mb-2">
+        <div className="flex items-baseline mb-1.5">
           {hasDiscount ? (
             <>
-              <span className="text-lg font-bold text-red-500 mr-2">${product.price.toFixed(2)}</span>
-              <span className="text-sm text-gray-500 line-through">${product.originalPrice.toFixed(2)}</span>
+              <span className="text-sm font-bold text-red-500 mr-2">${product.price.toFixed(2)}</span>
+              <span className="text-xs text-gray-500 line-through">${product.originalPrice.toFixed(2)}</span>
             </>
           ) : (
-            <span className="text-lg font-bold text-gray-900">${product.price.toFixed(2)}</span>
+            <span className="text-sm font-bold text-gray-900">${product.price.toFixed(2)}</span>
           )}
         </div>
         
         {/* Star Rating */}
-        <div className="flex items-center mb-3">
+        <div className="flex items-center mb-2">
           {[1, 2, 3, 4, 5].map((star) => (
             <i 
               key={star} 
-              className={`${star <= (product.rating || 4) ? 'text-yellow-400 fas' : 'text-gray-300 far'} fa-star text-sm`}
+              className={`${star <= (product.rating || 4) ? 'text-yellow-400 fas' : 'text-gray-300 far'} fa-star text-xs`}
             ></i>
           ))}
-          <span className="ml-2 text-xs text-gray-500">
+          <span className="ml-1 text-xs text-gray-500">
             ({product.reviews || Math.floor(Math.random() * 100) + 10})
           </span>
-          <span className="ml-auto text-xs text-gray-500 uppercase">REVIEW</span>
         </div>
         
         {/* Add to Cart Button */}
@@ -110,9 +109,9 @@ function ProductItem({ product }) {
             showNotification('Added to cart!', 'success');
           }}
           disabled={product.soldOut}
-          className={`w-full py-2 rounded-full text-center ${
+          className={`w-full py-1.5 rounded-full text-center text-sm ${
             product.soldOut
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
               : 'bg-black text-white hover:bg-gray-800'
           }`}
         >
