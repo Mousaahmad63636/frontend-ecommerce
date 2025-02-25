@@ -78,10 +78,6 @@ const DiscountedProducts = () => {
 
   return (
     <div className="container my-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="mb-0">Special Offers</h2>
-      </div>
-
       {/* Category Filter */}
       <div className="row mb-4">
         <div className="col-md-6 mx-auto">
