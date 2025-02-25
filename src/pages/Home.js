@@ -207,7 +207,6 @@ function Home() {
               <div>
                 {products.filter(p => p.discountPercentage > 0).length > 0 && (
                   <ProductList 
-                    title="Discounted Products" 
                     products={products.filter(p => p.discountPercentage > 0)} 
                     scrollable={true}
                   />
