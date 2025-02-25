@@ -3,7 +3,7 @@ import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import ProductItem from './ProductItem';
 
-function ProductList({ title, products, loading, error, scrollable = false }) {
+function ProductList({ title, products, loading, error, scrollable = true }) {  // Changed default to true
   const scrollContainerRef = useRef(null);
 
   const scroll = (direction) => {
@@ -77,12 +77,6 @@ function ProductList({ title, products, loading, error, scrollable = false }) {
           ))}
         </div>
       )}
-      
-      <div className="text-center mt-8">
-        <a href="/products" className="inline-block bg-red-600 text-white px-8 py-3 rounded-md font-medium hover:bg-red-700">
-          View All Products
-        </a>
-      </div>
     </div>
   );
 }

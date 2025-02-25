@@ -1,16 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Spinner, Select } from 'flowbite-react';
+import { Spinner } from 'flowbite-react';
 import { getImageUrl } from '../utils/imageUtils';
 import { useAuth } from '../contexts/AuthContext';
 
 // Component imports
-// import BestSelling from '../components/BestSelling'; // Commented out
 import ProductList from '../components/ProductList';
 import ContactSection from '../components/ContactSection';
 import BlackFridayBanner from '../components/BlackFridayBanner/BlackFridayBanner';
-import TimerDisplay from '../components/Admin/TimerDisplay';
 import DiscountedProducts from '../components/DiscountedProducts';
 import api from '../api/api';
 
@@ -129,6 +127,24 @@ function Home() {
     );
   }
 
+  // Function to create category-based product sections
+  const renderCategorySection = (categoryName) => {
+    const categoryProducts = products.filter(product => product.category === categoryName);
+    if (categoryProducts.length === 0) return null;
+    
+    return (
+      <section className="py-8" key={categoryName}>
+        <div className="container mx-auto px-4">
+          <ProductList 
+            title={categoryName} 
+            products={categoryProducts} 
+            scrollable={true}
+          />
+        </div>
+      </section>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Helmet>
@@ -200,75 +216,65 @@ function Home() {
       {!searchQuery && (
         <>
           {/* Special Offers Section (only centered h2 title) */}
-          <section className="py-16">
+          <section className="py-10">
             <div className="container mx-auto px-4">
-              <div className="mb-8 text-center">
+              <div className="mb-2 text-center">
                 <h2 className="text-3xl font-bold">Special Offers</h2>
               </div>
-              <DiscountedProducts />
-            </div>
-          </section>
-
-          {/* Best Selling Products (commented out) */}
-          {/* <section className="py-16 bg-white">
-            <div className="container mx-auto px-4">
-              <BestSelling />
-            </div>
-          </section> */}
-        </>
-      )}
-
-      {/* Main Products Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">
-            {searchQuery ? `Search Results for "${searchQuery}"` : 'All Products'}
-          </h2>
-
-          {!searchQuery && (
-            <div className="max-w-md mx-auto mb-8">
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-              >
-                <option value="all">All Categories</option>
-                {categories.map(category => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {error ? (
-            <div className="text-center py-8">
-              <div className="bg-red-50 p-6 rounded-lg">
-                <h3 className="text-red-600 text-xl mb-2">Error</h3>
-                <p className="text-red-700">{error}</p>
-              </div>
-            </div>
-          ) : filteredProducts.length > 0 ? (
-            <ProductList products={filteredProducts} />
-          ) : (
-            <div className="text-center py-8">
-              <div className="bg-gray-50 p-6 rounded-lg">
-                <h3 className="text-xl mb-2">No Products Found</h3>
-                {searchQuery && (
-                  <p className="text-gray-600">
-                    No results found for "{searchQuery}". Try a different search term or browse our categories.
-                  </p>
+              <div className="container mx-auto px-4">
+                {products.filter(p => p.discountPercentage > 0).length > 0 && (
+                  <ProductList 
+                    title="Discounted Products" 
+                    products={products.filter(p => p.discountPercentage > 0)} 
+                    scrollable={true}
+                  />
                 )}
               </div>
             </div>
-          )}
+          </section>
 
-          <div className="text-center mt-4 text-sm text-gray-500">
-            Showing {filteredProducts.length} products
+          {/* Category-based Sections */}
+          {categories.map(category => renderCategorySection(category))}
+        </>
+      )}
+
+      {/* Search Results Section */}
+      {searchQuery && (
+        <section className="py-16 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-8">
+              Search Results for "{searchQuery}"
+            </h2>
+
+            {error ? (
+              <div className="text-center py-8">
+                <div className="bg-red-50 p-6 rounded-lg">
+                  <h3 className="text-red-600 text-xl mb-2">Error</h3>
+                  <p className="text-red-700">{error}</p>
+                </div>
+              </div>
+            ) : filteredProducts.length > 0 ? (
+              <ProductList 
+                products={filteredProducts} 
+                scrollable={false} // Grid view for search results
+              />
+            ) : (
+              <div className="text-center py-8">
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <h3 className="text-xl mb-2">No Products Found</h3>
+                  <p className="text-gray-600">
+                    No results found for "{searchQuery}". Try a different search term or browse our categories.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <div className="text-center mt-4 text-sm text-gray-500">
+              Showing {filteredProducts.length} products
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <ContactSection />
     </div>
