@@ -213,12 +213,12 @@ function Home() {
             </div>
           </section>
 
-          {/* Best Selling Products */}
-          <section className="py-16 bg-white">
-            <div className="container mx-auto px-4">
-              <BestSelling />
-            </div>
-          </section>
+             {/* Best Selling Products */}
+          {/*  <section className="py-16 bg-white"> */}
+         {/*     <div className="container mx-auto px-4"> */}
+         {/*       <BestSelling /> */}
+          {/*    </div> */}
+          {/*  </section> */}
         </>
       )}
 
