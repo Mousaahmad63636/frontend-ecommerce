@@ -89,17 +89,18 @@ function Header() {
         </p>
       </div>
 
-      <header className={`bg-white/95 backdrop-blur-sm transition-all duration-300 ${isScrolled ? 'py-1' : 'py-2'}`}>
-  <div className="container mx-auto px-4">
-    <div className="flex items-center justify-between">
-      {/* Logo */}
-      <Link to="/" className="flex items-center space-x-2">
-        <img
-          src="/logo.png"
-          alt="Logo"
-          className="h-8 w-auto" // Also reduced the logo height from h-10 to h-8
-        />
-      </Link>
+      {/* Main Header */}
+      <header className={`bg-white/95 backdrop-blur-sm transition-all duration-300 ${isScrolled ? 'py-2' : 'py-4'}`}>
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between">
+            {/* Logo */}
+            <Link to="/" className="flex items-center space-x-2">
+              <img
+                src="/logo.png"
+                alt="Logo"
+                className="h-10 w-auto"
+              />
+            </Link>
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-8">
               <Link to="/" className="nav-link">Home</Link>
