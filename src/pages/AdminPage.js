@@ -1,13 +1,14 @@
 // src/components/Admin/AdminPage.js
 import React, { useState } from 'react';
-import ProductsSection from './ProductsSection';
-import DiscountsSection from './DiscountsSection';
-import PromoCodesSection from './PromoCodesSection';
-import TimerManager from './TimerManager';
-import OrderManagement from '../OrderManagement';
-import SettingsSection from './SettingsSection';
-import HeroSection from './HeroSection';
-import { useNotification } from '../Notification/NotificationProvider';
+import ProductsSection from '../components/Admin/ProductsSection';
+import DiscountsSection from '../components/Admin/DiscountsSection';
+import PromoCodesSection from '../components/Admin/PromoCodesSection';
+import TimerManager from '../components/Admin/TimerManager';
+import OrderManagement from '../components/OrderManagement';
+import SettingsSection from '../components/Admin/SettingsSection'; // Add this import
+import HeroSection from '../components/Admin/HeroSection';
+import { useNotification } from '../components/Notification/NotificationProvider';
+
 
 function AdminPage() {
     const [activeTab, setActiveTab] = useState('products');
