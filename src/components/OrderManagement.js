@@ -251,24 +251,24 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
   const handleWhatsAppMessage = (order, type = 'pending') => {
     // Get templates from settings or use defaults
     const templates = settings.whatsappMessageTemplate || {};
-
+  
     // Calculate the subtotal properly
     const subtotal = order.products.reduce((sum, item) =>
       sum + (item.product?.price || 0) * item.quantity, 0
     );
-
+  
     // Format order details
     const orderDetailsArabic = order.products.map(item =>
       `📦 ${item.product?.name || ''}
         القيمة: ${safeToFixed(item.product?.price)}$ × ${item.quantity}
         المجموع: ${safeToFixed((item.product?.price || 0) * item.quantity)}$`
     ).join('\n');
-
+  
     // Calculate final values
     const deliveryFee = order.shippingFee || 0;
     const discount = order.promoDiscount ? (subtotal * order.promoDiscount) / 100 : 0;
     const finalTotal = subtotal + deliveryFee - discount;
-
+  
     // If no template is set in settings, use default message
     if (!templates.arabic) {
       const message = getDefaultMessage(
@@ -279,14 +279,20 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
         finalTotal,
         discount
       );
-
-      // Send message
+  
+      // Send message using WhatsApp app URI scheme
       const phoneNumber = order.phoneNumber.replace(/\D/g, '');
-      const whatsappURL = `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
-      window.open(whatsappURL, '_blank', 'noopener,noreferrer');
+      const whatsappURI = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+      
+      // Try to open WhatsApp app, fall back to web if it fails
+      if (!window.open(whatsappURI)) {
+        // If app opening fails, fall back to web version
+        const whatsappURL = `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+        window.open(whatsappURL, '_blank', 'noopener,noreferrer');
+      }
       return;
     }
-
+  
     // Use template if available
     let messageArabic = templates.arabic
       .replace('{{customerName}}', order.customerName)
@@ -297,11 +303,17 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
       .replace('{{total}}', safeToFixed(finalTotal))
       .replace('{{address}}', order.address || '')
       .replace('{{discount}}', discount ? `💎 الخصم: -${safeToFixed(discount)}$\n` : '');
-
-    // Send message
+  
+    // Send message using WhatsApp app URI scheme
     const phoneNumber = order.phoneNumber.replace(/\D/g, '');
-    const whatsappURL = `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(messageArabic)}`;
-    window.open(whatsappURL, '_blank', 'noopener,noreferrer');
+    const whatsappURI = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(messageArabic)}`;
+    
+    // Try to open WhatsApp app, fall back to web if it fails
+    if (!window.open(whatsappURI)) {
+      // If app opening fails, fall back to web version
+      const whatsappURL = `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(messageArabic)}`;
+      window.open(whatsappURL, '_blank', 'noopener,noreferrer');
+    }
   };
   const filteredOrders = sortOrders(
     filterOrdersByDate(orders).filter(order => {
