@@ -21,7 +21,7 @@ function ProductsSection() {
         name: '',
         description: '',
         price: '',
-        category: '',
+        categories: [],
         images: []
     });
 
@@ -36,7 +36,13 @@ function ProductsSection() {
             setLoading(true);
             const data = await api.getProducts();
             setProducts(data);
-            const uniqueCategories = [...new Set(data.map(product => product.category))];
+            
+            // Extract all unique categories from all products
+            const allCategories = data.flatMap(product => 
+                Array.isArray(product.categories) ? product.categories : [product.category]
+            ).filter(Boolean);
+            
+            const uniqueCategories = [...new Set(allCategories)];
             setCategories(uniqueCategories);
         } catch (error) {
             showNotification('Failed to load products', 'error');
@@ -61,7 +67,14 @@ function ProductsSection() {
         }
 
         if (filterCategory !== 'all') {
-            result = result.filter(product => product.category === filterCategory);
+            result = result.filter(product => {
+                // Handle both legacy single category and new multiple categories format
+                if (Array.isArray(product.categories)) {
+                    return product.categories.includes(filterCategory);
+                } else {
+                    return product.category === filterCategory;
+                }
+            });
         }
 
         result.sort((a, b) => {
@@ -74,7 +87,14 @@ function ProductsSection() {
                     comparison = parseFloat(a.price) - parseFloat(b.price);
                     break;
                 case 'category':
-                    comparison = a.category.localeCompare(b.category);
+                    // Sort by first category for multiple categories
+                    const aCategory = Array.isArray(a.categories) && a.categories.length > 0 
+                        ? a.categories[0] 
+                        : a.category || '';
+                    const bCategory = Array.isArray(b.categories) && b.categories.length > 0 
+                        ? b.categories[0] 
+                        : b.category || '';
+                    comparison = aCategory.localeCompare(bCategory);
                     break;
                 case 'date':
                 default:
@@ -117,6 +137,17 @@ function ProductsSection() {
         }
     };
 
+    const handleCategoryChange = (e) => {
+        const { value } = e.target;
+        const { selectedOptions } = e.target;
+        const selectedValues = Array.from(selectedOptions).map(option => option.value);
+        
+        setFormData(prev => ({
+            ...prev,
+            categories: selectedValues
+        }));
+    };
+
     const handleAddCategory = async (e) => {
         e.preventDefault();
         if (!newCategory.trim()) {
@@ -151,7 +182,9 @@ function ProductsSection() {
             formDataToSend.append('name', formData.name);
             formDataToSend.append('description', formData.description);
             formDataToSend.append('price', formData.price);
-            formDataToSend.append('category', formData.category);
+            
+            // Append categories as JSON string to handle multiple categories
+            formDataToSend.append('categories', JSON.stringify(formData.categories));
             
             if (formData.images && formData.images.length > 0) {
                 Array.from(formData.images).forEach(image => {
@@ -198,7 +231,10 @@ function ProductsSection() {
             name: product.name,
             description: product.description,
             price: product.price,
-            category: product.category,
+            // Handle both legacy single category and new multiple categories format
+            categories: Array.isArray(product.categories) 
+                ? product.categories 
+                : product.category ? [product.category] : [],
             images: [],
             keepExisting: true
         });
@@ -223,7 +259,7 @@ function ProductsSection() {
             name: '',
             description: '',
             price: '',
-            category: '',
+            categories: [],
             images: []
         });
         setImagePreviews([]);
@@ -235,6 +271,15 @@ function ProductsSection() {
             images: Array.from(prev.images).filter((_, i) => i !== index)
         }));
         setImagePreviews(prev => prev.filter((_, i) => i !== index));
+    };
+
+    const getProductCategories = (product) => {
+        // Handle both legacy single category and new multiple categories format
+        if (Array.isArray(product.categories)) {
+            return product.categories;
+        } else {
+            return [product.category].filter(Boolean);
+        }
     };
 
     return (
@@ -376,17 +421,18 @@ function ProductsSection() {
                         </div>
 
                         <div className="col-span-2 sm:col-span-1">
-                            <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
+                            <label htmlFor="categories" className="block text-sm font-medium text-gray-700">Categories</label>
                             <div className="mt-1 flex rounded-md shadow-sm">
                                 <select
-                                    id="category"
-                                    name="category"
-                                    value={formData.category}
-                                    onChange={handleInputChange}
+                                    id="categories"
+                                    name="categories"
+                                    multiple
+                                    value={formData.categories}
+                                    onChange={handleCategoryChange}
                                     className="block w-full rounded-l-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     required
+                                    size={4}
                                 >
-                                    <option value="">Select category...</option>
                                     {categories.map(category => (
                                         <option key={category} value={category}>
                                             {category}
@@ -403,6 +449,7 @@ function ProductsSection() {
                                     </svg>
                                 </button>
                             </div>
+                            <p className="mt-1 text-xs text-gray-500">Hold Ctrl/Cmd to select multiple categories</p>
                         </div>
 
                         <div className="col-span-2 sm:col-span-1">
@@ -526,7 +573,7 @@ function ProductsSection() {
                                         Product
                                     </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Category
+                                        Categories
                                     </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Price
@@ -562,10 +609,17 @@ function ProductsSection() {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                {product.category}
-                                            </span>
+                                        <td className="px-6 py-4">
+                                            <div className="flex flex-wrap gap-1">
+                                                {getProductCategories(product).map(category => (
+                                                    <span 
+                                                        key={category} 
+                                                        className="px-2 py-1 inline-flex text-xs leading-4 font-semibold rounded-full bg-green-100 text-green-800"
+                                                    >
+                                                        {category}
+                                                    </span>
+                                                ))}
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm text-gray-900">${product.price.toFixed(2)}</div>
