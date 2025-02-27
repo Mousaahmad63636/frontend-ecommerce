@@ -21,6 +21,7 @@ function ProductsSection() {
         name: '',
         description: '',
         price: '',
+        category: '',
         categories: [],
         images: []
     });
@@ -68,7 +69,7 @@ function ProductsSection() {
 
         if (filterCategory !== 'all') {
             result = result.filter(product => {
-                // Handle both legacy single category and new multiple categories format
+                // Check both category and categories array
                 if (Array.isArray(product.categories)) {
                     return product.categories.includes(filterCategory);
                 } else {
@@ -87,7 +88,6 @@ function ProductsSection() {
                     comparison = parseFloat(a.price) - parseFloat(b.price);
                     break;
                 case 'category':
-                    // Sort by first category for multiple categories
                     const aCategory = Array.isArray(a.categories) && a.categories.length > 0 
                         ? a.categories[0] 
                         : a.category || '';
@@ -138,13 +138,14 @@ function ProductsSection() {
     };
 
     const handleCategoryChange = (e) => {
-        const { value } = e.target;
         const { selectedOptions } = e.target;
         const selectedValues = Array.from(selectedOptions).map(option => option.value);
         
         setFormData(prev => ({
             ...prev,
-            categories: selectedValues
+            categories: selectedValues,
+            // Set the first selected category as the primary category for backward compatibility
+            category: selectedValues.length > 0 ? selectedValues[0] : ''
         }));
     };
 
@@ -183,7 +184,10 @@ function ProductsSection() {
             formDataToSend.append('description', formData.description);
             formDataToSend.append('price', formData.price);
             
-            // Append categories as JSON string to handle multiple categories
+            // Send the primary category for backward compatibility
+            formDataToSend.append('category', formData.category);
+            
+            // Also send the categories array for future use
             formDataToSend.append('categories', JSON.stringify(formData.categories));
             
             if (formData.images && formData.images.length > 0) {
@@ -232,9 +236,8 @@ function ProductsSection() {
             description: product.description,
             price: product.price,
             // Handle both legacy single category and new multiple categories format
-            categories: Array.isArray(product.categories) 
-                ? product.categories 
-                : product.category ? [product.category] : [],
+            category: product.category || (Array.isArray(product.categories) && product.categories.length > 0 ? product.categories[0] : ''),
+            categories: Array.isArray(product.categories) ? product.categories : product.category ? [product.category] : [],
             images: [],
             keepExisting: true
         });
@@ -259,6 +262,7 @@ function ProductsSection() {
             name: '',
             description: '',
             price: '',
+            category: '',
             categories: [],
             images: []
         });
@@ -275,10 +279,12 @@ function ProductsSection() {
 
     const getProductCategories = (product) => {
         // Handle both legacy single category and new multiple categories format
-        if (Array.isArray(product.categories)) {
+        if (Array.isArray(product.categories) && product.categories.length > 0) {
             return product.categories;
+        } else if (product.category) {
+            return [product.category];
         } else {
-            return [product.category].filter(Boolean);
+            return [];
         }
     };
 
@@ -449,7 +455,7 @@ function ProductsSection() {
                                     </svg>
                                 </button>
                             </div>
-                            <p className="mt-1 text-xs text-gray-500">Hold Ctrl/Cmd to select multiple categories</p>
+                            <p className="mt-1 text-xs text-gray-500">Hold Ctrl/Cmd to select multiple categories. First selected category will be primary.</p>
                         </div>
 
                         <div className="col-span-2 sm:col-span-1">
