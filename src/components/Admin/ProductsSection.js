@@ -23,7 +23,9 @@ function ProductsSection() {
         price: '',
         category: '',
         categories: [],
-        images: []
+        images: [],
+        rating: 4,
+        reviewCount: 0
     });
 
     useEffect(() => {
@@ -96,6 +98,9 @@ function ProductsSection() {
                         : b.category || '';
                     comparison = aCategory.localeCompare(bCategory);
                     break;
+                case 'rating':
+                    comparison = a.rating - b.rating;
+                    break;
                 case 'date':
                 default:
                     comparison = new Date(b.createdAt) - new Date(a.createdAt);
@@ -129,6 +134,12 @@ function ProductsSection() {
 
             const previewUrls = fileArray.map(file => URL.createObjectURL(file));
             setImagePreviews(previewUrls);
+        } else if (type === 'number') {
+            // Handle numeric inputs (including rating and reviewCount)
+            setFormData(prev => ({
+                ...prev,
+                [name]: parseFloat(value)
+            }));
         } else {
             setFormData(prev => ({
                 ...prev,
@@ -216,13 +227,16 @@ function ProductsSection() {
             formDataToSend.append('description', formData.description);
             formDataToSend.append('price', formData.price);
             
+            // Add rating fields
+            formDataToSend.append('rating', formData.rating);
+            formDataToSend.append('reviewCount', formData.reviewCount);
+            
             // Send the primary category for backward compatibility
             // Use the first category as the main category if none is set
             const primaryCategory = formData.category || (formData.categories.length > 0 ? formData.categories[0] : '');
             formDataToSend.append('category', primaryCategory);
             
             // Stringify the categories array properly
-            console.log('Categories before stringify:', formData.categories);
             formDataToSend.append('categories', JSON.stringify(formData.categories));
             
             if (formData.images && formData.images.length > 0) {
@@ -234,11 +248,9 @@ function ProductsSection() {
             if (editingId) {
                 formDataToSend.append('keepExisting', formData.keepExisting);
                 const response = await api.updateProduct(editingId, formDataToSend);
-                console.log('Update response:', response);
                 showNotification('Product updated successfully', 'success');
             } else {
                 const response = await api.addProduct(formDataToSend);
-                console.log('Add response:', response);
                 showNotification('Product added successfully', 'success');
             }
     
@@ -252,6 +264,7 @@ function ProductsSection() {
             setLoading(false);
         }
     };
+
     const handleToggleSoldOut = async (productId, currentSoldOutStatus) => {
         try {
             await api.toggleProductSoldOut(productId, !currentSoldOutStatus);
@@ -267,12 +280,7 @@ function ProductsSection() {
     };
 
     const handleEdit = (product) => {
-        console.log('Editing product:', product); // Debug log
         setEditingId(product._id);
-        
-        // Check what categories data we have
-        console.log('Categories from product:', product.categories);
-        console.log('Single category:', product.category);
         
         // Ensure we properly handle both formats
         let categoryArray = [];
@@ -282,8 +290,6 @@ function ProductsSection() {
             categoryArray = [product.category];
         }
         
-        console.log('Final categories array for form:', categoryArray);
-        
         setFormData({
             name: product.name,
             description: product.description,
@@ -291,10 +297,13 @@ function ProductsSection() {
             category: product.category || (categoryArray.length > 0 ? categoryArray[0] : ''),
             categories: categoryArray,
             images: [],
-            keepExisting: true
+            keepExisting: true,
+            rating: product.rating || 4,
+            reviewCount: product.reviewCount || 0
         });
         setImagePreviews((product.images || []).map(getImageUrl));
     };
+
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this product?')) {
             try {
@@ -315,7 +324,9 @@ function ProductsSection() {
             price: '',
             category: '',
             categories: [],
-            images: []
+            images: [],
+            rating: 4,
+            reviewCount: 0
         });
         setImagePreviews([]);
     };
@@ -337,6 +348,19 @@ function ProductsSection() {
         } else {
             return [];
         }
+    };
+
+    // Function to render stars for rating display
+    const renderStars = (rating) => {
+        return (
+            <div className="flex">
+                {[1, 2, 3, 4, 5].map((star) => (
+                    <span key={star} className={`text-${star <= rating ? 'yellow-500' : 'gray-300'}`}>
+                        ★
+                    </span>
+                ))}
+            </div>
+        );
     };
 
     return (
@@ -396,6 +420,7 @@ function ProductsSection() {
                                 <option value="date">Date Created</option>
                                 <option value="name">Name</option>
                                 <option value="price">Price</option>
+                                <option value="rating">Rating</option>
                                 <option value="category">Category</option>
                             </select>
                             <button
@@ -477,7 +502,50 @@ function ProductsSection() {
                             ></textarea>
                         </div>
 
-                        {/* Updated Categories Section - Using Chips/Tags */}
+                        {/* Rating Fields */}
+                        <div className="col-span-1">
+                            <label htmlFor="rating" className="block text-sm font-medium text-gray-700">Star Rating (1-5)</label>
+                            <div className="mt-1 flex items-center">
+                                <input
+                                    type="number"
+                                    id="rating"
+                                    name="rating"
+                                    min="1"
+                                    max="5"
+                                    step="0.1"
+                                    value={formData.rating}
+                                    onChange={handleInputChange}
+                                    className="block w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm mr-3"
+                                />
+                                <div className="flex">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <span 
+                                            key={star} 
+                                            className="text-xl cursor-pointer"
+                                            style={{ color: star <= formData.rating ? '#FFD700' : '#D3D3D3' }}
+                                            onClick={() => setFormData(prev => ({ ...prev, rating: star }))}
+                                        >
+                                            ★
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="col-span-1">
+                            <label htmlFor="reviewCount" className="block text-sm font-medium text-gray-700">Number of Reviews</label>
+                            <input
+                                type="number"
+                                id="reviewCount"
+                                name="reviewCount"
+                                min="0"
+                                value={formData.reviewCount}
+                                onChange={handleInputChange}
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            />
+                        </div>
+
+                        {/* Categories Section - Using Chips/Tags */}
                         <div className="col-span-2">
                             <label htmlFor="categories" className="block text-sm font-medium text-gray-700 mb-2">Categories</label>
                             
@@ -676,6 +744,9 @@ function ProductsSection() {
                                         Price
                                     </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Rating
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Status
                                     </th>
                                     <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -723,6 +794,21 @@ function ProductsSection() {
                                             {product.originalPrice && (
                                                 <div className="text-xs text-gray-500 line-through">${product.originalPrice.toFixed(2)}</div>
                                             )}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center">
+                                                <div className="flex mr-2">
+                                                    {[1, 2, 3, 4, 5].map((star) => (
+                                                        <span 
+                                                            key={star} 
+                                                            style={{ color: star <= (product.rating || 4) ? '#FFD700' : '#D3D3D3' }}
+                                                        >
+                                                            ★
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                                <span className="text-xs text-gray-500">({product.reviewCount || 0})</span>
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${product.soldOut ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>

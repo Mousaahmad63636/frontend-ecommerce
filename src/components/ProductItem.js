@@ -112,7 +112,7 @@ function ProductItem({ product }) {
           )}
         </div>
         
-        {/* Star Rating */}
+        {/* Star Rating - Now using dynamic rating from product */}
         <div className="flex items-center mb-2">
           {[1, 2, 3, 4, 5].map((star) => (
             <i 
@@ -121,7 +121,7 @@ function ProductItem({ product }) {
             ></i>
           ))}
           <span className="ml-1 text-xs text-gray-500">
-            ({product.reviews || Math.floor(Math.random() * 100) + 10})
+            ({product.reviewCount || 0})
           </span>
         </div>
         
