@@ -112,17 +112,34 @@ const api = {
     getProductById: (id) => axiosInstance.get(`/products/${id}`).then(res => res.data),
     getBestSelling: () => axiosInstance.get('/products/best-selling').then(res => res.data),
     
-    addProduct: (formData) => 
-        axiosInstance.post('/products/add', formData, {
+    addProduct: (formData) => {
+        // Log form data for debugging
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+        
+        return axiosInstance.post('/products/add', formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
-        }).then(res => res.data),
+        }).then(res => res.data);
+    },
 
-    updateProduct: (id, formData) => 
-        axiosInstance.put(`/products/${id}`, formData, {
+    updateProduct: (id, formData) => {
+        // Log form data for debugging
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+        
+        return axiosInstance.put(`/products/${id}`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
-        }).then(res => res.data),
+        }).then(res => res.data);
+    },
 
     deleteProduct: (id) => axiosInstance.delete(`/products/${id}`).then(res => res.data),
+    
+    // Toggle product sold out status
+    toggleProductSoldOut: (id, soldOut) => 
+        axiosInstance.put(`/products/${id}/toggle-sold-out`, { soldOut }).then(res => res.data),
+    
     // Promo Code Methods
     getPromoCodes: () => axiosInstance.get('/promo-codes').then(res => res.data),
     validatePromoCode: async (code, cartTotal) => {
@@ -182,6 +199,9 @@ const api = {
             category: discountData.category || null,
             discountEndDate: discountData.discountEndDate
         }).then(res => res.data),
+        
+    resetDiscount: (productId) => 
+        axiosInstance.post('/products/reset-discount', { productId }).then(res => res.data),
 
     // Black Friday Methods
     getBlackFridayData: async () => {

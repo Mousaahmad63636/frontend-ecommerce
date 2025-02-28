@@ -112,16 +112,16 @@ function ProductItem({ product }) {
           )}
         </div>
         
-        {/* Star Rating - Now using dynamic rating from product */}
+        {/* Star Rating - Now using dynamic rating and review count */}
         <div className="flex items-center mb-2">
           {[1, 2, 3, 4, 5].map((star) => (
             <i 
               key={star} 
-              className={`${star <= (product.rating || 4) ? 'text-yellow-400 fas' : 'text-gray-300 far'} fa-star text-xs`}
+              className={`${star <= Math.round(product.rating || 4) ? 'text-yellow-400 fas' : 'text-gray-300 far'} fa-star text-xs`}
             ></i>
           ))}
           <span className="ml-1 text-xs text-gray-500">
-            ({product.reviewCount || 0})
+            ({product.reviewCount !== undefined ? product.reviewCount : 0})
           </span>
         </div>
         
