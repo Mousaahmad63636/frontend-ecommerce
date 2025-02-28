@@ -174,12 +174,13 @@ const api = {
 
     // Discount Methods
     applyDiscount: (discountData) => 
-        axiosInstance.post('/products/discount', discountData).then(res => res.data),
-    resetDiscount: (productId = null) => 
-        axiosInstance.post('/products/reset-discount', { productId }).then(res => res.data),
-    toggleProductSoldOut: (productId, soldOut) => 
-        axiosInstance.put(`/products/${productId}/toggle-sold-out`, {
-            soldOut: Boolean(soldOut)
+        axiosInstance.post('/products/discount', {
+            type: discountData.type,
+            discountType: discountData.discountType || 'percentage', // Include discount type with default
+            value: parseFloat(discountData.value),
+            targetId: discountData.targetId || null,
+            category: discountData.category || null,
+            discountEndDate: discountData.discountEndDate
         }).then(res => res.data),
 
     // Black Friday Methods
