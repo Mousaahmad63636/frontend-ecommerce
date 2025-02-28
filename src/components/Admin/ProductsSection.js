@@ -139,15 +139,15 @@ function ProductsSection() {
 
     const handleCategoryChange = (e) => {
         const { selectedOptions } = e.target;
-        const selectedValues = Array.from(selectedOptions).map(option => option.value);
+        const selectedCategories = Array.from(selectedOptions).map(option => option.value);
         
         setFormData(prev => ({
-            ...prev,
-            categories: selectedValues,
-            // Set the first selected category as the primary category for backward compatibility
-            category: selectedValues.length > 0 ? selectedValues[0] : ''
+          ...prev,
+          categories: selectedCategories,
+          // Keep the primary category as the first selected category for backward compatibility
+          category: selectedCategories.length > 0 ? selectedCategories[0] : ''
         }));
-    };
+      };
 
     const handleAddCategory = async (e) => {
         e.preventDefault();

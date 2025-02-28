@@ -101,22 +101,35 @@ function Home() {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    let filtered = products;
+// src/pages/Home.js
+// In the useEffect where you filter products by category:
 
-    if (searchQuery) {
-      const searchLower = searchQuery.toLowerCase();
-      filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(searchLower) ||
-        product.description.toLowerCase().includes(searchLower) ||
-        product.category.toLowerCase().includes(searchLower)
-      );
-    } else if (selectedCategory !== 'all') {
-      filtered = filtered.filter(product => product.category === selectedCategory);
-    }
+useEffect(() => {
+  let filtered = products;
 
-    setFilteredProducts(filtered);
-  }, [products, searchQuery, selectedCategory]);
+  if (searchQuery) {
+    const searchLower = searchQuery.toLowerCase();
+    filtered = filtered.filter(product =>
+      product.name.toLowerCase().includes(searchLower) ||
+      product.description.toLowerCase().includes(searchLower) ||
+      (product.category && product.category.toLowerCase().includes(searchLower)) ||
+      (Array.isArray(product.categories) && product.categories.some(cat => 
+        cat.toLowerCase().includes(searchLower)
+      ))
+    );
+  } else if (selectedCategory !== 'all') {
+    filtered = filtered.filter(product => {
+      // Check both category and categories array
+      if (Array.isArray(product.categories)) {
+        return product.categories.includes(selectedCategory);
+      } else {
+        return product.category === selectedCategory;
+      }
+    });
+  }
+
+  setFilteredProducts(filtered);
+}, [products, searchQuery, selectedCategory]);
 
   if (loading) {
     return (

@@ -18,6 +18,16 @@ function ProductItem({ product }) {
   // Calculate the dollar amount saved if there's a discount
   const savedAmount = hasDiscount ? (product.originalPrice - product.price).toFixed(2) : 0;
 
+  // Helper function to get categories (handles both legacy and new format)
+  const getProductCategories = () => {
+    if (Array.isArray(product.categories) && product.categories.length > 0) {
+      return product.categories;
+    } else if (product.category) {
+      return [product.category];
+    }
+    return [];
+  };
+
   return (
     <div className="product-card bg-white rounded-xl shadow-sm overflow-hidden transition-all hover:shadow-md relative border border-gray-100">
       {/* Discount Badge - Now showing dollar amount saved */}
@@ -77,6 +87,19 @@ function ProductItem({ product }) {
         <Link to={`/product/${product._id}`} className="block">
           <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-1">{product.name}</h3>
         </Link>
+        
+        {/* Categories */}
+        <div className="flex flex-wrap gap-1 mb-2">
+          {getProductCategories().map(category => (
+            <Link 
+              key={category}
+              to={`/?category=${encodeURIComponent(category)}`}
+              className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-sm hover:bg-gray-200"
+            >
+              {category}
+            </Link>
+          ))}
+        </div>
         
         <div className="flex items-baseline mb-1.5">
           {hasDiscount ? (

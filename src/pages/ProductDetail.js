@@ -1,3 +1,4 @@
+// src/pages/ProductDetail.js
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -50,6 +51,18 @@ function ProductDetail() {
 
     fetchProduct();
   }, [id]);
+
+  // Helper function to get product categories (handles both legacy and new format)
+  const getProductCategories = () => {
+    if (!product) return [];
+    
+    if (Array.isArray(product.categories) && product.categories.length > 0) {
+      return product.categories;
+    } else if (product.category) {
+      return [product.category];
+    }
+    return [];
+  };
 
   const getQuantityOptions = (basePrice) => {
     const maxQty = 5;
@@ -300,6 +313,23 @@ function ProductDetail() {
 
           <div className="col-md-6">
             <h1 className="mb-3">{product.name}</h1>
+
+            {/* Product Categories */}
+            {getProductCategories().length > 0 && (
+              <div className="mb-3">
+                <div className="d-flex flex-wrap gap-2">
+                  {getProductCategories().map(category => (
+                    <a 
+                      key={category} 
+                      href={`/?category=${encodeURIComponent(category)}`}
+                      className="badge bg-light text-dark text-decoration-none"
+                    >
+                      {category}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {product.soldOut && (
               <div className="mb-3">
