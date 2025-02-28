@@ -137,17 +137,42 @@ function ProductsSection() {
         }
     };
 
-    const handleCategoryChange = (e) => {
-        const { selectedOptions } = e.target;
-        const selectedCategories = Array.from(selectedOptions).map(option => option.value);
+    // New function to handle adding a category to the product
+    const handleAddCategoryToProduct = (categoryToAdd) => {
+        // Check if category is already added
+        if (formData.categories.includes(categoryToAdd)) {
+            showNotification(`Category "${categoryToAdd}" is already added`, 'info');
+            return;
+        }
+
+        // Add the category
+        const updatedCategories = [...formData.categories, categoryToAdd];
         
         setFormData(prev => ({
-          ...prev,
-          categories: selectedCategories,
-          // Keep the primary category as the first selected category for backward compatibility
-          category: selectedCategories.length > 0 ? selectedCategories[0] : ''
+            ...prev,
+            categories: updatedCategories,
+            // Set the first selected category as the primary category for backward compatibility
+            category: prev.category || categoryToAdd,
         }));
-      };
+
+        showNotification(`Category "${categoryToAdd}" added to product`, 'success');
+    };
+
+    // New function to remove a category from the product
+    const handleRemoveCategoryFromProduct = (categoryToRemove) => {
+        const updatedCategories = formData.categories.filter(category => category !== categoryToRemove);
+        
+        setFormData(prev => ({
+            ...prev,
+            categories: updatedCategories,
+            // Update primary category if removed
+            category: prev.category === categoryToRemove && updatedCategories.length > 0 
+                ? updatedCategories[0] 
+                : (prev.category === categoryToRemove ? '' : prev.category),
+        }));
+
+        showNotification(`Category "${categoryToRemove}" removed from product`, 'info');
+    };
 
     const handleAddCategory = async (e) => {
         e.preventDefault();
@@ -426,39 +451,75 @@ function ProductsSection() {
                             ></textarea>
                         </div>
 
-                        <div className="col-span-2 sm:col-span-1">
-                            <label htmlFor="categories" className="block text-sm font-medium text-gray-700">Categories</label>
-                            <div className="mt-1 flex rounded-md shadow-sm">
-                                <select
-                                    id="categories"
-                                    name="categories"
-                                    multiple
-                                    value={formData.categories}
-                                    onChange={handleCategoryChange}
-                                    className="block w-full rounded-l-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    required
-                                    size={4}
-                                >
-                                    {categories.map(category => (
-                                        <option key={category} value={category}>
-                                            {category}
-                                        </option>
-                                    ))}
-                                </select>
-                                <button
-                                    type="button"
-                                    onClick={() => setShowCategoryModal(true)}
-                                    className="inline-flex items-center rounded-r-md border border-l-0 border-gray-300 bg-gray-50 px-3 text-gray-500 hover:bg-gray-100 sm:text-sm"
-                                >
-                                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                    </svg>
-                                </button>
+                        {/* Updated Categories Section - Using Chips/Tags */}
+                        <div className="col-span-2">
+                            <label htmlFor="categories" className="block text-sm font-medium text-gray-700 mb-2">Categories</label>
+                            
+                            {/* Display selected categories as chips/tags */}
+                            <div className="flex flex-wrap gap-2 mb-3">
+                                {formData.categories.length > 0 ? (
+                                    formData.categories.map(category => (
+                                        <div key={category} className="bg-indigo-100 px-3 py-1 rounded-full flex items-center gap-1">
+                                            <span className="text-indigo-800 text-sm">{category}</span>
+                                            <button 
+                                                type="button"
+                                                onClick={() => handleRemoveCategoryFromProduct(category)}
+                                                className="text-indigo-500 hover:text-indigo-700"
+                                            >
+                                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-gray-500 text-sm italic">No categories selected. Click on categories below to add them.</p>
+                                )}
                             </div>
-                            <p className="mt-1 text-xs text-gray-500">Hold Ctrl/Cmd to select multiple categories. First selected category will be primary.</p>
+                            
+                            {/* Category selection area */}
+                            <div className="border border-gray-300 rounded-md p-3">
+                                <div className="flex justify-between items-center mb-2">
+                                    <h4 className="text-sm font-medium text-gray-700">Available Categories</h4>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowCategoryModal(true)}
+                                        className="inline-flex items-center text-xs text-indigo-600 hover:text-indigo-900"
+                                    >
+                                        <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                        </svg>
+                                        Add New Category
+                                    </button>
+                                </div>
+                                
+                                <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-2">
+                                    {categories.map(category => (
+                                        <button
+                                            key={category}
+                                            type="button"
+                                            onClick={() => handleAddCategoryToProduct(category)}
+                                            className={`px-3 py-1 rounded-full text-sm ${
+                                                formData.categories.includes(category) 
+                                                ? 'bg-indigo-500 text-white cursor-not-allowed' 
+                                                : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                                            }`}
+                                            disabled={formData.categories.includes(category)}
+                                        >
+                                            {category}
+                                        </button>
+                                    ))}
+                                </div>
+                                
+                                {formData.categories.length === 0 && (
+                                    <div className="mt-2 text-red-500 text-xs">
+                                        Please select at least one category.
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
-                        <div className="col-span-2 sm:col-span-1">
+                        <div className="col-span-2">
                             <label htmlFor="images" className="block text-sm font-medium text-gray-700">Product Images (Max 5)</label>
                             <input
                                 type="file"
@@ -525,8 +586,12 @@ function ProductsSection() {
                     <div className="flex justify-start space-x-3">
                         <button
                             type="submit"
-                            disabled={loading}
-                            className={`inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${loading ? 'opacity-75 cursor-not-allowed' : ''}`}
+                            disabled={loading || formData.categories.length === 0}
+                            className={`inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white ${
+                                loading || formData.categories.length === 0 
+                                ? 'bg-gray-400 cursor-not-allowed' 
+                                : 'bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                            }`}
                         >
                             {loading ? (
                                 <>
