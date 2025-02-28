@@ -10,6 +10,7 @@ import LoginModal from '../components/Auth/LoginModal';
 import DiscountTimer from '../components/DiscountTimer';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/api';
+import RatingStars from '../components/RatingStars';
 import { getImageUrl } from '../utils/imageUtils';
 
 function ProductDetail() {
@@ -55,7 +56,7 @@ function ProductDetail() {
   // Helper function to get product categories (handles both legacy and new format)
   const getProductCategories = () => {
     if (!product) return [];
-    
+
     if (Array.isArray(product.categories) && product.categories.length > 0) {
       return product.categories;
     } else if (product.category) {
@@ -89,7 +90,7 @@ function ProductDetail() {
       subtotal: subtotal
     }, finalQuantity);
 
-   // showNotification(`${finalQuantity} ${product.name}(s) added to cart!`, 'success');
+    // showNotification(`${finalQuantity} ${product.name}(s) added to cart!`, 'success');
   };
 
   const handleBuyOnWhatsApp = () => {
@@ -170,7 +171,7 @@ function ProductDetail() {
     <>
       <Helmet>
         <title>{product.name} - Spotlylb Store</title>
-        
+
         {/* Essential OpenGraph Meta Tags */}
         <meta property="og:type" content="product" />
         <meta property="og:title" content={product.name} />
@@ -182,16 +183,16 @@ function ProductDetail() {
         {/* Product specific meta tags */}
         <meta property="product:price:amount" content={product.price} />
         <meta property="product:price:currency" content="USD" />
-        
+
         {/* Twitter Card Meta Tags */}
         <meta name="twitter:card" content="product" />
         <meta name="twitter:title" content={product.name} />
         <meta name="twitter:description" content={product.description} />
         <meta name="twitter:image" content={getImageUrl(product.images[0])} />
       </Helmet>
-    
-    
-    <div className="container mt-4">
+
+
+      <div className="container mt-4">
         <div className="mb-4">
           <button onClick={() => navigate(-1)} className="btn btn-link text-dark p-0 mb-2" style={{ fontSize: '1.25rem' }}>
             <i className="fas fa-arrow-left me-2"></i>
@@ -251,7 +252,12 @@ function ProductDetail() {
                   style={{ width: '100%', height: 'auto', maxHeight: '500px', objectFit: 'contain' }}
                   onError={(e) => {
                     e.target.src = 'https://placehold.co/500@3x.png';
-                  } } />
+                  }} />
+
+                <div className="my-4 border-t pt-4">
+                  <h3 className="text-lg font-medium mb-2">Your Feedback</h3>
+                  <RatingStars />
+                </div>
                 {product.images && product.images.length > 1 && (
                   <>
                     <button
@@ -286,7 +292,7 @@ function ProductDetail() {
                       style={{ width: '80px', height: '80px', objectFit: 'cover', cursor: 'pointer' }}
                       onError={(e) => {
                         e.target.src = 'https://placehold.co/60@3x.png';
-                      } } />
+                      }} />
                   </div>
                 ))}
               </div>
@@ -319,8 +325,8 @@ function ProductDetail() {
               <div className="mb-3">
                 <div className="d-flex flex-wrap gap-2">
                   {getProductCategories().map(category => (
-                    <a 
-                      key={category} 
+                    <a
+                      key={category}
                       href={`/?category=${encodeURIComponent(category)}`}
                       className="badge bg-light text-dark text-decoration-none"
                     >
@@ -422,7 +428,7 @@ function ProductDetail() {
                   onExpire={() => {
                     showNotification('The discount has expired', 'info');
                     window.location.reload();
-                  } } />
+                  }} />
               </div>
             )}
 
