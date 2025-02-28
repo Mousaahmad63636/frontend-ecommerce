@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { Spinner } from 'flowbite-react';
 import { getImageUrl } from '../utils/imageUtils';
 import { useAuth } from '../contexts/AuthContext';
-
+import DailyTimer from '../components/DailyTimer/DailyTimer'; 
 // Component imports
 import ProductList from '../components/ProductList';
 import ContactSection from '../components/ContactSection';
@@ -101,35 +101,32 @@ function Home() {
     fetchData();
   }, []);
 
-// src/pages/Home.js
-// In the useEffect where you filter products by category:
+  useEffect(() => {
+    let filtered = products;
 
-useEffect(() => {
-  let filtered = products;
+    if (searchQuery) {
+      const searchLower = searchQuery.toLowerCase();
+      filtered = filtered.filter(product =>
+        product.name.toLowerCase().includes(searchLower) ||
+        product.description.toLowerCase().includes(searchLower) ||
+        (product.category && product.category.toLowerCase().includes(searchLower)) ||
+        (Array.isArray(product.categories) && product.categories.some(cat => 
+          cat.toLowerCase().includes(searchLower)
+        ))
+      );
+    } else if (selectedCategory !== 'all') {
+      filtered = filtered.filter(product => {
+        // Check both category and categories array
+        if (Array.isArray(product.categories)) {
+          return product.categories.includes(selectedCategory);
+        } else {
+          return product.category === selectedCategory;
+        }
+      });
+    }
 
-  if (searchQuery) {
-    const searchLower = searchQuery.toLowerCase();
-    filtered = filtered.filter(product =>
-      product.name.toLowerCase().includes(searchLower) ||
-      product.description.toLowerCase().includes(searchLower) ||
-      (product.category && product.category.toLowerCase().includes(searchLower)) ||
-      (Array.isArray(product.categories) && product.categories.some(cat => 
-        cat.toLowerCase().includes(searchLower)
-      ))
-    );
-  } else if (selectedCategory !== 'all') {
-    filtered = filtered.filter(product => {
-      // Check both category and categories array
-      if (Array.isArray(product.categories)) {
-        return product.categories.includes(selectedCategory);
-      } else {
-        return product.category === selectedCategory;
-      }
-    });
-  }
-
-  setFilteredProducts(filtered);
-}, [products, searchQuery, selectedCategory]);
+    setFilteredProducts(filtered);
+  }, [products, searchQuery, selectedCategory]);
 
   if (loading) {
     return (
@@ -214,6 +211,9 @@ useEffect(() => {
           {/* Special Offers Section - Horizontal Scrollable Row */}
           <section className="py-10">
             <div className="container mx-auto px-0"> 
+              {/* Daily Timer added here - above the Special Offers title */}
+              <DailyTimer />
+              
               <div className="mb-2 text-center">
                 <h2 className="text-3xl font-bold">Special Offers</h2>
               </div>
