@@ -204,15 +204,25 @@ function ProductsSection() {
             setLoading(true);
             const formDataToSend = new FormData();
             
+            // Validate categories
+            if (formData.categories.length === 0) {
+                showNotification('Please select at least one category', 'error');
+                setLoading(false);
+                return;
+            }
+            
             // Append all form data
             formDataToSend.append('name', formData.name);
             formDataToSend.append('description', formData.description);
             formDataToSend.append('price', formData.price);
             
             // Send the primary category for backward compatibility
-            formDataToSend.append('category', formData.category);
+            // Use the first category as the main category if none is set
+            const primaryCategory = formData.category || (formData.categories.length > 0 ? formData.categories[0] : '');
+            formDataToSend.append('category', primaryCategory);
             
-            // Also send the categories array for future use
+            // Stringify the categories array properly
+            console.log('Categories before stringify:', formData.categories);
             formDataToSend.append('categories', JSON.stringify(formData.categories));
             
             if (formData.images && formData.images.length > 0) {
@@ -220,26 +230,28 @@ function ProductsSection() {
                     formDataToSend.append('images', image);
                 });
             }
-
+    
             if (editingId) {
                 formDataToSend.append('keepExisting', formData.keepExisting);
-                await api.updateProduct(editingId, formDataToSend);
+                const response = await api.updateProduct(editingId, formDataToSend);
+                console.log('Update response:', response);
                 showNotification('Product updated successfully', 'success');
             } else {
-                await api.addProduct(formDataToSend);
+                const response = await api.addProduct(formDataToSend);
+                console.log('Add response:', response);
                 showNotification('Product added successfully', 'success');
             }
-
+    
             clearForm();
             fetchProducts();
         } catch (error) {
+            console.error('Error saving product:', error);
             const errorMessage = error.response?.data?.message || 'Error saving product';
             showNotification(errorMessage, 'error');
         } finally {
             setLoading(false);
         }
     };
-
     const handleToggleSoldOut = async (productId, currentSoldOutStatus) => {
         try {
             await api.toggleProductSoldOut(productId, !currentSoldOutStatus);
