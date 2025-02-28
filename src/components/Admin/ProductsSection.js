@@ -255,20 +255,34 @@ function ProductsSection() {
     };
 
     const handleEdit = (product) => {
+        console.log('Editing product:', product); // Debug log
         setEditingId(product._id);
+        
+        // Check what categories data we have
+        console.log('Categories from product:', product.categories);
+        console.log('Single category:', product.category);
+        
+        // Ensure we properly handle both formats
+        let categoryArray = [];
+        if (Array.isArray(product.categories) && product.categories.length > 0) {
+            categoryArray = [...product.categories];
+        } else if (product.category) {
+            categoryArray = [product.category];
+        }
+        
+        console.log('Final categories array for form:', categoryArray);
+        
         setFormData({
             name: product.name,
             description: product.description,
             price: product.price,
-            // Handle both legacy single category and new multiple categories format
-            category: product.category || (Array.isArray(product.categories) && product.categories.length > 0 ? product.categories[0] : ''),
-            categories: Array.isArray(product.categories) ? product.categories : product.category ? [product.category] : [],
+            category: product.category || (categoryArray.length > 0 ? categoryArray[0] : ''),
+            categories: categoryArray,
             images: [],
             keepExisting: true
         });
         setImagePreviews((product.images || []).map(getImageUrl));
     };
-
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this product?')) {
             try {
