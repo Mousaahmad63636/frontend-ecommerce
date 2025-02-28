@@ -16,6 +16,7 @@ const CategoryModal = () => (
                         <div className="mb-3">
                             <label className="form-label">Category Name</label>
                             <input
+                            
                                 type="text"
                                 className="form-control"
                                 value={newCategory}
