@@ -22,7 +22,16 @@ function CategoryManager() {
       setLoading(true);
       setError(null);
       
+      console.log('Requesting categories from API...');
       const fetchedCategories = await api.getCategories();
+      
+      // Validate response format
+      if (!Array.isArray(fetchedCategories)) {
+        console.error('Invalid response format:', fetchedCategories);
+        throw new Error('Invalid response format: categories must be an array');
+      }
+      
+      console.log(`Received ${fetchedCategories.length} categories from API`);
       setCategories(fetchedCategories);
       
       // Get products count for each category
@@ -39,10 +48,9 @@ function CategoryManager() {
       });
       
       setProductsCountByCategory(countMap);
-      console.log('Received categories:', categories); // Add this line
     } catch (err) {
       console.error('Error fetching categories:', err);
-      setError('Failed to load categories');
+      setError('Failed to load categories: ' + (err.message || 'Unknown error'));
       showNotification('Failed to load categories', 'error');
     } finally {
       setLoading(false);
