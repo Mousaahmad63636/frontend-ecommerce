@@ -266,7 +266,59 @@ mergeCategories: (sourceCategory, targetCategory) =>
             headers: { 'Content-Type': 'multipart/form-data' }
         }).then(res => res.data);
     },
-
+// Category Management Methods
+getCategories: async () => {
+    try {
+      const response = await axiosInstance.get('/categories');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      throw error;
+    }
+  },
+  
+  createCategory: async (name) => {
+    try {
+      const response = await axiosInstance.post('/categories', { name });
+      return response.data;
+    } catch (error) {
+      console.error('Error creating category:', error);
+      throw error;
+    }
+  },
+  
+  updateCategory: async (oldName, newName) => {
+    try {
+      const response = await axiosInstance.put(`/categories/${encodeURIComponent(oldName)}`, { newName });
+      return response.data;
+    } catch (error) {
+      console.error('Error updating category:', error);
+      throw error;
+    }
+  },
+  
+  deleteCategory: async (name) => {
+    try {
+      const response = await axiosInstance.delete(`/categories/${encodeURIComponent(name)}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      throw error;
+    }
+  },
+  
+  mergeCategories: async (sourceCategory, targetCategory) => {
+    try {
+      const response = await axiosInstance.post('/categories/merge', { 
+        sourceCategory, 
+        targetCategory 
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error merging categories:', error);
+      throw error;
+    }
+  },
     // User Preferences Methods
     updateUserPreferences: (preferences) => 
         axiosInstance.put('/users/preferences', preferences).then(res => res.data),
