@@ -111,7 +111,22 @@ const api = {
     getProducts: () => axiosInstance.get('/products').then(res => res.data),
     getProductById: (id) => axiosInstance.get(`/products/${id}`).then(res => res.data),
     getBestSelling: () => axiosInstance.get('/products/best-selling').then(res => res.data),
-    
+    getCategories: () => axiosInstance.get('/products/categories').then(res => res.data),
+
+createCategory: (categoryName) => 
+  axiosInstance.post('/products/categories', { name: categoryName }).then(res => res.data),
+
+updateCategory: (oldName, newName) => 
+  axiosInstance.put('/products/categories', { oldName, newName }).then(res => res.data),
+
+deleteCategory: (categoryName) => 
+  axiosInstance.delete(`/products/categories/${encodeURIComponent(categoryName)}`).then(res => res.data),
+
+mergeCategories: (sourceCategory, targetCategory) => 
+  axiosInstance.post('/products/categories/merge', { 
+    sourceCategory, 
+    targetCategory 
+  }).then(res => res.data),
     addProduct: (formData) => {
         // Log form data for debugging
         for (let [key, value] of formData.entries()) {

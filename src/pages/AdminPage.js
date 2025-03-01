@@ -8,7 +8,7 @@ import OrderManagement from '../components/OrderManagement';
 import SettingsSection from '../components/Admin/SettingsSection'; // Add this import
 import HeroSection from '../components/Admin/HeroSection';
 import { useNotification } from '../components/Notification/NotificationProvider';
-
+import CategoryManager from '../components/Admin/CategoryManager';
 
 function AdminPage() {
     const [activeTab, setActiveTab] = useState('products');
@@ -16,6 +16,7 @@ function AdminPage() {
 
     const tabs = [
         { id: 'products', name: 'Products', icon: 'fa-box' },
+        { id: 'categories', name: 'Categories', icon: 'fa-tags' }, // Add this new tab
         { id: 'discounts', name: 'Discounts', icon: 'fa-percent' },
         { id: 'promoCodes', name: 'Promo Codes', icon: 'fa-tags' },
         { id: 'orders', name: 'Orders', icon: 'fa-shopping-cart' },
@@ -28,6 +29,8 @@ function AdminPage() {
         switch (activeTab) {
             case 'products':
                 return <ProductsSection />;
+            case 'categories': // Add this case
+                return <CategoryManager />;
             case 'discounts':
                 return <DiscountsSection />;
             case 'promoCodes':
@@ -44,13 +47,12 @@ function AdminPage() {
                 return <ProductsSection />;
         }
     };
-
     return (
         <div className="container-fluid" style={{ paddingTop: '80px' }}>
             <div className="row">
                 {/* Fixed Sidebar */}
-                <div className="col-md-2 position-fixed start-0 h-100 bg-light border-end" 
-                     style={{ width: '250px', top: '80px', overflowY: 'auto' }}>
+                <div className="col-md-2 position-fixed start-0 h-100 bg-light border-end"
+                    style={{ width: '250px', top: '80px', overflowY: 'auto' }}>
                     <div className="list-group list-group-flush">
                         {tabs.map(tab => (
                             <button
