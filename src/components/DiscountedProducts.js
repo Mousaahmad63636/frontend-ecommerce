@@ -1,7 +1,8 @@
+// src/components/DiscountedProducts.js
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useNotification } from './Notification/NotificationProvider';
-import api from './../api/api';
+import api from '../api/api';
 import ProductList from './ProductList';
 
 const DiscountedProducts = () => {
@@ -19,17 +20,34 @@ const DiscountedProducts = () => {
         setLoading(true);
         setError(null);
         const response = await api.getProducts();
+        
         // Filter products with active discounts
         const discountedProducts = response.filter(product => 
           product.discountPercentage > 0 && 
           product.discountEndDate && 
           new Date(product.discountEndDate) > new Date()
         );
+        
         setProducts(discountedProducts);
         
-        // Extract unique categories from discounted products
-        const uniqueCategories = [...new Set(discountedProducts.map(product => product.category))];
-        setCategories(uniqueCategories);
+        // Extract all unique categories from discounted products
+        const allCategories = new Set();
+        
+        discountedProducts.forEach(product => {
+          // Add primary category
+          if (product.category) {
+            allCategories.add(product.category);
+          }
+          
+          // Add secondary categories from the categories array
+          if (Array.isArray(product.categories)) {
+            product.categories.forEach(category => {
+              if (category) allCategories.add(category);
+            });
+          }
+        });
+        
+        setCategories([...allCategories].sort());
         
         // Set initial filtered products
         setFilteredProducts(discountedProducts);
@@ -49,7 +67,20 @@ const DiscountedProducts = () => {
     if (selectedCategory === 'all') {
       setFilteredProducts(products);
     } else {
-      const filtered = products.filter(product => product.category === selectedCategory);
+      const filtered = products.filter(product => {
+        // Check primary category
+        if (product.category === selectedCategory) {
+          return true;
+        }
+        
+        // Check categories array for secondary categories
+        if (Array.isArray(product.categories) && product.categories.includes(selectedCategory)) {
+          return true;
+        }
+        
+        return false;
+      });
+      
       setFilteredProducts(filtered);
     }
   }, [selectedCategory, products]);
@@ -78,6 +109,8 @@ const DiscountedProducts = () => {
 
   return (
     <div className="container my-4">
+      <h2 className="text-center mb-4">Special Offers</h2>
+      
       {/* Category Filter */}
       <div className="row mb-4">
         <div className="col-md-6 mx-auto">
@@ -105,7 +138,11 @@ const DiscountedProducts = () => {
 
       {/* Display filtered products or message if none found */}
       {filteredProducts.length > 0 ? (
-        <ProductList products={filteredProducts} />
+        <ProductList 
+          products={filteredProducts} 
+          title=""
+          scrollable={true}
+        />
       ) : (
         <div className="text-center py-5">
           <p className="text-muted">

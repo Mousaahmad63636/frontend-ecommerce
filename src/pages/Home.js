@@ -1,308 +1,269 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { Spinner } from 'flowbite-react';
-import { getImageUrl } from '../utils/imageUtils';
-import { useAuth } from '../contexts/AuthContext';
-import DailyTimer from '../components/DailyTimer/DailyTimer'; 
-// Component imports
-import ProductList from '../components/ProductList';
-import ContactSection from '../components/ContactSection';
-import BlackFridayBanner from '../components/BlackFridayBanner/BlackFridayBanner';
+// src/pages/Home.js
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import api from '../api/api';
+import ProductList from '../components/ProductList';
+import { useScrollPosition } from '../hooks/useScrollPosition';
+import BestSelling from '../components/BestSelling';
+import DiscountedProducts from '../components/DiscountedProducts';
+import ContactSection from '../components/ContactSection';
+import DailyTimer from '../components/DailyTimer/DailyTimer';
+import './Home.css';
+import TimerDisplay from '../components/Admin/TimerDisplay';
+import { getImageUrl } from '../utils/imageUtils';
 
 function Home() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [blackFridayData, setBlackFridayData] = useState(null);
-  const [searchParams] = useSearchParams();
-  const { user } = useAuth();
-  const searchQuery = searchParams.get('q');
-  const [headerHeight, setHeaderHeight] = useState(0);
-  const heroRef = useRef(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [heroSettings, setHeroSettings] = useState({
     type: 'image',
     mediaUrl: '/hero.jpg',
-    title: 'Just Trendy - Where Trends Meet Need!',
-    subtitle: 'Discover Amazing Products at Great Prices'
+    title: 'Welcome to Our Store',
+    subtitle: 'Discover amazing products at great prices'
   });
+  
+  const scrollPosition = useScrollPosition();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  // Calculate header height on mount and when window resizes (not on scroll)
+  // Parse query parameters
   useEffect(() => {
-    const updateHeaderHeight = () => {
-      const header = document.querySelector('header')?.parentElement;
-      if (header) {
-        const height = header.offsetHeight;
-        setHeaderHeight(height);
-      }
-    };
+    const params = new URLSearchParams(location.search);
+    const categoryParam = params.get('category');
+    const searchParam = params.get('q');
+    
+    if (categoryParam) {
+      setSelectedCategory(categoryParam);
+    }
+    
+    if (searchParam) {
+      setSearchQuery(searchParam);
+    }
+  }, [location.search]);
 
-    // Initial calculation
-    updateHeaderHeight();
-
-    // Update only on resize, not on scroll
-    window.addEventListener('resize', updateHeaderHeight);
-
-    return () => {
-      window.removeEventListener('resize', updateHeaderHeight);
-    };
-  }, []);
-
-  useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const response = await api.getSettings();
-        if (response?.heroSection) {
-          setHeroSettings(response.heroSection);
-        }
-      } catch (error) {
-        console.error('Error fetching hero settings:', error);
-      }
-    };
-
-    fetchSettings();
-  }, []);
-
+  // Fetch products and settings
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        
+        // Fetch products
         const productsData = await api.getProducts();
         setProducts(productsData);
-
-        const uniqueCategories = [...new Set(productsData.map(product => product.category))];
-        setCategories(uniqueCategories);
-
-        if (api.getBlackFridayData) {
-          try {
-            const blackFridayResponse = await api.getBlackFridayData();
-            if (blackFridayResponse?.isActive) {
-              setBlackFridayData({
-                discount: blackFridayResponse.discountPercentage,
-                endDate: blackFridayResponse.endDate
-              });
-            }
-          } catch (blackFridayError) {
-            console.log('Black Friday data not available');
+        
+        // Extract ALL categories (primary and secondary) from products
+        const allCategories = new Set();
+        
+        productsData.forEach(product => {
+          // Add primary category
+          if (product.category) {
+            allCategories.add(product.category);
           }
+          
+          // Add secondary categories from the categories array
+          if (Array.isArray(product.categories)) {
+            product.categories.forEach(category => {
+              if (category) allCategories.add(category);
+            });
+          }
+        });
+        
+        setCategories([...allCategories].sort());
+        
+        // Fetch hero settings
+        const settingsData = await api.getSettings();
+        if (settingsData?.heroSection) {
+          setHeroSettings(settingsData.heroSection);
         }
       } catch (error) {
-        console.error('Error fetching products:', error);
-        setError('Failed to load products. Please try again later.');
+        console.error('Error fetching data:', error);
+        setError('Failed to load content. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
-
+    
     fetchData();
   }, []);
 
+  // Filter products based on category and search query
   useEffect(() => {
-    let filtered = products;
-
-    if (searchQuery) {
-      const searchLower = searchQuery.toLowerCase();
-      filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(searchLower) ||
-        product.description.toLowerCase().includes(searchLower) ||
-        (product.category && product.category.toLowerCase().includes(searchLower)) ||
-        (Array.isArray(product.categories) && product.categories.some(cat => 
-          cat.toLowerCase().includes(searchLower)
-        ))
-      );
-    } else if (selectedCategory !== 'all') {
-      filtered = filtered.filter(product => {
-        // Check both category and categories array
-        if (Array.isArray(product.categories)) {
-          return product.categories.includes(selectedCategory);
-        } else {
-          return product.category === selectedCategory;
+    let result = [...products];
+    
+    // Filter by category if selected
+    if (selectedCategory && selectedCategory !== 'all') {
+      result = result.filter(product => {
+        // Check primary category
+        if (product.category === selectedCategory) {
+          return true;
         }
+        
+        // Check categories array for secondary categories
+        if (Array.isArray(product.categories) && product.categories.includes(selectedCategory)) {
+          return true;
+        }
+        
+        return false;
       });
     }
+    
+    // Filter by search query if provided
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(product => 
+        product.name.toLowerCase().includes(query) || 
+        product.description.toLowerCase().includes(query)
+      );
+    }
+    
+    setFilteredProducts(result);
+  }, [products, selectedCategory, searchQuery]);
 
-    setFilteredProducts(filtered);
-  }, [products, searchQuery, selectedCategory]);
+  // Handle category change
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    
+    // Update URL with selected category
+    const params = new URLSearchParams(location.search);
+    if (category === 'all') {
+      params.delete('category');
+    } else {
+      params.set('category', category);
+    }
+    
+    // Keep search query if exists
+    if (searchQuery) {
+      params.set('q', searchQuery);
+    } else {
+      params.delete('q');
+    }
+    
+    navigate(`?${params.toString()}`);
+  };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <Spinner size="xl" />
-      </div>
-    );
-  }
+  // Handle search
+  const handleSearch = (e) => {
+    e.preventDefault();
+    
+    // Update URL with search query
+    const params = new URLSearchParams(location.search);
+    if (searchQuery) {
+      params.set('q', searchQuery);
+    } else {
+      params.delete('q');
+    }
+    
+    // Keep category if selected
+    if (selectedCategory !== 'all') {
+      params.set('category', selectedCategory);
+    }
+    
+    navigate(`?${params.toString()}`);
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Helmet>
-        <title>Trendy E-commerce Store | Discover Amazing Products</title>
-        <meta name="description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices." />
-      </Helmet>
-
-      {/* Hero Section - Fixed positioning based on initial header height */}
-      <section 
-        ref={heroRef} 
-        className="w-full" 
-        style={{ marginTop: `${headerHeight}px` }}
-      >
-        <div className="w-full overflow-hidden">
-          <div className="relative">
-            {heroSettings.type === 'image' ? (
-              <img
-                src={getImageUrl(heroSettings.mediaUrl)}
-                alt="Hero banner"
-                className="w-full h-auto"
-              />
-            ) : (
-              <video
-                src={getImageUrl(heroSettings.mediaUrl)}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-auto"
-              />
-            )}
-
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+    <div className="home-page">
+      {/* Hero Section */}
+      <div className="hero-section position-relative">
+        {heroSettings.type === 'image' ? (
+          <div 
+            className="hero-image"
+            style={{ 
+              backgroundImage: `url(${getImageUrl(heroSettings.mediaUrl)})`,
+              height: '500px',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              position: 'relative'
+            }}
+          >
+            <div className="hero-content position-absolute top-50 start-50 translate-middle text-center text-white p-4">
+              <h1 className="display-4 fw-bold">{heroSettings.title}</h1>
+              <p className="lead">{heroSettings.subtitle}</p>
+              <TimerDisplay />
+            </div>
           </div>
-        </div>
-      </section>
+        ) : (
+          <div className="hero-video-container">
+            <video 
+              src={getImageUrl(heroSettings.mediaUrl)} 
+              autoPlay 
+              muted 
+              loop 
+              className="hero-video"
+            />
+            <div className="hero-content position-absolute top-50 start-50 translate-middle text-center text-white p-4">
+              <h1 className="display-4 fw-bold">{heroSettings.title}</h1>
+              <p className="lead">{heroSettings.subtitle}</p>
+              <TimerDisplay />
+            </div>
+          </div>
+        )}
+      </div>
 
-      {/* Admin Panel Section */}
-      {user && user.role === 'admin' && (
-        <section className="py-8 bg-gray-100">
-          <div className="container mx-auto px-0">
-            <div className="bg-white rounded-lg shadow-md p-6 text-center mx-4">
-              <h3 className="text-2xl font-bold mb-4">Admin Panel</h3>
-              <p className="mb-4">Manage your store, products, and orders</p>
-              <Link
-                to="/admin"
-                className="bg-primary-600 text-white px-6 py-2 rounded-full hover:bg-primary-700 transition-all duration-300"
+      <div className="container py-5">
+        {/* Category and Search Filters */}
+        <div className="row mb-4">
+          <div className="col-md-6">
+            <div className="d-flex align-items-center mb-3">
+              <label className="me-2 fw-bold">Filter by Category:</label>
+              <select 
+                className="form-select" 
+                value={selectedCategory} 
+                onChange={(e) => handleCategoryChange(e.target.value)}
               >
-                Go to Admin Dashboard
-              </Link>
+                <option value="all">All Categories</option>
+                {categories.map(category => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
-        </section>
-      )}
-
-      {/* Black Friday Banner */}
-      {blackFridayData && (
-        <div className="bg-black text-white py-3">
-          <div className="container mx-auto px-0">
-            <div className="mx-4">
-              <BlackFridayBanner
-                endDate={blackFridayData.endDate}
-                discount={blackFridayData.discount}
+          <div className="col-md-6">
+            <form onSubmit={handleSearch} className="d-flex">
+              <input 
+                type="text" 
+                className="form-control me-2" 
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
-            </div>
+              <button type="submit" className="btn btn-primary">Search</button>
+            </form>
           </div>
         </div>
-      )}
 
-      {!searchQuery && (
-        <>
-          {/* Special Offers Section - Horizontal Scrollable Row */}
-          <section className="py-10">
-            <div className="container mx-auto px-0"> 
-              {/* Daily Timer added here - above the Special Offers title */}
-              <DailyTimer />
-              
-              <div className="mb-2 text-center">
-                <h2 className="text-3xl font-bold">Special Offers</h2>
-              </div>
-              <div>
-                {products.filter(p => p.discountPercentage > 0).length > 0 && (
-                  <ProductList 
-                    title=" " 
-                    products={products.filter(p => p.discountPercentage > 0)} 
-                    scrollable={true}
-                  />
-                )}
-              </div>
-            </div>
-          </section>
+        {/* Daily Timer */}
+        <DailyTimer />
 
-          {/* All Products Section - Grid Layout */}
-          <section className="py-10">
-            <div className="container mx-auto px-4">
-              <div className="mb-6 text-center">
-                <h2 className="text-3xl font-bold">All Products</h2>
-              </div>
-              
-              {/* Category Filter */}
-              <div className="max-w-md mx-auto mb-8">
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-                >
-                  <option value="all">All Categories</option>
-                  {categories.map(category => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              
-              {/* Products Grid - Mobile: 1 per row, Tablet: 2 per row, Desktop: 4-5 per row */}
-              <ProductList 
-                products={selectedCategory === 'all' ? products : products.filter(p => p.category === selectedCategory)} 
-                scrollable={false} // Grid view for all products
-                mobileColumns={1} // 1 column for mobile view
-              />
-            </div>
-          </section>
-        </>
-      )}
+        {/* Discounted Products Section */}
+        <DiscountedProducts />
 
-      {/* Search Results Section */}
-      {searchQuery && (
-        <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-8">
-              Search Results for "{searchQuery}"
-            </h2>
+        {/* Main Product List */}
+        {error ? (
+          <div className="alert alert-danger">{error}</div>
+        ) : (
+          <ProductList 
+            title={selectedCategory === 'all' ? 'All Products' : `${selectedCategory} Products`}
+            products={filteredProducts} 
+            loading={loading}
+            scrollable={false}
+            mobileColumns={2}
+          />
+        )}
 
-            {error ? (
-              <div className="text-center py-8">
-                <div className="bg-red-50 p-6 rounded-lg">
-                  <h3 className="text-red-600 text-xl mb-2">Error</h3>
-                  <p className="text-red-700">{error}</p>
-                </div>
-              </div>
-            ) : filteredProducts.length > 0 ? (
-              <ProductList 
-                products={filteredProducts} 
-                scrollable={false} // Grid view for search results
-                mobileColumns={1} // 1 column for mobile view in search results too
-              />
-            ) : (
-              <div className="text-center py-8">
-                <div className="bg-gray-50 p-6 rounded-lg">
-                  <h3 className="text-xl mb-2">No Products Found</h3>
-                  <p className="text-gray-600">
-                    No results found for "{searchQuery}". Try a different search term or browse our categories.
-                  </p>
-                </div>
-              </div>
-            )}
+        {/* Best Selling Products */}
+        <BestSelling />
 
-            <div className="text-center mt-4 text-sm text-gray-500">
-              Showing {filteredProducts.length} products
-            </div>
-          </div>
-        </section>
-      )}
-
-      <ContactSection />
+        {/* Contact Section */}
+        <ContactSection />
+      </div>
     </div>
   );
 }
