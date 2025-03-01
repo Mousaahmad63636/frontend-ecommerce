@@ -5,7 +5,6 @@ import axios from 'axios';
 const BASE_URL = process.env.REACT_APP_API_URL;
 const UPLOAD_URL = process.env.REACT_APP_UPLOAD_URL;
 
-
 const publicRoutes = [
     '/products',
     '/products/best-selling',
@@ -14,7 +13,8 @@ const publicRoutes = [
     '/settings',
     '/timer',
     '/promo-codes/validate',
-    '/orders/guest'
+    '/orders/guest',
+    '/categories' // Added GET /categories as a public route
 ];
 
 const axiosInstance = axios.create({
@@ -26,7 +26,10 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(request => {
-    const isPublicRoute = publicRoutes.some(route => request.url.startsWith(route));
+    // Only consider it a public route if it's both in the publicRoutes list AND a GET request
+    // This allows public GET for categories but requires auth for POST/PUT/DELETE
+    const isPublicRoute = publicRoutes.some(route => request.url.startsWith(route)) && 
+                          request.method.toLowerCase() === 'get';
     
     if (!isPublicRoute) {
         const token = localStorage.getItem('token');
@@ -43,7 +46,8 @@ axiosInstance.interceptors.request.use(request => {
 axiosInstance.interceptors.response.use(
     response => response,
     error => {
-        const isPublicRoute = publicRoutes.some(route => error.config.url.startsWith(route));
+        const isPublicRoute = publicRoutes.some(route => error.config.url.startsWith(route)) && 
+                             error.config.method.toLowerCase() === 'get';
 
         if (!error.response) {
             return Promise.reject(new Error('Network error. Please check your connection.'));
@@ -111,22 +115,10 @@ const api = {
     getProducts: () => axiosInstance.get('/products').then(res => res.data),
     getProductById: (id) => axiosInstance.get(`/products/${id}`).then(res => res.data),
     getBestSelling: () => axiosInstance.get('/products/best-selling').then(res => res.data),
-    getCategories: () => axiosInstance.get('/products/categories').then(res => res.data),
-
-createCategory: (categoryName) => 
-  axiosInstance.post('/products/categories', { name: categoryName }).then(res => res.data),
-
-updateCategory: (oldName, newName) => 
-  axiosInstance.put('/products/categories', { oldName, newName }).then(res => res.data),
-
-deleteCategory: (categoryName) => 
-  axiosInstance.delete(`/products/categories/${encodeURIComponent(categoryName)}`).then(res => res.data),
-
-mergeCategories: (sourceCategory, targetCategory) => 
-  axiosInstance.post('/products/categories/merge', { 
-    sourceCategory, 
-    targetCategory 
-  }).then(res => res.data),
+    
+    // LEGACY getCategories from products endpoint - keeping for backward compatibility
+    getProductCategories: () => axiosInstance.get('/products/categories').then(res => res.data),
+    
     addProduct: (formData) => {
         // Log form data for debugging
         for (let [key, value] of formData.entries()) {
@@ -252,11 +244,10 @@ mergeCategories: (sourceCategory, targetCategory) =>
     addProductReview: (productId, reviewData) => 
         axiosInstance.post(`/products/${productId}/reviews`, reviewData).then(res => res.data),
 
-    // Search and Categories Methods
+    // Search Methods
     searchProducts: (query) => 
         axiosInstance.get(`/products/search?q=${encodeURIComponent(query)}`).then(res => res.data),
-    getCategories: () => axiosInstance.get('/products/categories').then(res => res.data),
-
+    
     // File Upload Methods
     uploadImage: (file, type = 'product') => {
         const formData = new FormData();
@@ -266,59 +257,61 @@ mergeCategories: (sourceCategory, targetCategory) =>
             headers: { 'Content-Type': 'multipart/form-data' }
         }).then(res => res.data);
     },
-// Category Management Methods
-getCategories: async () => {
-    try {
-      const response = await axiosInstance.get('/categories');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-      throw error;
-    }
-  },
-  
-  createCategory: async (name) => {
-    try {
-      const response = await axiosInstance.post('/categories', { name });
-      return response.data;
-    } catch (error) {
-      console.error('Error creating category:', error);
-      throw error;
-    }
-  },
-  
-  updateCategory: async (oldName, newName) => {
-    try {
-      const response = await axiosInstance.put(`/categories/${encodeURIComponent(oldName)}`, { newName });
-      return response.data;
-    } catch (error) {
-      console.error('Error updating category:', error);
-      throw error;
-    }
-  },
-  
-  deleteCategory: async (name) => {
-    try {
-      const response = await axiosInstance.delete(`/categories/${encodeURIComponent(name)}`);
-      return response.data;
-    } catch (error) {
-      console.error('Error deleting category:', error);
-      throw error;
-    }
-  },
-  
-  mergeCategories: async (sourceCategory, targetCategory) => {
-    try {
-      const response = await axiosInstance.post('/categories/merge', { 
-        sourceCategory, 
-        targetCategory 
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error merging categories:', error);
-      throw error;
-    }
-  },
+    
+    // Category Management Methods - NEW ENDPOINTS
+    getCategories: async () => {
+        try {
+            const response = await axiosInstance.get('/categories');
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+            throw error;
+        }
+    },
+    
+    createCategory: async (name) => {
+        try {
+            const response = await axiosInstance.post('/categories', { name });
+            return response.data;
+        } catch (error) {
+            console.error('Error creating category:', error);
+            throw error;
+        }
+    },
+    
+    updateCategory: async (oldName, newName) => {
+        try {
+            const response = await axiosInstance.put(`/categories/${encodeURIComponent(oldName)}`, { newName });
+            return response.data;
+        } catch (error) {
+            console.error('Error updating category:', error);
+            throw error;
+        }
+    },
+    
+    deleteCategory: async (name) => {
+        try {
+            const response = await axiosInstance.delete(`/categories/${encodeURIComponent(name)}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error deleting category:', error);
+            throw error;
+        }
+    },
+    
+    mergeCategories: async (sourceCategory, targetCategory) => {
+        try {
+            const response = await axiosInstance.post('/categories/merge', { 
+                sourceCategory, 
+                targetCategory 
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error merging categories:', error);
+            throw error;
+        }
+    },
+    
     // User Preferences Methods
     updateUserPreferences: (preferences) => 
         axiosInstance.put('/users/preferences', preferences).then(res => res.data),

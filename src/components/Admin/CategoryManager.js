@@ -1,7 +1,7 @@
 // src/components/Admin/CategoryManager.js
 import React, { useState, useEffect } from 'react';
 import { useNotification } from '../../components/Notification/NotificationProvider';
-import axios from 'axios';
+import api from '../../api/api'; // Use the configured API client with auth
 
 function CategoryManager() {
   const [categories, setCategories] = useState([]);
@@ -13,8 +13,6 @@ function CategoryManager() {
   const [updatedCategoryName, setUpdatedCategoryName] = useState('');
   const { showNotification } = useNotification();
 
-  const API_URL = process.env.REACT_APP_API_URL || 'https://backend-ecommerce-z7ih.onrender.com/api';
-
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -24,17 +22,17 @@ function CategoryManager() {
     setError(null);
     
     try {
-      console.log('Fetching categories from updated endpoint...');
-      const response = await axios.get(`${API_URL}/categories`);
+      console.log('Fetching categories...');
+      const response = await api.getCategories();
       
       // Check response format
-      if (!response.data || !response.data.categories) {
+      if (!response || !response.categories) {
         throw new Error('Invalid response format');
       }
       
-      setCategories(response.data.categories);
-      setCategoryCounts(response.data.categoryCounts || {});
-      console.log(`Loaded ${response.data.categories.length} categories successfully`);
+      setCategories(response.categories);
+      setCategoryCounts(response.categoryCounts || {});
+      console.log(`Loaded ${response.categories.length} categories successfully`);
     } catch (err) {
       console.error('Error fetching categories:', err);
       setError(err.message || 'Failed to load categories');
@@ -55,10 +53,7 @@ function CategoryManager() {
     setLoading(true);
     
     try {
-      const response = await axios.post(`${API_URL}/categories`, {
-        name: newCategory.trim()
-      });
-      
+      await api.createCategory(newCategory.trim());
       showNotification('Category created successfully', 'success');
       setNewCategory('');
       fetchCategories();
@@ -99,11 +94,7 @@ function CategoryManager() {
     setLoading(true);
     
     try {
-      const response = await axios.put(
-        `${API_URL}/categories/${encodeURIComponent(editingCategory)}`, 
-        { newName: updatedCategoryName.trim() }
-      );
-      
+      await api.updateCategory(editingCategory, updatedCategoryName.trim());
       showNotification('Category updated successfully', 'success');
       handleCancelEdit();
       fetchCategories();
@@ -134,10 +125,7 @@ function CategoryManager() {
     setLoading(true);
     
     try {
-      const response = await axios.delete(
-        `${API_URL}/categories/${encodeURIComponent(category)}`
-      );
-      
+      await api.deleteCategory(category);
       showNotification('Category deleted successfully', 'success');
       fetchCategories();
     } catch (err) {
@@ -176,11 +164,7 @@ function CategoryManager() {
     setLoading(true);
     
     try {
-      const response = await axios.post(`${API_URL}/categories/merge`, {
-        sourceCategory,
-        targetCategory
-      });
-      
+      await api.mergeCategories(sourceCategory, targetCategory);
       showNotification(`Successfully merged "${sourceCategory}" into "${targetCategory}"`, 'success');
       fetchCategories();
     } catch (err) {
