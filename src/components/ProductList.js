@@ -15,7 +15,7 @@ function ProductList({ title, products, loading, error, scrollable = true, mobil
       });
     }
   };
-
+  
   // Filter products by category if provided
   const filteredProducts = filterCategory && filterCategory !== 'all' 
     ? products.filter(product => {
@@ -60,7 +60,7 @@ function ProductList({ title, products, loading, error, scrollable = true, mobil
       {title && (
         <div className="flex justify-between items-center mb-4 px-2">
           <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
-          {scrollable && filteredProducts.length > 4 && (
+          {scrollable && (
             <div className="flex gap-2">
               <button onClick={() => scroll('left')} className="bg-white shadow-sm rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-50">
                 <i className="fas fa-chevron-left text-sm"></i>

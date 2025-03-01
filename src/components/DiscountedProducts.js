@@ -1,8 +1,7 @@
-// src/components/DiscountedProducts.js
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useNotification } from './Notification/NotificationProvider';
-import api from '../api/api';
+import api from './../api/api';
 import ProductList from './ProductList';
 
 const DiscountedProducts = () => {
@@ -20,17 +19,15 @@ const DiscountedProducts = () => {
         setLoading(true);
         setError(null);
         const response = await api.getProducts();
-        
         // Filter products with active discounts
         const discountedProducts = response.filter(product => 
           product.discountPercentage > 0 && 
           product.discountEndDate && 
           new Date(product.discountEndDate) > new Date()
         );
-        
         setProducts(discountedProducts);
         
-        // Extract all unique categories from discounted products
+        // Extract ALL categories (primary and secondary) from products
         const allCategories = new Set();
         
         discountedProducts.forEach(product => {
@@ -80,7 +77,6 @@ const DiscountedProducts = () => {
         
         return false;
       });
-      
       setFilteredProducts(filtered);
     }
   }, [selectedCategory, products]);
@@ -109,8 +105,6 @@ const DiscountedProducts = () => {
 
   return (
     <div className="container my-4">
-      <h2 className="text-center mb-4">Special Offers</h2>
-      
       {/* Category Filter */}
       <div className="row mb-4">
         <div className="col-md-6 mx-auto">
@@ -138,11 +132,7 @@ const DiscountedProducts = () => {
 
       {/* Display filtered products or message if none found */}
       {filteredProducts.length > 0 ? (
-        <ProductList 
-          products={filteredProducts} 
-          title=""
-          scrollable={true}
-        />
+        <ProductList products={filteredProducts} />
       ) : (
         <div className="text-center py-5">
           <p className="text-muted">
