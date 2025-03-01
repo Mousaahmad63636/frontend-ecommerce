@@ -39,6 +39,7 @@ function CategoryManager() {
       });
       
       setProductsCountByCategory(countMap);
+      console.log('Received categories:', categories); // Add this line
     } catch (err) {
       console.error('Error fetching categories:', err);
       setError('Failed to load categories');
