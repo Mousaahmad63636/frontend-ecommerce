@@ -42,6 +42,8 @@ const CheckoutPage = React.lazy(() => import('./pages/CheckoutPage'));
 const DeliveryPage = React.lazy(() => import('./pages/DeliveryPage'));
 const PaymentPage = React.lazy(() => import('./pages/PaymentPage'));
 const LoginModal = React.lazy(() => import('./components/Auth/LoginModal'));
+const ContactPage = React.lazy(() => import('./pages/ContactPage'));
+const AboutPage = React.lazy(() => import('./pages/AboutPage'));
 
 export const CheckoutStepsContext = React.createContext();
 
@@ -182,6 +184,8 @@ function AppContent() {
                   </div>
                 }
               />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/about" element={<AboutPage />} />
             </Routes>
           </Suspense>
         </main>

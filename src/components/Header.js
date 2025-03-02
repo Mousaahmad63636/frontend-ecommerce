@@ -185,11 +185,15 @@ function Header() {
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-6">
               <Link to="/" className="nav-link text-sm">Home</Link>
-              <Link to="/products" className="nav-link text-sm">Our Products</Link>
+              <Link
+                to="/?scrollToProducts=true"
+                className="nav-link text-sm"
+              >
+                Our Products
+              </Link>
               <Link to="/contact" className="nav-link text-sm">Contact</Link>
               <Link to="/about" className="nav-link text-sm">About</Link>
             </nav>
-
             {/* Right Section */}
             <div className="flex items-center space-x-3 md:space-x-4">
               {/* Desktop Search */}
@@ -334,9 +338,16 @@ function Header() {
           <div className="lg:hidden border-t mt-1">
             <nav className="container mx-auto px-4 py-2 space-y-2">
               <Link to="/" className="block text-sm text-gray-700 hover:text-purple-600 py-1">Home</Link>
-              <Link to="/products" className="block text-sm text-gray-700 hover:text-purple-600 py-1">Our Products</Link>
+              <Link
+                to="/?scrollToProducts=true"
+                className="block text-sm text-gray-700 hover:text-purple-600 py-1"
+                onClick={() => setShowMobileMenu(false)}
+              >
+                Our Products
+              </Link>
               <Link to="/contact" className="block text-sm text-gray-700 hover:text-purple-600 py-1">Contact</Link>
               <Link to="/about" className="block text-sm text-gray-700 hover:text-purple-600 py-1">About</Link>
+
               {isAuthenticated ? (
                 <>
                   <Link to="/profile" className="block text-sm text-gray-700 hover:text-purple-600 py-1">My Profile</Link>

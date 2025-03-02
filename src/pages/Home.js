@@ -10,7 +10,6 @@ import ProductList from '../components/ProductList';
 import ContactSection from '../components/ContactSection';
 import BlackFridayBanner from '../components/BlackFridayBanner/BlackFridayBanner';
 import api from '../api/api';
-
 function Home() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -24,6 +23,9 @@ function Home() {
   const searchQuery = searchParams.get('q');
   const [headerHeight, setHeaderHeight] = useState(0);
   const heroRef = useRef(null);
+  const location = useLocation();
+const productsRef = useRef(null);
+
   const [heroSettings, setHeroSettings] = useState({
     type: 'image',
     mediaUrl: '/hero.jpg',
@@ -40,7 +42,12 @@ function Home() {
         setHeaderHeight(height);
       }
     };
-
+    useEffect(() => {
+      const params = new URLSearchParams(location.search);
+      if (params.get('scrollToProducts') === 'true' && productsRef.current) {
+        productsRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, [location]);
     // Initial calculation
     updateHeaderHeight();
 
@@ -251,7 +258,7 @@ function Home() {
           </section>
 
           {/* All Products Section - Grid Layout */}
-          <section className="py-10">
+          <section ref={productsRef} className="py-10">
             <div className="container mx-auto px-4">
               <div className="mb-6 text-center">
                 <h2 className="text-3xl font-bold">All Products</h2>
