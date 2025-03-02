@@ -1,3 +1,4 @@
+// src/components/Admin/ProductsSection.js
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNotification } from '../../components/Notification/NotificationProvider';
 import api from '../../api/api';
@@ -12,7 +13,7 @@ function ProductsSection() {
     const { showNotification } = useNotification();
     const [newCategory, setNewCategory] = useState('');
     const [imagePreviews, setImagePreviews] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterCategory, setFilterCategory] = useState('all');
     const [sortField, setSortField] = useState('date');
@@ -34,19 +35,33 @@ function ProductsSection() {
         };
     }, [imagePreviews]);
 
+    // Separate function to fetch categories from the dedicated endpoint
+    const fetchCategories = async () => {
+        try {
+            setLoading(true);
+            const response = await api.getCategories();
+            if (response && response.categories) {
+                setCategories(response.categories);
+                console.log('Fetched categories:', response.categories);
+            } else {
+                console.error('Invalid categories response:', response);
+            }
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+            showNotification('Failed to load categories', 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const fetchProducts = async () => {
         try {
             setLoading(true);
             const data = await api.getProducts();
             setProducts(data);
             
-            // Extract all unique categories from all products
-            const allCategories = data.flatMap(product => 
-                Array.isArray(product.categories) ? product.categories : [product.category]
-            ).filter(Boolean);
-            
-            const uniqueCategories = [...new Set(allCategories)];
-            setCategories(uniqueCategories);
+            // Fetch categories separately using the dedicated endpoint
+            await fetchCategories();
         } catch (error) {
             showNotification('Failed to load products', 'error');
         } finally {
@@ -198,13 +213,20 @@ function ProductsSection() {
         }
 
         try {
-            const updatedCategories = [...categories, newCategory.trim()];
-            setCategories(updatedCategories);
+            setLoading(true);
+            // Call the API to create a new category
+            await api.createCategory(newCategory.trim());
+            showNotification('Category added successfully', 'success');
             setNewCategory('');
             setShowCategoryModal(false);
-            showNotification('Category added successfully', 'success');
+            
+            // Refresh the categories list
+            await fetchCategories();
         } catch (error) {
-            showNotification('Error adding category', 'error');
+            console.error('Error adding category:', error);
+            showNotification('Error adding category: ' + (error.message || 'Unknown error'), 'error');
+        } finally {
+            setLoading(false);
         }
     };
 
