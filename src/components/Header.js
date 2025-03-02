@@ -119,7 +119,7 @@ function Header() {
         </div>
       );
     }
-    
+
     // Otherwise, just show the text
     return (
       <div className="flex items-center justify-center w-full">
@@ -150,10 +150,10 @@ function Header() {
           </div>
 
           {/* Contact Text - Hidden on mobile */}
-          <div className="hidden md:block">
+          <div className="hidden md:flex items-center space-x-2">
+            <FaWhatsapp className="text-green-500 text-lg" />
             <span className="text-sm">Get in touch with us</span>
           </div>
-
           {/* Empty div for mobile layout balance */}
           <div className="md:hidden"></div>
         </div>
