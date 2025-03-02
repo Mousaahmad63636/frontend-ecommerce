@@ -114,5 +114,5 @@
   -webkit-box-orient: vertical;
 }
 body {
-  padding-top: 80px; /* Adjust this value to match your header height */
+  padding-top: 10px; /* Adjust this value to match your header height */
 }
