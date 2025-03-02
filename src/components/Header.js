@@ -100,11 +100,11 @@ function Header() {
 
   // Function to render banner text with ShopNow link
   const renderBannerText = () => {
-    // If text already contains ShopNow, handle it specially
+    // If text already contains ShopNow, just return it as is
     if (bannerText.includes('ShopNow')) {
       return (
         <div className="flex items-center justify-center w-full">
-          <span className="text-xs sm:text-sm md:text-base font-medium text-center px-1">
+          <span className="text-sm md:text-base font-medium text-center">
             {bannerText.split('ShopNow').map((part, index, array) => {
               // If this is the last part, don't add the ShopNow link
               if (index === array.length - 1) return part;
@@ -120,77 +120,45 @@ function Header() {
       );
     }
     
+    // Otherwise, just show the text
     return (
       <div className="flex items-center justify-center w-full">
-        <span className="text-xs sm:text-sm md:text-base font-medium mx-1 sm:mx-2 text-center">{bannerText}</span>
+        <span className="text-sm md:text-base font-medium text-center">{bannerText}</span>
       </div>
     );
   };
+
   return (
     <div className={`fixed top-0 left-0 right-0 z-50 ${isScrolled ? 'shadow-md' : ''}`}>
       {/* Top Banner with purple style */}
-      <div style={{ backgroundColor: '#8c52ff' }} className="text-white py-2 px-2 sm:px-4">
-        <div className="container mx-auto">
-          {/* Mobile and desktop different layouts */}
-          <div className="hidden sm:flex justify-between items-center">
-            {/* Social Media Links - desktop only */}
-            <div className="flex items-center space-x-2">
-              <a href="#" className="text-white hover:opacity-80">
-                <i className="fab fa-facebook"></i>
-              </a>
-              <a href="#" className="text-white hover:opacity-80">
-                <i className="fab fa-instagram"></i>
-              </a>
-              <span className="text-sm ml-1">Follow us!</span>
-            </div>
-  
-            {/* Banner Text - desktop */}
+      <div style={{ backgroundColor: '#8c52ff' }} className="text-white py-2 px-4">
+        <div className="container mx-auto flex justify-between items-center">
+          {/* Social Media Links - Hidden on mobile */}
+          <div className="hidden md:flex items-center space-x-2">
+            <a href="#" className="text-white hover:opacity-80">
+              <i className="fab fa-facebook"></i>
+            </a>
+            <a href="#" className="text-white hover:opacity-80">
+              <i className="fab fa-instagram"></i>
+            </a>
+            <span className="text-sm ml-1">Follow us!</span>
+          </div>
+
+          {/* Banner Text - Centered on mobile */}
+          <div className="flex-1 md:flex-none text-center">
             {renderBannerText()}
+          </div>
 
-          {/* Contact Links - desktop only */}
-          <div className="flex items-center space-x-2">
+          {/* Contact Text - Hidden on mobile */}
+          <div className="hidden md:block">
             <span className="text-sm">Get in touch with us</span>
-            <a href="tel:+1234567890" className="text-white hover:opacity-80">
-              <i className="fas fa-phone"></i>
-            </a>
-            <a href="mailto:info@example.com" className="text-white hover:opacity-80">
-              <i className="fas fa-envelope"></i>
-            </a>
           </div>
-        </div>
 
-            {/* Mobile view - simplified version */}
-            <div className="sm:hidden">
-          {/* Banner Text - mobile */}
-          <div className="flex flex-col items-center justify-center">
-            {/* Social and contact row */}
-            <div className="flex justify-between w-full mb-1">
-              <div className="flex items-center space-x-1">
-                <a href="#" className="text-white hover:opacity-80 text-xs">
-                  <i className="fab fa-facebook"></i>
-                </a>
-                <a href="#" className="text-white hover:opacity-80 text-xs">
-                  <i className="fab fa-instagram"></i>
-                </a>
-              </div>
-              <div className="flex items-center space-x-1">
-                <a href="tel:+1234567890" className="text-white hover:opacity-80 text-xs">
-                  <i className="fas fa-phone"></i>
-                </a>
-                <a href="mailto:info@example.com" className="text-white hover:opacity-80 text-xs">
-                  <i className="fas fa-envelope"></i>
-                </a>
-              </div>
-            </div>
-         {/* Banner text row */}
-         <div className="flex items-center justify-center w-full">
-              <span className="text-xs font-medium mx-1 text-center">{bannerText}</span>
-
-            </div>
-          </div>
+          {/* Empty div for mobile layout balance */}
+          <div className="md:hidden"></div>
         </div>
       </div>
-    </div>
+
       {/* Main Header */}
       <header className={`bg-white/95 backdrop-blur-sm transition-all duration-300 ${isScrolled ? 'py-2' : 'py-4'}`}>
         <div className="container mx-auto px-5">
