@@ -83,7 +83,6 @@ function ProductDetail() {
     if (!product) return;
 
     addToCart(product, quantity);
-    showNotification(`Added ${quantity} ${product.name} to cart`, 'success');
   };
 
   // Handle wishlist toggle
@@ -92,10 +91,8 @@ function ProductDetail() {
 
     if (isInWishlist(product._id)) {
       removeFromWishlist(product._id);
-      showNotification('Removed from wishlist', 'success');
     } else {
       addToWishlist(product);
-      showNotification('Added to wishlist', 'success');
     }
   };
 
