@@ -28,7 +28,7 @@ function Footer() {
             <h5 className="text-xl font-semibold mb-4">Follow Us</h5>
             <div className="flex space-x-4">
               <a 
-                href="https://instagram.com" 
+                href="https://www.instagram.com/spotlylb?igsh=Zng3NWhlc3c5ejRh&utm_source=qr" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 aria-label="Follow us on Instagram"
@@ -37,7 +37,7 @@ function Footer() {
                 <i className="fab fa-instagram text-2xl"></i>
               </a>
               <a 
-                href="https://facebook.com" 
+                href="https://www.facebook.com/profile.php?id=61570963155100&mibextid=LQQJ4d" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 aria-label="Follow us on Facebook"
@@ -46,7 +46,7 @@ function Footer() {
                 <i className="fab fa-facebook text-2xl"></i>
               </a>
               <a 
-                href="https://tiktok.com" 
+                href="https://www.tiktok.com/@spotlylb?_t=ZS-8uMGOEL8oOi&_r=1" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 aria-label="Follow us on TikTok"

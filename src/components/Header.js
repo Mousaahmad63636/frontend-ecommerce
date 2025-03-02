@@ -111,7 +111,7 @@ function Header() {
               return (
                 <React.Fragment key={index}>
                   {part}
-                  <a href="#" className="underline font-semibold hover:opacity-80">ShopNow</a>
+                  <a href="spotlylb.com" className="underline font-semibold hover:opacity-80">ShopNow</a>
                 </React.Fragment>
               );
             })}
@@ -135,11 +135,14 @@ function Header() {
         <div className="container mx-auto flex justify-between items-center">
           {/* Social Media Links - Hidden on mobile */}
           <div className="hidden md:flex items-center space-x-2">
-            <a href="#" className="text-white hover:opacity-80">
+            <a href="https://www.facebook.com/profile.php?id=61570963155100&mibextid=LQQJ4d" className="text-white hover:opacity-80">
               <i className="fab fa-facebook"></i>
             </a>
-            <a href="#" className="text-white hover:opacity-80">
+            <a href="https://www.instagram.com/spotlylb?igsh=Zng3NWhlc3c5ejRh&utm_source=qr" className="text-white hover:opacity-80">
               <i className="fab fa-instagram"></i>
+            </a>
+            <a href="https://www.tiktok.com/@spotlylb?_t=ZS-8uMGOEL8oOi&_r=1" className="text-white hover:opacity-80">
+              <i className="fab fa-tiktok"></i>
             </a>
             <span className="text-sm ml-1">Follow us!</span>
           </div>
