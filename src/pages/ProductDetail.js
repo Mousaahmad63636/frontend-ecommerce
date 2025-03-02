@@ -111,7 +111,7 @@ function ProductDetail() {
     const productUrl = window.location.href;
     // Add preview parameter to help WhatsApp recognize this is a product page
     const messageWithPreview = encodeURIComponent(
-      `Hi! I'm interested in buying ${product.name}\n\nProduct Link: ${productUrl}?preview=true`
+      `Hello! I want to buy the following product(s):\n ${product.name} \n ${product.price} \n URL: ${productUrl}?preview=true`
     );
 
     window.open(`https://wa.me/${phoneNumber}?text=${messageWithPreview}`, '_blank');
