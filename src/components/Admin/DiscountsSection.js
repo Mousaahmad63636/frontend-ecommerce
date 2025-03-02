@@ -122,17 +122,18 @@ function DiscountsSection() {
     };
 
     // Helper function to format discount display
-    const formatDiscount = (product) => {
-        if (!product.discountPercentage || product.discountPercentage <= 0) {
-            return <span className="text-muted">No discount</span>;
-        }
-        
-        if (product.discountType === 'fixed') {
-            return <span className="text-success">-${product.discountPercentage.toFixed(2)}</span>;
-        } else {
-            return <span className="text-success">{product.discountPercentage}% off</span>;
-        }
-    };
+    // In DiscountsSection.js
+const formatDiscount = (product) => {
+    if (!product.discountPercentage || product.discountPercentage <= 0) {
+        return <span className="text-muted">No discount</span>;
+    }
+    
+    if (product.discountType === 'fixed') {
+        return <span className="text-success">-${product.discountPercentage.toFixed(2)}</span>;
+    } else {
+        return <span className="text-success">{product.discountPercentage}% off</span>;
+    }
+};
 
     return (
         <div className="discounts-section">
