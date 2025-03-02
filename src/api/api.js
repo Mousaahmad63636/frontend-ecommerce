@@ -197,16 +197,15 @@ const api = {
         axiosInstance.delete(`/users/wishlist/${productId}`).then(res => res.data),
 
     // Discount Methods
- // src/api/api.js (verify this section)
-applyDiscount: (discountData) => 
-    axiosInstance.post('/products/discount', {
-        type: discountData.type,
-        discountType: discountData.discountType, // Make sure this is included
-        value: parseFloat(discountData.value),
-        targetId: discountData.targetId || null,
-        category: discountData.category || null,
-        discountEndDate: discountData.discountEndDate
-    }).then(res => res.data),
+    applyDiscount: (discountData) => 
+        axiosInstance.post('/products/discount', {
+            type: discountData.type,
+            discountType: discountData.discountType,
+            value: parseFloat(discountData.value),
+            targetId: discountData.targetId || null,
+            category: discountData.category || null,
+            discountEndDate: discountData.discountEndDate || null // Handle null value
+        }).then(res => res.data),
         
     resetDiscount: (productId) => 
         axiosInstance.post('/products/reset-discount', { productId }).then(res => res.data),

@@ -38,73 +38,74 @@ function DiscountsSection() {
         }));
     };
 
-    const handleApplyDiscount = async (type) => {
-        try {
-            if (!discountData.discountValue) {
-                showNotification('Please enter a discount value', 'error');
-                return;
-            }
+// src/components/Admin/DiscountsSection.js
+// Find the handleApplyDiscount function and modify it like this:
 
-            if (type === 'specific' && !discountData.selectedProductId) {
-                showNotification('Please select a product', 'error');
-                return;
-            }
-
-            if (type === 'category' && !discountData.category) {
-                showNotification('Please select a category', 'error');
-                return;
-            }
-
-            // Validate discount value based on type
-            const discountValue = parseFloat(discountData.discountValue);
-            
-            if (discountData.discountType === 'percentage' && (discountValue <= 0 || discountValue > 100)) {
-                showNotification('Percentage discount must be between 1 and 100', 'error');
-                return;
-            }
-            
-            if (discountData.discountType === 'fixed' && discountValue <= 0) {
-                showNotification('Fixed discount must be greater than 0', 'error');
-                return;
-            }
-
-            // Set default end date to 7 days from now if no end date is specified
-            let endDate = null;
-            if (discountData.enableTimer && discountData.endDate) {
-                endDate = new Date(discountData.endDate);
-            } else {
-                endDate = new Date();
-                endDate.setDate(endDate.getDate() + 7); // Default 7 days
-            }
-
-            // Create the discount payload
-            const discountPayload = {
-                type,
-                discountType: discountData.discountType, // Include the discount type (percentage or fixed)
-                value: discountValue,
-                targetId: type === 'specific' ? discountData.selectedProductId : null,
-                category: type === 'category' ? discountData.category : null,
-                discountEndDate: endDate.toISOString() // Always include an end date
-            };
-
-            // Call API to apply discount
-            await api.applyDiscount(discountPayload);
-            showNotification('Discount applied successfully!', 'success');
-            fetchProducts(); // Refresh the products list
-
-            // Reset the form
-            setDiscountData({
-                discountType: 'percentage',
-                discountValue: '',
-                selectedProductId: '',
-                category: '',
-                enableTimer: false,
-                endDate: ''
-            });
-        } catch (error) {
-            showNotification(error.message || 'Error applying discount', 'error');
+const handleApplyDiscount = async (type) => {
+    try {
+        if (!discountData.discountValue) {
+            showNotification('Please enter a discount value', 'error');
+            return;
         }
-    };
+
+        if (type === 'specific' && !discountData.selectedProductId) {
+            showNotification('Please select a product', 'error');
+            return;
+        }
+
+        if (type === 'category' && !discountData.category) {
+            showNotification('Please select a category', 'error');
+            return;
+        }
+
+        // Validate discount value based on type
+        const discountValue = parseFloat(discountData.discountValue);
+        
+        if (discountData.discountType === 'percentage' && (discountValue <= 0 || discountValue > 100)) {
+            showNotification('Percentage discount must be between 1 and 100', 'error');
+            return;
+        }
+        
+        if (discountData.discountType === 'fixed' && discountValue <= 0) {
+            showNotification('Fixed discount must be greater than 0', 'error');
+            return;
+        }
+
+        // Only set end date if timer is enabled
+        let endDate = null;
+        if (discountData.enableTimer && discountData.endDate) {
+            endDate = new Date(discountData.endDate);
+        }
+        // Removed the else block that was setting a default 7-day end date
+
+        // Create the discount payload
+        const discountPayload = {
+            type,
+            discountType: discountData.discountType,
+            value: discountValue,
+            targetId: type === 'specific' ? discountData.selectedProductId : null,
+            category: type === 'category' ? discountData.category : null,
+            discountEndDate: endDate ? endDate.toISOString() : null // Make this nullable
+        };
+
+        // Call API to apply discount
+        await api.applyDiscount(discountPayload);
+        showNotification('Discount applied successfully!', 'success');
+        fetchProducts(); // Refresh the products list
+
+        // Reset the form
+        setDiscountData({
+            discountType: 'percentage',
+            discountValue: '',
+            selectedProductId: '',
+            category: '',
+            enableTimer: false,
+            endDate: ''
+        });
+    } catch (error) {
+        showNotification(error.message || 'Error applying discount', 'error');
+    }
+};
 
     const handleResetDiscount = async (productId = null) => {
         try {
