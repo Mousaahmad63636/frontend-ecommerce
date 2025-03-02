@@ -46,7 +46,7 @@ function ProductDetail() {
   // Fetch similar products
   const fetchSimilarProducts = async (category) => {
     if (!category) return;
-    
+
     try {
       setLoadingSimilar(true);
       const products = await api.getProducts();
@@ -80,7 +80,7 @@ function ProductDetail() {
   // Handle add to cart
   const handleAddToCart = () => {
     if (!product) return;
-    
+
     addToCart(product, quantity);
     showNotification(`Added ${quantity} ${product.name} to cart`, 'success');
   };
@@ -88,7 +88,7 @@ function ProductDetail() {
   // Handle wishlist toggle
   const handleWishlistToggle = () => {
     if (!product) return;
-    
+
     if (isInWishlist(product._id)) {
       removeFromWishlist(product._id);
       showNotification('Removed from wishlist', 'success');
@@ -107,27 +107,27 @@ function ProductDetail() {
   // Handle WhatsApp click
   const handleWhatsAppClick = () => {
     if (!product) return;
-    
+
     const phoneNumber = '96173873187'; // Your business phone number
     const productUrl = window.location.href;
     const message = encodeURIComponent(
       `Hi! I'm interested in buying ${product.name}\n\nProduct Link: ${productUrl}`
     );
-    
+
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
   };
 
   // Navigate to next/previous image
   const navigateImage = (direction) => {
     if (!product || !product.images || product.images.length <= 1) return;
-    
+
     let newIndex;
     if (direction === 'next') {
       newIndex = (currentImageIndex + 1) % product.images.length;
     } else {
       newIndex = (currentImageIndex - 1 + product.images.length) % product.images.length;
     }
-    
+
     setCurrentImageIndex(newIndex);
   };
 
@@ -141,21 +141,21 @@ function ProductDetail() {
   // Format categories for display
   const getFormattedCategories = () => {
     if (!product) return [];
-    
+
     if (Array.isArray(product.categories) && product.categories.length > 0) {
       return product.categories;
     }
-    
+
     return product.category ? [product.category] : [];
   };
 
   // Check if product has a discount
   const hasDiscount = product && product.originalPrice && product.price < product.originalPrice;
-  
+
   // Calculate discount percentage
   const getDiscountPercentage = () => {
     if (!hasDiscount) return 0;
-    
+
     return Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
   };
 
@@ -185,16 +185,21 @@ function ProductDetail() {
       <Helmet>
         <title>{product.name} | Spotlylb</title>
         <meta name="description" content={product.description.substring(0, 160)} />
-        
-        {/* OpenGraph / Facebook */}
+
+        {/* OpenGraph / Facebook / WhatsApp */}
         <meta property="og:type" content="product" />
         <meta property="og:url" content={window.location.href} />
         <meta property="og:title" content={`${product.name} | Spotlylb`} />
         <meta property="og:description" content={product.description.substring(0, 160)} />
-        <meta property="og:image" content={product.images && product.images.length > 0 
-          ? getImageUrl(product.images[0]) 
+
+        {/* Important: Use forWhatsApp=true parameter and absolute URL */}
+        <meta property="og:image" content={product.images && product.images.length > 0
+          ? getImageUrl(product.images[0], true)
           : 'https://spotlylb.com/placeholder.jpg'} />
-        
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:site_name" content="Spotlylb" />
+
         {/* Product specific metadata */}
         <meta property="product:price:amount" content={product.price} />
         <meta property="product:price:currency" content="USD" />
@@ -234,11 +239,11 @@ function ProductDetail() {
                     {getDiscountPercentage()}% OFF
                   </div>
                 )}
-                
+
                 <div className="relative aspect-square">
                   <img
-                    src={product.images && product.images.length > 0 
-                      ? getImageUrl(product.images[currentImageIndex]) 
+                    src={product.images && product.images.length > 0
+                      ? getImageUrl(product.images[currentImageIndex])
                       : '/placeholder.jpg'}
                     alt={product.name}
                     className="w-full h-full object-contain"
@@ -247,7 +252,7 @@ function ProductDetail() {
                     }}
                   />
                 </div>
-                
+
                 {product.images && product.images.length > 1 && (
                   <div className="absolute inset-0 flex items-center justify-between px-4 pointer-events-none">
                     <button
@@ -269,18 +274,17 @@ function ProductDetail() {
                   </div>
                 )}
               </div>
-              
+
               {/* Thumbnails */}
               {product.images && product.images.length > 1 && (
                 <div className="mt-4 grid grid-cols-5 gap-2">
                   {product.images.map((image, index) => (
                     <button
                       key={index}
-                      className={`rounded-md overflow-hidden border-2 ${
-                        currentImageIndex === index 
-                          ? 'border-blue-500' 
+                      className={`rounded-md overflow-hidden border-2 ${currentImageIndex === index
+                          ? 'border-blue-500'
                           : 'border-transparent hover:border-gray-300'
-                      } transition duration-200`}
+                        } transition duration-200`}
                       onClick={() => selectImage(index)}
                     >
                       <div className="aspect-square">
@@ -298,11 +302,11 @@ function ProductDetail() {
                 </div>
               )}
             </div>
-            
+
             {/* Product Info */}
             <div className="md:w-1/2 p-6 md:border-l border-gray-100">
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
-              
+
               {/* Categories */}
               <div className="flex flex-wrap gap-2 mb-3">
                 {getFormattedCategories().map(category => (
@@ -315,15 +319,15 @@ function ProductDetail() {
                   </Link>
                 ))}
               </div>
-              
+
               {/* Product Rating */}
               <div className="flex items-center mb-4">
                 <div className="flex mr-2">
                   {[1, 2, 3, 4, 5].map(star => (
-                    <svg 
-                      key={star} 
-                      className={`w-5 h-5 ${star <= (product.rating || 4) ? 'text-yellow-400' : 'text-gray-300'}`} 
-                      fill="currentColor" 
+                    <svg
+                      key={star}
+                      className={`w-5 h-5 ${star <= (product.rating || 4) ? 'text-yellow-400' : 'text-gray-300'}`}
+                      fill="currentColor"
                       viewBox="0 0 20 20"
                     >
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -334,7 +338,7 @@ function ProductDetail() {
                   ({product.reviewCount || 0} reviews)
                 </span>
               </div>
-              
+
               {/* Price */}
               <div className="mb-6">
                 {hasDiscount ? (
@@ -355,7 +359,7 @@ function ProductDetail() {
                   </span>
                 )}
               </div>
-              
+
               {/* Discount Timer */}
               {product.discountEndDate && new Date(product.discountEndDate) > new Date() && (
                 <div className="mb-6 p-3 bg-orange-50 rounded-lg border border-orange-100">
@@ -363,24 +367,24 @@ function ProductDetail() {
                   <DiscountTimer endDate={product.discountEndDate} />
                 </div>
               )}
-              
+
               {/* Description */}
               <div className="mb-6">
                 <h5 className="font-medium text-gray-900 mb-2">Description</h5>
                 <p className="text-gray-600">{product.description}</p>
               </div>
-              
+
               {/* User Rating Section */}
               <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                 <h5 className="font-medium text-gray-900 mb-3">Your Rating</h5>
-                <RatingStars 
-                  initialRating={userRating} 
+                <RatingStars
+                  initialRating={userRating}
                   size="large"
                   onRatingChange={handleRatingChange}
                   labelText="Rate this product:"
                 />
               </div>
-              
+
               {/* Quantity Selector */}
               <div className="mb-6">
                 <h5 className="font-medium text-gray-900 mb-2">Quantity:</h5>
@@ -413,28 +417,26 @@ function ProductDetail() {
                   </button>
                 </div>
               </div>
-              
+
               {/* Action Buttons */}
               <div className="space-y-3">
                 <div className="flex gap-2">
                   <button
-                    className={`flex-1 py-3 px-4 rounded-lg font-medium ${
-                      product.soldOut 
-                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
+                    className={`flex-1 py-3 px-4 rounded-lg font-medium ${product.soldOut
+                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                         : 'bg-blue-600 hover:bg-blue-700 text-white'
-                    } transition duration-200`}
+                      } transition duration-200`}
                     onClick={handleAddToCart}
                     disabled={product.soldOut}
                   >
                     {product.soldOut ? 'Sold Out' : 'Add to Cart'}
                   </button>
-                  
+
                   <button
-                    className={`p-3 rounded-lg ${
-                      isInWishlist(product._id) 
-                        ? 'bg-red-500 text-white' 
+                    className={`p-3 rounded-lg ${isInWishlist(product._id)
+                        ? 'bg-red-500 text-white'
                         : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                    } transition duration-200`}
+                      } transition duration-200`}
                     onClick={handleWishlistToggle}
                   >
                     <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -442,9 +444,9 @@ function ProductDetail() {
                     </svg>
                   </button>
                 </div>
-                
+
                 {/* Buy on WhatsApp button */}
-                <button 
+                <button
                   className="w-full py-3 px-4 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition duration-200"
                   onClick={handleWhatsAppClick}
                 >
@@ -454,7 +456,7 @@ function ProductDetail() {
                   Buy on WhatsApp
                 </button>
               </div>
-              
+
               {/* Shipping Info */}
               <div className="mt-6 p-4 bg-gray-50 rounded-lg">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -484,24 +486,22 @@ function ProductDetail() {
                   </div>
                 </div>
               </div>
-              
+
               {/* Stock Status */}
               <div className="mt-4">
-                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                  product.soldOut 
-                    ? 'bg-red-100 text-red-800' 
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${product.soldOut
+                    ? 'bg-red-100 text-red-800'
                     : 'bg-green-100 text-green-800'
-                }`}>
-                  <span className={`w-2 h-2 rounded-full mr-1.5 ${
-                    product.soldOut ? 'bg-red-500' : 'bg-green-500'
-                  }`}></span>
+                  }`}>
+                  <span className={`w-2 h-2 rounded-full mr-1.5 ${product.soldOut ? 'bg-red-500' : 'bg-green-500'
+                    }`}></span>
                   {product.soldOut ? 'Out of Stock' : 'In Stock'}
                 </span>
               </div>
             </div>
           </div>
         </div>
-        
+
         {/* Similar Products */}
         {similarProducts.length > 0 && (
           <div className="mt-12">
@@ -511,8 +511,8 @@ function ProductDetail() {
                 <div key={similarProduct._id} className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow transition duration-200">
                   <Link to={`/product/${similarProduct._id}`} className="block relative aspect-square">
                     <img
-                      src={similarProduct.images && similarProduct.images.length > 0 
-                        ? getImageUrl(similarProduct.images[0]) 
+                      src={similarProduct.images && similarProduct.images.length > 0
+                        ? getImageUrl(similarProduct.images[0])
                         : '/placeholder.jpg'}
                       alt={similarProduct.name}
                       className="w-full h-full object-cover"
@@ -528,7 +528,7 @@ function ProductDetail() {
                     <p className="text-gray-900 font-bold mb-2">
                       {formatPrice(similarProduct.price)}
                     </p>
-                    <button 
+                    <button
                       className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-3 rounded transition duration-200"
                       onClick={() => {
                         addToCart(similarProduct);
