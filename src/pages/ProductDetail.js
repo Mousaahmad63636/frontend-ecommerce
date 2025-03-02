@@ -10,6 +10,7 @@ import { getImageUrl } from '../utils/imageUtils';
 import DiscountTimer from '../components/DiscountTimer/DiscountTimer';
 import Loading from '../components/Loading/Loading';
 import RatingStars from '../components/RatingStars';
+import WhatsAppMetaTags from '../components/WhatsAppMetaTags';
 
 function ProductDetail() {
   const { id } = useParams();
@@ -105,17 +106,19 @@ function ProductDetail() {
   };
 
   // Handle WhatsApp click
-  const handleWhatsAppClick = () => {
-    if (!product) return;
-
-    const phoneNumber = '96173873187'; // Your business phone number
-    const productUrl = window.location.href;
-    const message = encodeURIComponent(
-      `Hi! I'm interested in buying ${product.name}\n\nProduct Link: ${productUrl}`
-    );
-
-    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
-  };
+ // In handleWhatsAppClick function
+const handleWhatsAppClick = () => {
+  if (!product) return;
+  
+  const phoneNumber = '96178934833';
+  const productUrl = window.location.href;
+  // Add preview parameter to help WhatsApp recognize this is a product page
+  const messageWithPreview = encodeURIComponent(
+    `Hi! I'm interested in buying ${product.name}\n\nProduct Link: ${productUrl}?preview=true`
+  );
+  
+  window.open(`https://wa.me/${phoneNumber}?text=${messageWithPreview}`, '_blank');
+};
 
   // Navigate to next/previous image
   const navigateImage = (direction) => {
@@ -182,22 +185,26 @@ function ProductDetail() {
   return (
     <div className="product-detail-page bg-gray-50">
       {/* Add Helmet for dynamic OpenGraph metadata */}
-      <Helmet>
+      <WhatsAppMetaTags product={product} />
+      <Helmet prioritizeSeoTags>
         <title>{product.name} | Spotlylb</title>
         <meta name="description" content={product.description.substring(0, 160)} />
 
-        {/* OpenGraph / Facebook / WhatsApp */}
-        <meta property="og:type" content="product" />
-        <meta property="og:url" content={window.location.href} />
-        <meta property="og:title" content={`${product.name} | Spotlylb`} />
-        <meta property="og:description" content={product.description.substring(0, 160)} />
+        {/* Clear any previous OG tags */}
+        <meta property="og:image" content="" />
 
-        {/* Important: Use forWhatsApp=true parameter and absolute URL */}
+        {/* Primary Product Image - Ensure this comes FIRST in the header */}
         <meta property="og:image" content={product.images && product.images.length > 0
           ? getImageUrl(product.images[0], true)
           : 'https://spotlylb.com/placeholder.jpg'} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
+
+        {/* Other OpenGraph tags */}
+        <meta property="og:type" content="product" />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:title" content={`${product.name} | Spotlylb`} />
+        <meta property="og:description" content={product.description.substring(0, 160)} />
         <meta property="og:site_name" content="Spotlylb" />
 
         {/* Product specific metadata */}
@@ -282,8 +289,8 @@ function ProductDetail() {
                     <button
                       key={index}
                       className={`rounded-md overflow-hidden border-2 ${currentImageIndex === index
-                          ? 'border-blue-500'
-                          : 'border-transparent hover:border-gray-300'
+                        ? 'border-blue-500'
+                        : 'border-transparent hover:border-gray-300'
                         } transition duration-200`}
                       onClick={() => selectImage(index)}
                     >
@@ -423,8 +430,8 @@ function ProductDetail() {
                 <div className="flex gap-2">
                   <button
                     className={`flex-1 py-3 px-4 rounded-lg font-medium ${product.soldOut
-                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                        : 'bg-blue-600 hover:bg-blue-700 text-white'
+                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                      : 'bg-blue-600 hover:bg-blue-700 text-white'
                       } transition duration-200`}
                     onClick={handleAddToCart}
                     disabled={product.soldOut}
@@ -434,8 +441,8 @@ function ProductDetail() {
 
                   <button
                     className={`p-3 rounded-lg ${isInWishlist(product._id)
-                        ? 'bg-red-500 text-white'
-                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                      ? 'bg-red-500 text-white'
+                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                       } transition duration-200`}
                     onClick={handleWishlistToggle}
                   >
@@ -490,8 +497,8 @@ function ProductDetail() {
               {/* Stock Status */}
               <div className="mt-4">
                 <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${product.soldOut
-                    ? 'bg-red-100 text-red-800'
-                    : 'bg-green-100 text-green-800'
+                  ? 'bg-red-100 text-red-800'
+                  : 'bg-green-100 text-green-800'
                   }`}>
                   <span className={`w-2 h-2 rounded-full mr-1.5 ${product.soldOut ? 'bg-red-500' : 'bg-green-500'
                     }`}></span>
