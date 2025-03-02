@@ -106,19 +106,19 @@ function ProductDetail() {
   };
 
   // Handle WhatsApp click
- // In handleWhatsAppClick function
-const handleWhatsAppClick = () => {
-  if (!product) return;
-  
-  const phoneNumber = '96178934833';
-  const productUrl = window.location.href;
-  // Add preview parameter to help WhatsApp recognize this is a product page
-  const messageWithPreview = encodeURIComponent(
-    `Hi! I'm interested in buying ${product.name}\n\nProduct Link: ${productUrl}?preview=true`
-  );
-  
-  window.open(`https://wa.me/${phoneNumber}?text=${messageWithPreview}`, '_blank');
-};
+  // In handleWhatsAppClick function
+  const handleWhatsAppClick = () => {
+    if (!product) return;
+
+    const phoneNumber = '96178934833';
+    const productUrl = window.location.href;
+    // Add preview parameter to help WhatsApp recognize this is a product page
+    const messageWithPreview = encodeURIComponent(
+      `Hi! I'm interested in buying ${product.name}\n\nProduct Link: ${productUrl}?preview=true`
+    );
+
+    window.open(`https://wa.me/${phoneNumber}?text=${messageWithPreview}`, '_blank');
+  };
 
   // Navigate to next/previous image
   const navigateImage = (direction) => {
@@ -190,20 +190,20 @@ const handleWhatsAppClick = () => {
         <title>{product.name} | Spotlylb</title>
         <meta name="description" content={product.description.substring(0, 160)} />
 
-        {/* Clear any previous OG tags */}
-        <meta property="og:image" content="" />
+        {/* Primary OpenGraph tags - ORDER IS IMPORTANT */}
+        <meta property="og:title" content={product.name} />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:type" content="product" />
 
-        {/* Primary Product Image - Ensure this comes FIRST in the header */}
-        <meta property="og:image" content={product.images && product.images.length > 0 
-  ? getImageUrl(product.images[0], true) 
-  : 'https://spotlylb.com/placeholder.jpg'} />
+        {/* Image tags - This needs to come BEFORE description for WhatsApp */}
+        <meta property="og:image" content={product.images && product.images.length > 0
+          ? getImageUrl(product.images[0], true)
+          : 'https://spotlylb.com/placeholder.jpg'} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={product.name} />
 
-        {/* Other OpenGraph tags */}
-        <meta property="og:type" content="product" />
-        <meta property="og:url" content={window.location.href} />
-        <meta property="og:title" content={`${product.name} | Spotlylb`} />
+        {/* Description comes AFTER image */}
         <meta property="og:description" content={product.description.substring(0, 160)} />
         <meta property="og:site_name" content="Spotlylb" />
 
