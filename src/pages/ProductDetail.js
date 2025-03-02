@@ -194,9 +194,9 @@ const handleWhatsAppClick = () => {
         <meta property="og:image" content="" />
 
         {/* Primary Product Image - Ensure this comes FIRST in the header */}
-        <meta property="og:image" content={product.images && product.images.length > 0
-          ? getImageUrl(product.images[0], true)
-          : 'https://spotlylb.com/placeholder.jpg'} />
+        <meta property="og:image" content={product.images && product.images.length > 0 
+  ? getImageUrl(product.images[0], true) 
+  : 'https://spotlylb.com/placeholder.jpg'} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
 
