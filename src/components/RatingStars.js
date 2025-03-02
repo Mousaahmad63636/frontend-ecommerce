@@ -1,12 +1,22 @@
+// src/components/RatingStars.js
 import React, { useState } from 'react';
 
-const RatingStars = () => {
-  const [rating, setRating] = useState(0);
+const RatingStars = ({ 
+  initialRating = 0, 
+  showLabel = true, 
+  labelText = "Rate this product:", 
+  readOnly = false,
+  onRatingChange = null,
+  size = "medium" // small, medium, large
+}) => {
+  const [rating, setRating] = useState(initialRating);
   const [hover, setHover] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [message, setMessage] = useState('');
 
   const handleRating = (selectedRating) => {
+    if (readOnly) return;
+    
     setRating(selectedRating);
     setSubmitted(true);
     
@@ -19,17 +29,29 @@ const RatingStars = () => {
       setMessage("Thank you for your positive feedback!");
     }
     
-    // Reset after 3 seconds
+    // Call the callback if provided
+    if (onRatingChange) {
+      onRatingChange(selectedRating);
+    }
+    
+    // Reset message after 3 seconds
     setTimeout(() => {
       setSubmitted(false);
       setMessage('');
     }, 3000);
   };
 
+  // Size classes for the stars
+  const sizeClasses = {
+    small: "text-lg",
+    medium: "text-2xl",
+    large: "text-3xl"
+  };
+
   return (
     <div className="flex flex-col items-center">
       <div className="flex items-center mb-2">
-        <p className="mr-2 text-sm text-gray-600">Rate your experience:</p>
+        {showLabel && <p className="mr-2 text-sm text-gray-600">{labelText}</p>}
         <div className="flex">
           {[...Array(5)].map((_, index) => {
             const ratingValue = index + 1;
@@ -38,15 +60,15 @@ const RatingStars = () => {
               <button
                 type="button"
                 key={ratingValue}
-                className={`text-2xl px-1 focus:outline-none ${
+                className={`${sizeClasses[size] || sizeClasses.medium} px-1 focus:outline-none ${
                   ratingValue <= (hover || rating) 
                     ? 'text-yellow-400' 
                     : 'text-gray-300'
-                }`}
+                } ${readOnly ? 'cursor-default' : 'cursor-pointer'}`}
                 onClick={() => handleRating(ratingValue)}
-                onMouseEnter={() => setHover(ratingValue)}
-                onMouseLeave={() => setHover(0)}
-                disabled={submitted}
+                onMouseEnter={() => !readOnly && setHover(ratingValue)}
+                onMouseLeave={() => !readOnly && setHover(0)}
+                disabled={readOnly}
               >
                 <span className="star">★</span>
               </button>
