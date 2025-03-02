@@ -6,54 +6,10 @@ import api from '../../api/api';
 function SettingsSection() {
   const [settings, setSettings] = useState({
     whatsappMessageTemplate: {
-      english: `🛍️ *New Order*
-──────────────
-Hello \{{customerName}}! 👋
-
-Your order has been received ✅
-Order #\{{orderId}}
-
-──────────────
-*Order Details:*
-
-\{{orderDetails}}
-
-──────────────
-*Order Summary:*
-💰 Subtotal: $\{{subtotal}}
-\{{discount}}
-🚚 Delivery Fee: $\{{deliveryFee}}
-*Total Amount: $\{{total}}*
-
-──────────────
-We'll notify you when your order is confirmed 🚀
-
-Thank you for your trust! 🙏`,
-
-      arabic: `🛍️ *طلب جديد*
-──────────────
-مرحباً \{{customerName}}! 👋
-
-تم استلام طلبك بنجاح ✅
-رقم الطلب: #\{{orderId}}
-
-──────────────
-*تفاصيل الطلب:*
-
-\{{orderDetails}}
-
-──────────────
-*ملخص الطلب:*
-💰 المجموع الفرعي: $\{{subtotal}}
-\{{discount}}
-🚚 رسوم التوصيل: $\{{deliveryFee}}
-*المجموع الكلي: $\{{total}}*
-
-──────────────
-سنقوم بإعلامك عندما يتم تأكيد طلبك 🚀
-
-شكراً لثقتك بنا! 🙏`
-    }
+      english: '',
+      arabic: ''
+    },
+    bannerText: '' // Added banner text field
   });
   
   const [loading, setLoading] = useState(true);
@@ -99,6 +55,14 @@ Thank you for your trust! 🙏`,
     }));
   };
 
+  // New handler for banner text
+  const handleBannerTextChange = (e) => {
+    setSettings(prev => ({
+      ...prev,
+      bannerText: e.target.value
+    }));
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -106,9 +70,41 @@ Thank you for your trust! 🙏`,
   return (
     <div className="settings-section">
       <form onSubmit={handleSubmit}>
+        {/* Banner Settings Card */}
         <div className="card mb-4">
-          <div className="card-header">
-            <h4>WhatsApp Message Templates</h4>
+          <div className="card-header bg-white">
+            <h4 className="mb-0">Banner Settings</h4>
+          </div>
+          <div className="card-body">
+            <div className="mb-3">
+              <label className="form-label">Top Banner Text</label>
+              <input
+                type="text"
+                className="form-control"
+                value={settings.bannerText || ''}
+                onChange={handleBannerTextChange}
+                placeholder="Enter banner text"
+              />
+              <small className="text-muted d-block mt-1">
+                This text appears at the top of all pages. Use "ShopNow" in your text to automatically create a clickable link.
+              </small>
+            </div>
+            
+            <div className="mt-3 p-3 bg-light rounded">
+              <div className="d-flex align-items-center mb-2">
+                <i className="fas fa-eye me-2 text-primary"></i>
+                <strong>Preview:</strong>
+              </div>
+              <div className="bg-dark text-white p-2 text-center rounded">
+                <p className="mb-0 small">{settings.bannerText || ''}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="card mb-4">
+          <div className="card-header bg-white">
+            <h4 className="mb-0">WhatsApp Message Templates</h4>
           </div>
           <div className="card-body">
             <div className="mb-4">
@@ -116,7 +112,7 @@ Thank you for your trust! 🙏`,
               <textarea
                 className="form-control font-monospace"
                 rows="15"
-                value={settings.whatsappMessageTemplate.english}
+                value={settings.whatsappMessageTemplate?.english || ''}
                 onChange={(e) => handleInputChange(e, 'english')}
               />
               <small className="text-muted d-block mt-2">
@@ -130,7 +126,7 @@ Thank you for your trust! 🙏`,
                 className="form-control font-monospace"
                 dir="rtl"
                 rows="15"
-                value={settings.whatsappMessageTemplate.arabic}
+                value={settings.whatsappMessageTemplate?.arabic || ''}
                 onChange={(e) => handleInputChange(e, 'arabic')}
               />
               <small className="text-muted d-block mt-2">
@@ -143,7 +139,12 @@ Thank you for your trust! 🙏`,
               className="btn btn-primary"
               disabled={loading}
             >
-              {loading ? 'Saving...' : 'Save Settings'}
+              {loading ? (
+                <>
+                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Saving...
+                </>
+              ) : 'Save Settings'}
             </button>
           </div>
         </div>

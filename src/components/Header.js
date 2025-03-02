@@ -1,3 +1,4 @@
+// src/components/Header.js
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
@@ -6,6 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNotification } from '../components/Notification/NotificationProvider';
 import LoginModal from './Auth/LoginModal';
 import SideCart from './SideCart/SideCart';
+import api from '../api/api';
 
 function Header() {
   const { getCartItemsCount } = useCart();
@@ -22,6 +24,24 @@ function Header() {
   const [showSearch, setShowSearch] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  // Add state for banner text
+  const [bannerText, setBannerText] = useState('Summer Sale For All Swim Suits And Free Express Delivery - OFF 50%! ShopNow');
+
+  // Add effect to fetch settings and get banner text
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await api.getSettings();
+        if (response && response.bannerText) {
+          setBannerText(response.bannerText);
+        }
+      } catch (error) {
+        console.error('Error fetching banner text:', error);
+      }
+    };
+
+    fetchSettings();
+  }, []);
 
   // Debug authentication state
   useEffect(() => {
@@ -79,14 +99,35 @@ function Header() {
     }
   };
 
+  // Function to render banner text with ShopNow link
+  const renderBannerText = () => {
+    // If text already contains ShopNow, just return it as is
+    if (bannerText.includes('ShopNow')) {
+      return (
+        <p className="text-xs md:text-sm truncate">
+          {bannerText.split('ShopNow').map((part, index, array) => {
+            // If this is the last part, don't add the ShopNow link
+            if (index === array.length - 1) return part;
+            return (
+              <React.Fragment key={index}>
+                {part}
+                <a href="#" className="underline font-semibold hover:text-primary-200">ShopNow</a>
+              </React.Fragment>
+            );
+          })}
+        </p>
+      );
+    }
+    
+    // Otherwise, just show the text
+    return <p className="text-xs md:text-sm truncate">{bannerText}</p>;
+  };
+
   return (
     <div className={`fixed top-0 left-0 right-0 z-50 ${isScrolled ? 'shadow-md' : ''}`}>
-      {/* Top Banner */}
+      {/* Top Banner with dynamic text */}
       <div className="bg-black text-white py-2 px-4 text-center">
-        <p className="text-xs md:text-sm truncate">
-          Summer Sale For All Swim Suits And Free Express Delivery - OFF 50%!{' '}
-          <a href="#" className="underline font-semibold hover:text-primary-200">ShopNow</a>
-        </p>
+        {renderBannerText()}
       </div>
 
       {/* Main Header */}
