@@ -123,9 +123,7 @@ function Header() {
     // Otherwise, just show the text with truck icons
     return (
       <div className="flex items-center justify-center">
-        <span className="hidden sm:inline-block">🚚</span>
         <span className="text-sm md:text-base font-medium mx-2">{bannerText}</span>
-        <span className="hidden sm:inline-block">🚚</span>
       </div>
     );
   };
