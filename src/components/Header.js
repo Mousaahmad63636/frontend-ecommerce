@@ -151,9 +151,17 @@ function Header() {
 
           {/* Contact Text - Hidden on mobile */}
           <div className="hidden md:flex items-center space-x-2">
-            <FaWhatsapp className="text-green-500 text-lg" />
-            <span className="text-sm">Get in touch with us</span>
+            <a
+              href="https://wa.me/96176919370?text=Hello!%20I'm%20interested%20in%20your%20products."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-2 text-white hover:opacity-80"
+            >
+              <i className="fab fa-whatsapp text-xl text-green-400"></i>
+              <span className="text-sm">Get in touch with us</span>
+            </a>
           </div>
+
           {/* Empty div for mobile layout balance */}
           <div className="md:hidden"></div>
         </div>
