@@ -61,16 +61,12 @@ function Footer() {
             <h5 className="text-xl font-semibold mb-4">Contact Us</h5>
             <div className="space-y-2">
               <p className="flex items-center">
-                <i className="far fa-envelope mr-2"></i>
-                support@example.com
-              </p>
-              <p className="flex items-center">
                 <i className="fas fa-phone mr-2"></i>
-                +1 234 567 890
+                +961 76919370
               </p>
               <p className="flex items-center">
                 <i className="fas fa-map-marker-alt mr-2"></i>
-                123 Street Name, City, Country
+                Lebanon
               </p>
             </div>
           </div>
