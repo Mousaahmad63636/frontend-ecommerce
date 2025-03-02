@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Spinner } from 'flowbite-react';
+import { useLocation } from 'react-router-dom';
 import { getImageUrl } from '../utils/imageUtils';
 import { useAuth } from '../contexts/AuthContext';
 import DailyTimer from '../components/DailyTimer/DailyTimer'; 
