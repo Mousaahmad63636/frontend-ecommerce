@@ -11,6 +11,7 @@ import ProductList from '../components/ProductList';
 import ContactSection from '../components/ContactSection';
 import BlackFridayBanner from '../components/BlackFridayBanner/BlackFridayBanner';
 import api from '../api/api';
+
 function Home() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -25,7 +26,7 @@ function Home() {
   const [headerHeight, setHeaderHeight] = useState(0);
   const heroRef = useRef(null);
   const location = useLocation();
-const productsRef = useRef(null);
+  const productsRef = useRef(null);
 
   const [heroSettings, setHeroSettings] = useState({
     type: 'image',
@@ -34,7 +35,15 @@ const productsRef = useRef(null);
     subtitle: 'Discover Amazing Products at Great Prices'
   });
 
-  // Calculate header height on mount and when window resizes (not on scroll)
+  // Separate useEffect for scroll to products functionality
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('scrollToProducts') === 'true' && productsRef.current) {
+      productsRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [location]);
+
+  // Calculate header height on mount and when window resizes
   useEffect(() => {
     const updateHeaderHeight = () => {
       const header = document.querySelector('header')?.parentElement;
@@ -43,12 +52,7 @@ const productsRef = useRef(null);
         setHeaderHeight(height);
       }
     };
-    useEffect(() => {
-      const params = new URLSearchParams(location.search);
-      if (params.get('scrollToProducts') === 'true' && productsRef.current) {
-        productsRef.current.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, [location]);
+    
     // Initial calculation
     updateHeaderHeight();
 
