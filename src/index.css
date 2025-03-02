@@ -113,3 +113,6 @@
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
 }
+body {
+  padding-top: 80px; /* Adjust this value to match your header height */
+}
