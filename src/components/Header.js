@@ -24,8 +24,7 @@ function Header() {
   const [showSearch, setShowSearch] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  // Add state for banner text
-  const [bannerText, setBannerText] = useState('Summer Sale For All Swim Suits And Free Express Delivery - OFF 50%! ShopNow');
+  const [bannerText, setBannerText] = useState('SAME DAY DELIVERY INSIDE BEIRUT');
 
   // Add effect to fetch settings and get banner text
   useEffect(() => {
@@ -104,30 +103,66 @@ function Header() {
     // If text already contains ShopNow, just return it as is
     if (bannerText.includes('ShopNow')) {
       return (
-        <p className="text-xs md:text-sm truncate">
-          {bannerText.split('ShopNow').map((part, index, array) => {
-            // If this is the last part, don't add the ShopNow link
-            if (index === array.length - 1) return part;
-            return (
-              <React.Fragment key={index}>
-                {part}
-                <a href="#" className="underline font-semibold hover:text-primary-200">ShopNow</a>
-              </React.Fragment>
-            );
-          })}
-        </p>
+        <div className="flex items-center justify-center">
+          <span className="text-sm md:text-base font-medium">
+            {bannerText.split('ShopNow').map((part, index, array) => {
+              // If this is the last part, don't add the ShopNow link
+              if (index === array.length - 1) return part;
+              return (
+                <React.Fragment key={index}>
+                  {part}
+                  <a href="#" className="underline font-semibold hover:opacity-80">ShopNow</a>
+                </React.Fragment>
+              );
+            })}
+          </span>
+        </div>
       );
     }
     
-    // Otherwise, just show the text
-    return <p className="text-xs md:text-sm truncate">{bannerText}</p>;
+    // Otherwise, just show the text with truck icons
+    return (
+      <div className="flex items-center justify-center">
+        <span className="hidden sm:inline-block">🚚</span>
+        <span className="text-sm md:text-base font-medium mx-2">{bannerText}</span>
+        <span className="hidden sm:inline-block">🚚</span>
+      </div>
+    );
   };
 
   return (
     <div className={`fixed top-0 left-0 right-0 z-50 ${isScrolled ? 'shadow-md' : ''}`}>
-      {/* Top Banner with dynamic text */}
-      <div className="bg-black text-white py-2 px-4 text-center">
-        {renderBannerText()}
+      {/* Top Banner with purple style */}
+      <div style={{ backgroundColor: '#8c52ff' }} className="text-white py-2 px-4">
+        <div className="container mx-auto flex justify-between items-center">
+          {/* Social Media Links */}
+          <div className="hidden md:flex items-center space-x-2">
+            <a href="#" className="text-white hover:opacity-80">
+              <i className="fab fa-facebook"></i>
+            </a>
+            <a href="#" className="text-white hover:opacity-80">
+              <i className="fab fa-instagram"></i>
+            </a>
+            <span className="text-sm ml-1">Follow us!</span>
+          </div>
+
+          {/* Banner Text */}
+          {renderBannerText()}
+
+          {/* Contact Links */}
+          <div className="hidden md:flex items-center space-x-2">
+            <span className="text-sm">Get in touch with us</span>
+            <a href="tel:+1234567890" className="text-white hover:opacity-80">
+              <i className="fas fa-phone"></i>
+            </a>
+            <a href="mailto:info@example.com" className="text-white hover:opacity-80">
+              <i className="fas fa-envelope"></i>
+            </a>
+          </div>
+
+          {/* Mobile version only shows center text */}
+          <div className="md:hidden"></div>
+        </div>
       </div>
 
       {/* Main Header */}
@@ -135,7 +170,7 @@ function Header() {
         <div className="container mx-auto px-5">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2 -ml-2"> {/* Added -ml-2 to move left */}
+            <Link to="/" className="flex items-center space-x-2 -ml-2">
               <img
                 src="/logo.png"
                 alt="Logo"
@@ -157,7 +192,7 @@ function Header() {
                 <input
                   type="search"
                   placeholder="Search for products..."
-                  className="w-48 lg:w-64 px-4 py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
+                  className="w-48 lg:w-64 px-4 py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -168,14 +203,14 @@ function Header() {
 
               {/* Mobile Search Toggle */}
               <button
-                className="md:hidden text-gray-700 hover:text-primary-600"
+                className="md:hidden text-gray-700 hover:text-purple-600"
                 onClick={() => setShowSearch(!showSearch)}
               >
                 <i className="fas fa-search text-xl"></i>
               </button>
 
               {/* Icons */}
-              <Link to="/wishlist" className="relative text-gray-700 hover:text-primary-600">
+              <Link to="/wishlist" className="relative text-gray-700 hover:text-purple-600">
                 <i className="far fa-heart text-xl"></i>
                 {getWishlistCount() > 0 && (
                   <span className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center animate-pulse">
@@ -186,7 +221,7 @@ function Header() {
 
               <button
                 onClick={() => setShowSideCart(true)}
-                className="relative text-gray-700 hover:text-primary-600"
+                className="relative text-gray-700 hover:text-purple-600"
               >
                 <i className="fas fa-shopping-cart text-xl"></i>
                 {getCartItemsCount() > 0 && (
@@ -200,7 +235,7 @@ function Header() {
               {isAuthenticated ? (
                 <div className="relative hidden md:block user-menu-container">
                   <button
-                    className="flex items-center space-x-2 text-gray-700 hover:text-primary-600"
+                    className="flex items-center space-x-2 text-gray-700 hover:text-purple-600"
                     onClick={() => setShowUserMenu(!showUserMenu)}
                   >
                     <span className="hidden lg:block">{user?.name?.split(' ')[0] || 'User'}</span>
@@ -254,7 +289,7 @@ function Header() {
                 <div className="hidden md:block">
                   <button
                     onClick={() => setShowLoginModal(true)}
-                    className="text-gray-700 hover:text-primary-600"
+                    className="text-gray-700 hover:text-purple-600"
                   >
                     <i className="fas fa-user-circle text-xl"></i>
                   </button>
@@ -262,7 +297,7 @@ function Header() {
               )}
               {/* Mobile Menu Toggle */}
               <button
-                className="lg:hidden text-gray-700 hover:text-primary-600"
+                className="lg:hidden text-gray-700 hover:text-purple-600"
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
               >
                 <i className={`fas ${showMobileMenu ? 'fa-times' : 'fa-bars'} text-xl`}></i>
@@ -277,7 +312,7 @@ function Header() {
                 <input
                   type="search"
                   placeholder="Search for products..."
-                  className="w-full px-4 py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
+                  className="w-full px-4 py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -293,15 +328,15 @@ function Header() {
         {showMobileMenu && (
           <div className="lg:hidden border-t mt-4">
             <nav className="container mx-auto px-4 py-4 space-y-4">
-              <Link to="/" className="block text-gray-700 hover:text-primary-600">Home</Link>
-              <Link to="/products" className="block text-gray-700 hover:text-primary-600">Our Products</Link>
-              <Link to="/contact" className="block text-gray-700 hover:text-primary-600">Contact</Link>
-              <Link to="/about" className="block text-gray-700 hover:text-primary-600">About</Link>
+              <Link to="/" className="block text-gray-700 hover:text-purple-600">Home</Link>
+              <Link to="/products" className="block text-gray-700 hover:text-purple-600">Our Products</Link>
+              <Link to="/contact" className="block text-gray-700 hover:text-purple-600">Contact</Link>
+              <Link to="/about" className="block text-gray-700 hover:text-purple-600">About</Link>
               {isAuthenticated ? (
                 <>
-                  <Link to="/profile" className="block text-gray-700 hover:text-primary-600">My Profile</Link>
+                  <Link to="/profile" className="block text-gray-700 hover:text-purple-600">My Profile</Link>
                   {user?.role === 'admin' && (
-                    <Link to="/admin" className="block text-gray-700 hover:text-primary-600">Admin Dashboard</Link>
+                    <Link to="/admin" className="block text-gray-700 hover:text-purple-600">Admin Dashboard</Link>
                   )}
                   <button
                     onClick={handleLogout}
@@ -316,7 +351,7 @@ function Header() {
                     setShowLoginModal(true);
                     setShowMobileMenu(false);
                   }}
-                  className="block w-full text-left text-primary-600 hover:text-primary-700"
+                  className="block w-full text-left text-purple-600 hover:text-purple-700"
                 >
                   Sign In
                 </button>
@@ -354,7 +389,7 @@ const styles = `
 }
 
 .nav-link:hover {
-  color: #4F46E5;
+  color: #8c52ff;
 }
 
 .nav-link::after {
@@ -364,7 +399,7 @@ const styles = `
   left: 0;
   width: 0;
   height: 2px;
-  background-color: #4F46E5;
+  background-color: #8c52ff;
   transition: width 0.2s;
 }
 
