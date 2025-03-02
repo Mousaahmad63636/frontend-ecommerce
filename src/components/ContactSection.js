@@ -2,7 +2,7 @@
 import React from 'react';
 
 function ContactSection() {
-  const phoneNumber = '96173873187';
+  const phoneNumber = '96176919370';
   const message = encodeURIComponent('Hello! I have a question about your products.');
 
   const handleWhatsAppClick = () => {

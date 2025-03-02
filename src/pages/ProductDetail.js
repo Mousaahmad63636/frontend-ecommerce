@@ -107,7 +107,7 @@ function ProductDetail() {
   const handleWhatsAppClick = () => {
     if (!product) return;
 
-    const phoneNumber = '96178934833';
+    const phoneNumber = '96176919370';
     const productUrl = window.location.href;
     // Add preview parameter to help WhatsApp recognize this is a product page
     const messageWithPreview = encodeURIComponent(
