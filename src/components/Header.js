@@ -157,7 +157,7 @@ function Header() {
               rel="noopener noreferrer"
               className="flex items-center space-x-2 text-white hover:opacity-80"
             >
-              <i className="fab fa-whatsapp text-xl text-green-400"></i>
+              <i className="fab fa-whatsapp text-xl text-white-400"></i>
               <span className="text-sm">Get in touch with us</span>
             </a>
           </div>
