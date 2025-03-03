@@ -73,6 +73,8 @@ const DailyTimer = () => {
           <span className="text-gray-700 text-sm font-medium">Seconds</span>
         </div>
       </div>
+
+      offer ends absr emta
     </div>
   );
 };
