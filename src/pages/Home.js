@@ -1,15 +1,16 @@
-// src/pages/Home.js
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import api from '../api/api';
-import { useNotification } from '../components/Notification/NotificationProvider';
+import { useSearchParams, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import { Spinner } from 'flowbite-react';
+import { useLocation } from 'react-router-dom';
+import { getImageUrl } from '../utils/imageUtils';
+import { useAuth } from '../contexts/AuthContext';
+import DailyTimer from '../components/DailyTimer/DailyTimer'; 
+// Component imports
 import ProductList from '../components/ProductList';
-import BestSelling from '../components/BestSelling';
-import DiscountedProducts from '../components/DiscountedProducts';
-import CategorySlider from '../components/CategorySlider/CategorySlider';
-import TimerDisplay from '../components/Admin/TimerDisplay';
-import WhatsAppFloat from '../components/ConsultingFloat/ConsultingFloat';
 import ContactSection from '../components/ContactSection';
+import BlackFridayBanner from '../components/BlackFridayBanner/BlackFridayBanner';
+import api from '../api/api';
 
 function Home() {
   const location = useLocation();
