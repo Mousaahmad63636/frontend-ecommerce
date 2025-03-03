@@ -4,7 +4,17 @@ import PropTypes from 'prop-types';
 import ProductItem from './ProductItem';
 import { Link } from 'react-router-dom';
 
-function ProductList({ title, products, loading, error, scrollable = true, mobileColumns = 2, filterCategory = null }) {
+function ProductList({ 
+  title, 
+  products, 
+  loading, 
+  error, 
+  scrollable = true, 
+  mobileColumns = 2, 
+  filterCategory = null,
+  viewAllUrl = null,  // New prop for custom View All URL
+  viewAllText = "View all"  // Customizable button text
+}) {
   const scrollContainerRef = useRef(null);
 
   const scroll = (direction) => {
@@ -55,6 +65,13 @@ function ProductList({ title, products, loading, error, scrollable = true, mobil
       </div>
     );
   }
+
+  // Determine appropriate View All URL
+  const defaultViewAllUrl = filterCategory && filterCategory !== 'all' 
+    ? `/?category=${encodeURIComponent(filterCategory)}` 
+    : '/?scrollToProducts=true';
+  
+  const finalViewAllUrl = viewAllUrl || defaultViewAllUrl;
 
   return (
     <div className="mb-10">
@@ -108,12 +125,10 @@ function ProductList({ title, products, loading, error, scrollable = true, mobil
       {scrollable && filteredProducts.length > 0 && (
         <div className="flex justify-center mt-6">
           <Link 
-            to={filterCategory && filterCategory !== 'all' 
-              ? `/?category=${encodeURIComponent(filterCategory)}` 
-              : '/?scrollToProducts=true'}
-            className="flex items-center justify-center bg-white border border-gray-200 rounded-md px-8 py-3 shadow-sm transition-all hover:shadow-md hover:border-gray-300"
+            to={finalViewAllUrl}
+            className="view-all-button flex items-center justify-center bg-white border border-gray-200 rounded-md px-8 py-3 shadow-sm transition-all hover:shadow-md hover:border-gray-300"
           >
-            <span className="text-gray-700 font-medium mr-2">View all</span>
+            <span className="text-gray-700 font-medium mr-2">{viewAllText}</span>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -131,7 +146,9 @@ ProductList.propTypes = {
   error: PropTypes.string,
   scrollable: PropTypes.bool,
   mobileColumns: PropTypes.number,
-  filterCategory: PropTypes.string
+  filterCategory: PropTypes.string,
+  viewAllUrl: PropTypes.string,
+  viewAllText: PropTypes.string
 };
 
 export default ProductList;

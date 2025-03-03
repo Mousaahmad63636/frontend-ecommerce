@@ -104,6 +104,11 @@ const DiscountedProducts = () => {
     return null;
   }
 
+  // Create the custom URL for viewing all discounted products
+  const viewAllDiscountedUrl = selectedCategory !== 'all'
+    ? `/?showDiscounted=true&category=${encodeURIComponent(selectedCategory)}`
+    : '/?showDiscounted=true';
+
   return (
     <div className="container my-4">
       {/* Category Filter */}
@@ -140,6 +145,8 @@ const DiscountedProducts = () => {
           error={error}
           scrollable={true}
           filterCategory={selectedCategory !== 'all' ? selectedCategory : null}
+          viewAllUrl={viewAllDiscountedUrl}
+          viewAllText="View all offers"
         />
       ) : (
         <div className="text-center py-5">
