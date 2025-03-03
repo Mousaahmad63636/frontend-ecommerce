@@ -3,111 +3,143 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
+import { useNotification } from './Notification/NotificationProvider';
 import { getImageUrl } from '../utils/imageUtils';
 
 function ProductItem({ product }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { addToCart } = useCart();
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
+  const { showNotification } = useNotification();
+
   const isWishlisted = isInWishlist(product._id);
+  const hasDiscount = product.discountPercentage > 0;
+  
+  // Calculate the dollar amount saved if there's a discount
+  const savedAmount = hasDiscount ? (product.originalPrice - product.price).toFixed(2) : 0;
 
-  // Create discount badge (matches exact styling from image)
-  const renderDiscountBadge = () => {
-    if (product.discountPercentage > 0) {
-      let discountText = '';
-      if (product.discountType === 'fixed') {
-        discountText = `$${product.discountPercentage.toFixed(2)} OFF`;
-      } else {
-        discountText = `-${product.discountPercentage}%`;
-      }
-      
-      return (
-        <div className="absolute top-3 left-3 bg-red-500 text-white font-semibold text-sm px-3 py-1 rounded z-10">
-          {discountText}
-        </div>
-      );
+  // Helper function to get categories (handles both legacy and new format)
+  const getProductCategories = () => {
+    if (Array.isArray(product.categories) && product.categories.length > 0) {
+      return product.categories;
+    } else if (product.category) {
+      return [product.category];
     }
-    return null;
-  };
-
-  // Calculate appropriate rating stars (exactly as in the image)
-  const renderRatingStars = () => {
-    const rating = Math.round(product.rating || 0);
-    const fullStars = [...Array(5)].map((_, index) => (
-      <span key={index} className={index < rating ? "text-yellow-400" : "text-gray-300"}>
-        ★
-      </span>
-    ));
-    
-    return (
-      <div className="flex items-center">
-        <div className="flex text-xl">{fullStars}</div>
-        <span className="text-gray-500 ml-2">({product.reviewCount || 0})</span>
-        <span className="ml-4 text-gray-500">REVIEW</span>
-      </div>
-    );
+    return [];
   };
 
   return (
-    <div className="bg-white rounded-none overflow-hidden relative">
-      {/* Discount Badge */}
-      {renderDiscountBadge()}
+    <div className="product-card bg-white rounded-xl shadow-sm overflow-hidden transition-all hover:shadow-md relative border border-gray-100">
+      {/* Discount Badge - Now showing dollar amount saved */}
+      {hasDiscount && (
+        <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 text-xs font-medium z-10 rounded-full">
+          Save ${savedAmount}
+        </div>
+      )}
       
-      {/* Wishlist Heart Button */}
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          isWishlisted ? removeFromWishlist(product._id) : addToWishlist(product);
-        }}
-        className="absolute top-3 right-3 z-10 w-12 h-12 bg-gray-200 bg-opacity-80 rounded-full flex items-center justify-center"
-        aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-      >
-        <svg 
-          width="24" 
-          height="24" 
-          viewBox="0 0 24 24" 
-          fill={isWishlisted ? "black" : "none"} 
-          stroke="black" 
-          strokeWidth="2" 
-          className="transition-all duration-300"
-        >
-          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-        </svg>
-      </button>
-      
-      {/* Product Image */}
-      <Link to={`/product/${product._id}`} className="block">
-        <div className="relative bg-gray-100 aspect-square overflow-hidden">
+      {/* Product Image Container */}
+      <div className="relative aspect-square overflow-hidden bg-gray-50">
+        <Link to={`/product/${product._id}`}>
           <img
             src={product.images && product.images.length > 0 
               ? getImageUrl(product.images[currentImageIndex]) 
               : '/placeholder.jpg'}
             alt={product.name}
-            className="w-full h-full object-contain transition-all duration-300"
+            className="w-full h-full object-contain p-2 transition-transform hover:scale-105"
             onError={(e) => {
               e.target.src = '/placeholder.jpg';
             }}
           />
-        </div>
-      </Link>
-      
-      {/* Product Details */}
-      <div className="p-4">
-        {/* Product Name */}
-        <Link to={`/product/${product._id}`}>
-          <h3 className="text-xl font-medium text-black mb-2">{product.name}</h3>
         </Link>
         
-        {/* Price */}
-        <div className="flex items-center mb-3">
-          <span className="text-xl font-bold text-red-500">${product.price.toFixed(0)}</span>
-          {product.discountPercentage > 0 && (
-            <span className="text-lg text-gray-500 line-through ml-2">${product.originalPrice.toFixed(0)}</span>
+        {/* Wishlist Button */}
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            isWishlisted ? removeFromWishlist(product._id) : addToWishlist(product);
+          }}
+          className="absolute top-2 right-2 z-10 w-7 h-7 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white"
+        >
+          <i className={`${isWishlisted ? 'fas' : 'far'} fa-heart ${isWishlisted ? 'text-red-500' : 'text-gray-700'} text-sm`}></i>
+        </button>
+        
+        {/* Image Navigation Dots */}
+        {product.images && product.images.length > 1 && (
+          <div className="absolute bottom-1 left-0 right-0 flex justify-center gap-1">
+            {product.images.map((_, idx) => (
+              <button
+                key={idx}
+                className={`w-1.5 h-1.5 rounded-full transition-all ${
+                  idx === currentImageIndex ? 'bg-gray-800 w-3' : 'bg-gray-400'
+                }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setCurrentImageIndex(idx);
+                }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+      
+      {/* Product Info */}
+      <div className="p-3">
+        <Link to={`/product/${product._id}`} className="block">
+          <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-1">{product.name}</h3>
+        </Link>
+        
+        {/* Categories */}
+        <div className="flex flex-wrap gap-1 mb-2">
+          {getProductCategories().map(category => (
+            <Link 
+              key={category}
+              to={`/?category=${encodeURIComponent(category)}`}
+              className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-sm hover:bg-gray-200"
+            >
+              {category}
+            </Link>
+          ))}
+        </div>
+        
+        <div className="flex items-baseline mb-1.5">
+          {hasDiscount ? (
+            <>
+              <span className="text-sm font-bold text-red-500 mr-2">${product.price.toFixed(2)}</span>
+              <span className="text-xs text-gray-500 line-through">${product.originalPrice.toFixed(2)}</span>
+            </>
+          ) : (
+            <span className="text-sm font-bold text-gray-900">${product.price.toFixed(2)}</span>
           )}
         </div>
         
-        {/* Rating Stars - Styled exactly like the image */}
-        {renderRatingStars()}
+        {/* Star Rating - Now using dynamic rating and review count */}
+        <div className="flex items-center mb-2">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <i 
+              key={star} 
+              className={`${star <= Math.round(product.rating || 4) ? 'text-yellow-400 fas' : 'text-gray-300 far'} fa-star text-xs`}
+            ></i>
+          ))}
+          <span className="ml-1 text-xs text-gray-500">
+            ({product.reviewCount !== undefined ? product.reviewCount : 0})
+          </span>
+        </div>
+        
+        {/* Add to Cart Button */}
+        <button
+          onClick={() => {
+            addToCart(product);
+            showNotification('Added to cart!', 'success');
+          }}
+          disabled={product.soldOut}
+          className={`w-full py-1.5 rounded-full text-center text-sm ${
+            product.soldOut
+              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+              : 'bg-black text-white hover:bg-gray-800'
+          }`}
+        >
+          {product.soldOut ? 'Sold Out' : 'Add to Cart'}
+        </button>
       </div>
     </div>
   );
