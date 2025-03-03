@@ -512,7 +512,7 @@ function Home() {
   </section>
 )}
 
-// 2. And in the "View All Products" section, add this before the product count text:
+
 {!searchQuery && !showDiscountedOnly && showAllProducts && (
   <section ref={productsRef} className="py-10">
     <div className="container mx-auto px-4">
@@ -575,7 +575,7 @@ function Home() {
   </section>
 )}
 
-// 3. Also add to search results section:
+
 {searchQuery && (
   <section className="py-10">
     <div className="container mx-auto px-4">
