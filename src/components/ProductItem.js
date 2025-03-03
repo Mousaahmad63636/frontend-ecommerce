@@ -29,10 +29,10 @@ function ProductItem({ product }) {
   };
 
   return (
-    <div className="group w-full h-full bg-white rounded-lg overflow-hidden transition-all duration-300 border border-gray-100 hover:border-gray-200 hover:shadow-md relative">
+    <div className="group w-full bg-white rounded-lg overflow-hidden transition-all duration-300 border border-gray-100 hover:border-gray-200 hover:shadow-md relative">
       {/* Discount Badge */}
       {hasDiscount && (
-        <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-0.5 text-2xs font-medium z-10 rounded-full shadow-sm">
+        <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-0.5 text-xs font-medium z-10 rounded-full shadow-sm">
           Save ${savedAmount}
         </div>
       )}
@@ -52,7 +52,7 @@ function ProductItem({ product }) {
           />
         </Link>
         
-        {/* Wishlist Button - Enlarged for better touch target */}
+        {/* Wishlist Button */}
         <button
           onClick={(e) => {
             e.preventDefault();
@@ -64,7 +64,7 @@ function ProductItem({ product }) {
           <i className={`${isWishlisted ? 'fas' : 'far'} fa-heart ${isWishlisted ? 'text-red-500' : 'text-gray-700'}`}></i>
         </button>
         
-        {/* Image Navigation Dots - Improved visibility */}
+        {/* Image Navigation Dots */}
         {product.images && product.images.length > 1 && (
           <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5">
             {product.images.map((_, idx) => (
@@ -85,33 +85,35 @@ function ProductItem({ product }) {
       </div>
       
       {/* Product Info */}
-      <div className="p-3 flex flex-col h-[110px]">
-        <Link to={`/product/${product._id}`} className="block mb-0.5">
+      <div className="p-3 flex flex-col min-h-[120px]">
+        <Link to={`/product/${product._id}`} className="block mb-1">
           <h3 className="text-sm font-medium text-gray-900 line-clamp-1 hover:text-gray-700 transition-colors duration-200">{product.name}</h3>
         </Link>
         
-        {/* Categories - Limited to prevent overflow */}
-        <div className="flex flex-wrap gap-1 mb-auto">
-          {getProductCategories().slice(0, 2).map(category => (
-            <Link 
-              key={category}
-              to={`/?category=${encodeURIComponent(category)}`}
-              className="text-2xs px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-sm hover:bg-gray-200 transition-colors duration-200"
-            >
-              {category}
-            </Link>
-          ))}
-          {getProductCategories().length > 2 && (
-            <span className="text-2xs text-gray-500">+{getProductCategories().length - 2} more</span>
-          )}
+        {/* Categories - Single row with overflow handling */}
+        <div className="flex items-center mb-1.5 h-5 overflow-hidden">
+          <div className="flex items-center gap-1 overflow-hidden whitespace-nowrap">
+            {getProductCategories().slice(0, 2).map((category, index) => (
+              <Link 
+                key={category}
+                to={`/?category=${encodeURIComponent(category)}`}
+                className="inline-block text-xs px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-sm hover:bg-gray-200 transition-colors duration-200 whitespace-nowrap"
+              >
+                {category}
+              </Link>
+            ))}
+            {getProductCategories().length > 2 && (
+              <span className="text-xs text-gray-500 whitespace-nowrap">+{getProductCategories().length - 2}</span>
+            )}
+          </div>
         </div>
         
         {/* Price Section */}
-        <div className="mt-1 flex items-baseline">
+        <div className="flex items-baseline mb-1">
           {hasDiscount ? (
             <>
               <span className="text-sm font-bold text-red-500 mr-1.5">${product.price.toFixed(2)}</span>
-              <span className="text-2xs text-gray-500 line-through">${product.originalPrice.toFixed(2)}</span>
+              <span className="text-xs text-gray-500 line-through">${product.originalPrice.toFixed(2)}</span>
             </>
           ) : (
             <span className="text-sm font-bold text-gray-900">${product.price.toFixed(2)}</span>
@@ -126,26 +128,28 @@ function ProductItem({ product }) {
               className={`${star <= Math.round(product.rating || 4) ? 'text-yellow-400 fas' : 'text-gray-300 far'} fa-star text-xs`}
             ></i>
           ))}
-          <span className="ml-1 text-2xs text-gray-500">
+          <span className="ml-1 text-xs text-gray-500">
             ({product.reviewCount !== undefined ? product.reviewCount : 0})
           </span>
         </div>
         
-        {/* Add to Cart Button */}
-        <button
-          onClick={() => {
-            addToCart(product);
-            showNotification('Added to cart!', 'success');
-          }}
-          disabled={product.soldOut}
-          className={`w-full py-1.5 rounded-full text-center text-xs font-medium transition-all duration-200 ${
-            product.soldOut
-              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-              : 'bg-black text-white hover:bg-gray-800 active:scale-95'
-          }`}
-        >
-          {product.soldOut ? 'Sold Out' : 'Add to Cart'}
-        </button>
+        {/* Add to Cart Button - Always visible */}
+        <div className="mt-auto">
+          <button
+            onClick={() => {
+              addToCart(product);
+              showNotification('Added to cart!', 'success');
+            }}
+            disabled={product.soldOut}
+            className={`w-full py-1.5 rounded-full text-center text-sm font-medium transition-all duration-200 ${
+              product.soldOut
+                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                : 'bg-black text-white hover:bg-gray-800 active:scale-95'
+            }`}
+          >
+            {product.soldOut ? 'Sold Out' : 'Add to Cart'}
+          </button>
+        </div>
       </div>
     </div>
   );
