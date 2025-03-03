@@ -1,3 +1,4 @@
+// src/pages/Home.js
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -24,6 +25,7 @@ function Home() {
   const { user } = useAuth();
   const searchQuery = searchParams.get('q');
   const [headerHeight, setHeaderHeight] = useState(0);
+  const [showDiscountedOnly, setShowDiscountedOnly] = useState(false);
   const heroRef = useRef(null);
   const location = useLocation();
   const productsRef = useRef(null);
@@ -40,6 +42,25 @@ function Home() {
     const params = new URLSearchParams(location.search);
     if (params.get('scrollToProducts') === 'true' && productsRef.current) {
       productsRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Check for showDiscounted parameter
+    const showDiscounted = params.get('showDiscounted');
+    if (showDiscounted === 'true') {
+      setShowDiscountedOnly(true);
+      
+      // If there's also a category parameter, set it
+      const categoryParam = params.get('category');
+      if (categoryParam) {
+        setSelectedCategory(categoryParam);
+      }
+      
+      // Scroll to products section
+      setTimeout(() => {
+        if (productsRef.current) {
+          productsRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 300);
     }
   }, [location]);
 
@@ -132,6 +153,7 @@ function Home() {
   useEffect(() => {
     let filtered = products;
 
+    // Apply search filter
     if (searchQuery) {
       const searchLower = searchQuery.toLowerCase();
       filtered = filtered.filter(product =>
@@ -142,7 +164,9 @@ function Home() {
           cat.toLowerCase().includes(searchLower)
         ))
       );
-    } else if (selectedCategory !== 'all') {
+    } 
+    // Apply category filter
+    else if (selectedCategory !== 'all') {
       filtered = filtered.filter(product => {
         // Check primary category
         if (product.category === selectedCategory) {
@@ -158,8 +182,17 @@ function Home() {
       });
     }
 
+    // Apply discount filter if showDiscountedOnly is true
+    if (showDiscountedOnly) {
+      filtered = filtered.filter(product => 
+        product.discountPercentage > 0 && 
+        product.discountEndDate && 
+        new Date(product.discountEndDate) > new Date()
+      );
+    }
+
     setFilteredProducts(filtered);
-  }, [products, searchQuery, selectedCategory]);
+  }, [products, searchQuery, selectedCategory, showDiscountedOnly]);
 
   if (loading) {
     return (
@@ -168,6 +201,14 @@ function Home() {
       </div>
     );
   }
+
+  // Get discounted products
+  const discountedProducts = products.filter(p => p.discountPercentage > 0);
+  
+  // Create the custom URL for viewing all discounted products
+  const viewAllDiscountedUrl = selectedCategory !== 'all'
+    ? `/?showDiscounted=true&category=${encodeURIComponent(selectedCategory)}`
+    : '/?showDiscounted=true';
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -239,7 +280,8 @@ function Home() {
         </div>
       )}
 
-      {!searchQuery && (
+      {/* Main content - either normal homepage or search results */}
+      {!searchQuery && !showDiscountedOnly && (
         <>
           {/* Special Offers Section - Horizontal Scrollable Row */}
           <section className="py-10">
@@ -251,11 +293,13 @@ function Home() {
                 <h2 className="text-3xl font-bold">Special Offers</h2>
               </div>
               <div>
-                {products.filter(p => p.discountPercentage > 0).length > 0 && (
+                {discountedProducts.length > 0 && (
                   <ProductList 
                     title=" " 
-                    products={products.filter(p => p.discountPercentage > 0)} 
+                    products={discountedProducts} 
                     scrollable={true}
+                    viewAllUrl={viewAllDiscountedUrl}
+                    viewAllText="View all offers"
                   />
                 )}
               </div>
@@ -287,14 +331,68 @@ function Home() {
               
               {/* Products Grid - Mobile: 1 per row, Tablet: 2 per row, Desktop: 4-5 per row */}
               <ProductList 
-                products={products} 
-                filterCategory={selectedCategory}
+                products={filteredProducts} 
+                filterCategory={selectedCategory !== 'all' ? selectedCategory : null}
                 scrollable={false} // Grid view for all products
                 mobileColumns={1} // 1 column for mobile view
               />
             </div>
           </section>
         </>
+      )}
+
+      {/* View All Discounted Products Section */}
+      {!searchQuery && showDiscountedOnly && (
+        <section ref={productsRef} className="py-10">
+          <div className="container mx-auto px-4">
+            <div className="mb-6 text-center">
+              <h2 className="text-3xl font-bold">
+                All Special Offers
+                {selectedCategory !== 'all' && ` in ${selectedCategory}`}
+              </h2>
+            </div>
+            
+            {/* Category Filter */}
+            <div className="max-w-md mx-auto mb-8">
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+              >
+                <option value="all">All Categories</option>
+                {categories.map(category => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            {/* Products Grid */}
+            {filteredProducts.length > 0 ? (
+              <ProductList 
+                products={filteredProducts}
+                scrollable={false} // Grid view for all discounted products
+                mobileColumns={1} // 1 column for mobile view
+              />
+            ) : (
+              <div className="text-center py-8">
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <h3 className="text-xl mb-2">No Discounted Products Found</h3>
+                  <p className="text-gray-600">
+                    No discounted products found
+                    {selectedCategory !== 'all' && ` in the "${selectedCategory}" category`}
+                    . Try selecting a different category.
+                  </p>
+                </div>
+              </div>
+            )}
+            
+            <div className="text-center mt-4 text-sm text-gray-500">
+              Showing {filteredProducts.length} discounted products
+            </div>
+          </div>
+        </section>
       )}
 
       {/* Search Results Section */}
