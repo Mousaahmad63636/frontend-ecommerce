@@ -449,11 +449,6 @@ function Home() {
           </section>
         </>
       )}
-
-// src/pages/Home.js
-// I'll focus only on the parts that need to be updated
-
-// 1. Update the "View All Discounted Products" section:
 {!searchQuery && showDiscountedOnly && !showAllProducts && (
   <section ref={productsRef} className="py-10">
     <div className="container mx-auto px-4">
@@ -516,7 +511,7 @@ function Home() {
   </section>
 )}
 
-// 2. Update the "View All Products" section:
+
 {!searchQuery && !showDiscountedOnly && showAllProducts && (
   <section ref={productsRef} className="py-10">
     <div className="container mx-auto px-4">
@@ -579,7 +574,6 @@ function Home() {
   </section>
 )}
 
-// 3. Keep the Search Results section with 1 column on mobile:
 {searchQuery && (
   <section className="py-10">
     <div className="container mx-auto px-4">
