@@ -37,40 +37,40 @@ const DailyTimer = () => {
       <div className="flex justify-center items-end">
         {/* Days */}
         <div className="flex flex-col items-center mx-3">
-          <div className="text-black font-bold text-4xl md:text-5xl mb-2">
+          <div className="text-purple font-bold text-4xl md:text-5xl mb-2">
             {String(timeLeft.days).padStart(2, '0')}
           </div>
           <span className="text-gray-700 text-sm font-medium">Days</span>
         </div>
 
         {/* Separator */}
-        <div className="text-purple-500 text-4xl md:text-5xl mb-2 mx-1">:</div>
+        <div className="text-black-500 text-4xl md:text-5xl mb-2 mx-1">:</div>
 
         {/* Hours */}
         <div className="flex flex-col items-center mx-3">
-          <div className="text-black font-bold text-4xl md:text-5xl mb-2">
+          <div className="text-purple font-bold text-4xl md:text-5xl mb-2">
             {String(timeLeft.hours).padStart(2, '0')}
           </div>
           <span className="text-gray-700 text-sm font-medium">Hours</span>
         </div>
 
         {/* Separator */}
-        <div className="text-purple-500 text-4xl md:text-5xl mb-2 mx-1">:</div>
+        <div className="text-black-500 text-4xl md:text-5xl mb-2 mx-1">:</div>
 
         {/* Minutes */}
         <div className="flex flex-col items-center mx-3">
-          <div className="text-black font-bold text-4xl md:text-5xl mb-2">
+          <div className="text-purple font-bold text-4xl md:text-5xl mb-2">
             {String(timeLeft.minutes).padStart(2, '0')}
           </div>
           <span className="text-gray-700 text-sm font-medium">Minutes</span>
         </div>
 
         {/* Separator */}
-        <div className="text-purple-500 text-4xl md:text-5xl mb-2 mx-1">:</div>
+        <div className="text-black-500 text-4xl md:text-5xl mb-2 mx-1">:</div>
 
         {/* Seconds */}
         <div className="flex flex-col items-center mx-3">
-          <div className="text-black font-bold text-4xl md:text-5xl mb-2">
+          <div className="text-purple font-bold text-4xl md:text-5xl mb-2">
             {String(timeLeft.seconds).padStart(2, '0')}
           </div>
           <span className="text-gray-700 text-sm font-medium">Seconds</span>
