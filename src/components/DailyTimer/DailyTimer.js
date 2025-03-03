@@ -66,7 +66,7 @@ const DailyTimer = () => {
         </div>
 
         {/* Separator */}
-        <div className="text-red-500 text-4xl md:text-5xl mb-2 mx-1">:</div>
+        <div className="text-purble-500 text-4xl md:text-5xl mb-2 mx-1">:</div>
 
         {/* Seconds */}
         <div className="flex flex-col items-center mx-3">
