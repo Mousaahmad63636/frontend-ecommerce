@@ -1,3 +1,4 @@
+// src/components/DiscountedProducts.js
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useNotification } from './Notification/NotificationProvider';
@@ -132,7 +133,14 @@ const DiscountedProducts = () => {
 
       {/* Display filtered products or message if none found */}
       {filteredProducts.length > 0 ? (
-        <ProductList products={filteredProducts} />
+        <ProductList
+          title="Special Offers"
+          products={filteredProducts}
+          loading={loading}
+          error={error}
+          scrollable={true}
+          filterCategory={selectedCategory !== 'all' ? selectedCategory : null}
+        />
       ) : (
         <div className="text-center py-5">
           <p className="text-muted">

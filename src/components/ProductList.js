@@ -2,6 +2,7 @@
 import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import ProductItem from './ProductItem';
+import { Link } from 'react-router-dom';
 
 function ProductList({ title, products, loading, error, scrollable = true, mobileColumns = 2, filterCategory = null }) {
   const scrollContainerRef = useRef(null);
@@ -100,6 +101,23 @@ function ProductList({ title, products, loading, error, scrollable = true, mobil
       {filterCategory && filterCategory !== 'all' && (
         <div className="text-sm text-gray-500 mt-2">
           Showing {filteredProducts.length} of {products.length} products in {filterCategory}
+        </div>
+      )}
+
+      {/* New "View All" button - Only show when in scrollable mode and has products */}
+      {scrollable && filteredProducts.length > 0 && (
+        <div className="flex justify-center mt-6">
+          <Link 
+            to={filterCategory && filterCategory !== 'all' 
+              ? `/?category=${encodeURIComponent(filterCategory)}` 
+              : '/?scrollToProducts=true'}
+            className="flex items-center justify-center bg-white border border-gray-200 rounded-md px-8 py-3 shadow-sm transition-all hover:shadow-md hover:border-gray-300"
+          >
+            <span className="text-gray-700 font-medium mr-2">View all</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </Link>
         </div>
       )}
     </div>
