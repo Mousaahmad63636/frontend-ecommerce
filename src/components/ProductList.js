@@ -76,8 +76,8 @@ function ProductList({
   return (
     <div className="mb-10">
       {title && (
-        <div className="flex justify-between items-center mb-8 px-2">
-          <h2 className="text-4xl font-bold text-black">{title}</h2>
+        <div className="flex justify-between items-center mb-4 px-2">
+          <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
           {scrollable && (
             <div className="flex gap-2">
               <button onClick={() => scroll('left')} className="bg-white shadow-sm rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-50">
@@ -94,24 +94,22 @@ function ProductList({
       {scrollable ? (
         <div 
           ref={scrollContainerRef}
-          className="flex overflow-x-auto gap-6 pb-6 scrollbar-hide scroll-smooth pl-2 pr-2"
+          className="flex overflow-x-auto gap-3 pb-4 scrollbar-hide scroll-smooth pl-2 pr-2"
           style={{ scrollbarWidth: 'none' }}
         >
           {filteredProducts.map(product => (
-            <div key={product._id} className="min-w-[300px] max-w-[300px]">
+            <div key={product._id} className="min-w-[200px] max-w-[200px]">
               <ProductItem product={product} />
             </div>
           ))}
         </div>
       ) : (
         <div className={mobileColumns === 1 
-          ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" 
-          : "grid grid-cols-2 lg:grid-cols-3 gap-6"
+          ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3" 
+          : "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3"
         }>
           {filteredProducts.map(product => (
-            <div key={product._id} className="bg-gray-50">
-              <ProductItem product={product} />
-            </div>
+            <ProductItem key={product._id} product={product} />
           ))}
         </div>
       )}
@@ -123,9 +121,9 @@ function ProductList({
         </div>
       )}
 
-      {/* "View All Products" button styled exactly like the reference image */}
+      {/* New "View All" button styled like the reference image - Only show when in scrollable mode and has products */}
       {scrollable && filteredProducts.length > 0 && (
-        <div className="flex justify-center mt-10 mb-4">
+        <div className="flex justify-center mt-8 mb-4">
           <Link 
             to={finalViewAllUrl}
             className="bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center min-w-[240px]"

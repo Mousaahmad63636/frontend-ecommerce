@@ -403,133 +403,93 @@ function Home() {
         </>
       )}
 
-// src/pages/Home.js - update the sections for discounted products and search
-
-// View All Discounted Products Section
-{!searchQuery && showDiscountedOnly && (
-  <section ref={productsRef} className="py-10">
-    <div className="container mx-auto px-4">
-      {/* Category Filter */}
-      <div className="max-w-md mx-auto mb-8">
-        <select
-          value={selectedCategory}
-          onChange={handleCategoryChange}
-          className="w-full border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-        >
-          <option value="all">All Categories</option>
-          {categories.map(category => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
-      </div>
-      
-      {/* Products Grid */}
-      {filteredProducts.length > 0 ? (
-        <>
-          <ProductList 
-            products={filteredProducts}
-            scrollable={false} // Grid view for all discounted products
-            mobileColumns={1} // 1 column for mobile view
-          />
-          
-          {/* "Back to Home" button at the bottom */}
-          <div className="flex justify-center mt-8">
-            <button
-              onClick={goToHome}
-              className="bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center min-w-[240px]"
-            >
-              Back to Home
-            </button>
-          </div>
-        </>
-      ) : (
-        <div className="text-center py-8">
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <h3 className="text-xl mb-2">No Discounted Products Found</h3>
-            <p className="text-gray-600 mb-4">
-              No discounted products available
-              {selectedCategory !== 'all' && ` in the "${selectedCategory}" category`}.
-            </p>
-            <button
-              onClick={() => setSelectedCategory('all')}
-              className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors mb-4"
-            >
-              View All Categories
-            </button>
-            <div className="mt-4">
-              <button
-                onClick={goToHome}
-                className="bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center"
+      {/* View All Discounted Products Section */}
+      {!searchQuery && showDiscountedOnly && (
+        <section ref={productsRef} className="py-10">
+          <div className="container mx-auto px-4">
+            {/* Category Filter */}
+            <div className="max-w-md mx-auto mb-8">
+              <select
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+                className="w-full border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
               >
-                Back to Home
-              </button>
+                <option value="all">All Categories</option>
+                {categories.map(category => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            {/* Products Grid */}
+            {filteredProducts.length > 0 ? (
+              <ProductList 
+                products={filteredProducts}
+                scrollable={false} // Grid view for all discounted products
+                mobileColumns={1} // 1 column for mobile view
+              />
+            ) : (
+              <div className="text-center py-8">
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <h3 className="text-xl mb-2">No Discounted Products Found</h3>
+                  <p className="text-gray-600 mb-4">
+                    No discounted products available
+                    {selectedCategory !== 'all' && ` in the "${selectedCategory}" category`}.
+                  </p>
+                  <button
+                    onClick={() => setSelectedCategory('all')}
+                    className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors"
+                  >
+                    View All Categories
+                  </button>
+                </div>
+              </div>
+            )}
+            
+            <div className="text-center mt-4 text-sm text-gray-500">
+              Showing {filteredProducts.length} discounted products
+              {selectedCategory !== 'all' && ` in ${selectedCategory}`}
             </div>
           </div>
-        </div>
-      )}
-      
-      <div className="text-center mt-4 text-sm text-gray-500">
-        Showing {filteredProducts.length} discounted products
-        {selectedCategory !== 'all' && ` in ${selectedCategory}`}
-      </div>
-    </div>
-  </section>
-)}
-
-{/* Search Results Section */}
-{searchQuery && (
-  <section className="py-10">
-    <div className="container mx-auto px-4">
-      {error ? (
-        <div className="text-center py-8">
-          <div className="bg-red-50 p-6 rounded-lg">
-            <h3 className="text-red-600 text-xl mb-2">Error</h3>
-            <p className="text-red-700">{error}</p>
-          </div>
-        </div>
-      ) : filteredProducts.length > 0 ? (
-        <>
-          <ProductList 
-            products={filteredProducts} 
-            scrollable={false} // Grid view for search results
-            mobileColumns={1} // 1 column for mobile view in search results too
-          />
-          
-          {/* "Back to Home" button at the bottom */}
-          <div className="flex justify-center mt-8">
-            <button
-              onClick={goToHome}
-              className="bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center min-w-[240px]"
-            >
-              Back to Home
-            </button>
-          </div>
-        </>
-      ) : (
-        <div className="text-center py-8">
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <h3 className="text-xl mb-2">No Products Found</h3>
-            <p className="text-gray-600 mb-4">
-              No results found for "{searchQuery}". Try a different search term or browse our categories.
-            </p>
-            <button
-              onClick={goToHome}
-              className="bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center"
-            >
-              Back to Home
-            </button>
-          </div>
-        </div>
+        </section>
       )}
 
-      <div className="text-center mt-4 text-sm text-gray-500">
-        Showing {filteredProducts.length} products
-      </div>
-    </div>
-  </section>
-)}
+      {/* Search Results Section */}
+      {searchQuery && (
+        <section className="py-10">
+          <div className="container mx-auto px-4">
+            {error ? (
+              <div className="text-center py-8">
+                <div className="bg-red-50 p-6 rounded-lg">
+                  <h3 className="text-red-600 text-xl mb-2">Error</h3>
+                  <p className="text-red-700">{error}</p>
+                </div>
+              </div>
+            ) : filteredProducts.length > 0 ? (
+              <ProductList 
+                products={filteredProducts} 
+                scrollable={false} // Grid view for search results
+                mobileColumns={1} // 1 column for mobile view in search results too
+              />
+            ) : (
+              <div className="text-center py-8">
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <h3 className="text-xl mb-2">No Products Found</h3>
+                  <p className="text-gray-600">
+                    No results found for "{searchQuery}". Try a different search term or browse our categories.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <div className="text-center mt-4 text-sm text-gray-500">
+              Showing {filteredProducts.length} products
+            </div>
+          </div>
+        </section>
+      )}
 
       <ContactSection />
     </div>
