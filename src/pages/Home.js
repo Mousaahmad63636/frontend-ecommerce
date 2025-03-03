@@ -10,7 +10,6 @@ import CategorySlider from '../components/CategorySlider/CategorySlider';
 import TimerDisplay from '../components/Admin/TimerDisplay';
 import WhatsAppFloat from '../components/ConsultingFloat/ConsultingFloat';
 import ContactSection from '../components/ContactSection';
-import './Home.css';
 
 function Home() {
   const location = useLocation();
