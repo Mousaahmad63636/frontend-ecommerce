@@ -247,6 +247,11 @@ function Home() {
     ? `/?showDiscounted=true&category=${encodeURIComponent(selectedCategory)}`
     : '/?showDiscounted=true';
 
+  // Create URL for viewing all products with selected category
+  const viewAllProductsUrl = selectedCategory !== 'all'
+    ? `/?scrollToProducts=true&category=${encodeURIComponent(selectedCategory)}`
+    : '/?scrollToProducts=true';
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Helmet>
@@ -355,7 +360,7 @@ function Home() {
                     products={discountedProducts} 
                     scrollable={true}
                     viewAllUrl={viewAllDiscountedUrl}
-                    viewAllText="View All Products"
+                    viewAllText="View All Offers"
                   />
                 ) : (
                   <div className="text-center py-5">
@@ -368,15 +373,15 @@ function Home() {
             </div>
           </section>
 
-          {/* All Products Section - Grid Layout */}
+          {/* Explore Our Products Section - Now also Horizontal Scrollable */}
           <section ref={productsRef} className="py-10">
-            <div className="container mx-auto px-4">
-              <div className="mb-6 text-center">
+            <div className="container mx-auto px-0">
+              <div className="mb-2 text-center">
                 <h2 className="text-3xl font-bold">Explore Our Products</h2>
               </div>
               
               {/* Category Filter */}
-              <div className="max-w-md mx-auto mb-8">
+              <div className="max-w-md mx-auto mb-8 px-4">
                 <select
                   value={selectedCategory}
                   onChange={handleCategoryChange}
@@ -391,13 +396,23 @@ function Home() {
                 </select>
               </div>
               
-              {/* Products Grid - Mobile: 1 per row, Tablet: 2 per row, Desktop: 4-5 per row */}
-              <ProductList 
-                products={filteredProducts} 
-                filterCategory={selectedCategory !== 'all' ? selectedCategory : null}
-                scrollable={false} // Grid view for all products
-                mobileColumns={1} // 1 column for mobile view
-              />
+              {/* Products Horizontal Scrollable, just like Special Offers */}
+              {filteredProducts.length > 0 ? (
+                <ProductList 
+                  title=" "
+                  products={filteredProducts} 
+                  filterCategory={selectedCategory !== 'all' ? selectedCategory : null}
+                  scrollable={true}
+                  viewAllUrl={viewAllProductsUrl}
+                  viewAllText="View All Products"
+                />
+              ) : (
+                <div className="text-center py-5 px-4">
+                  <p className="text-gray-500">
+                    No products available in this category.
+                  </p>
+                </div>
+              )}
             </div>
           </section>
         </>
