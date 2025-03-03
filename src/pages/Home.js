@@ -450,12 +450,6 @@ function Home() {
         </>
       )}
 
-// src/pages/Home.js
-// (keeping the same imports and most of the code, focusing only on the relevant additions)
-
-// In the existing code, add the following button at the end of both grid view sections:
-
-// 1. First, in the "View All Discounted Products" section, add this before the product count text:
 {!searchQuery && showDiscountedOnly && !showAllProducts && (
   <section ref={productsRef} className="py-10">
     <div className="container mx-auto px-4">
