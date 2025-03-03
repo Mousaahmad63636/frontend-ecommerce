@@ -1,6 +1,6 @@
 // src/pages/Home.js
 import React, { useState, useEffect, useRef } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Spinner } from 'flowbite-react';
 import { useLocation } from 'react-router-dom';
@@ -28,6 +28,7 @@ function Home() {
   const [showDiscountedOnly, setShowDiscountedOnly] = useState(false);
   const heroRef = useRef(null);
   const location = useLocation();
+  const navigate = useNavigate();
   const productsRef = useRef(null);
 
   const [heroSettings, setHeroSettings] = useState({
@@ -36,6 +37,14 @@ function Home() {
     title: 'Just Trendy - Where Trends Meet Need!',
     subtitle: 'Discover Amazing Products at Great Prices'
   });
+
+  // Handle navigation to home
+  const goToHome = () => {
+    navigate('/', { replace: true });
+    setShowDiscountedOnly(false);
+    setSelectedCategory('all');
+    window.scrollTo(0, 0);
+  };
 
   // Separate useEffect for scroll to products functionality
   useEffect(() => {
@@ -61,8 +70,16 @@ function Home() {
           productsRef.current.scrollIntoView({ behavior: 'smooth' });
         }
       }, 300);
+    } else {
+      // Reset showDiscountedOnly when not in the URL
+      setShowDiscountedOnly(false);
     }
-  }, [location]);
+
+    // Handle category param when no showDiscounted
+    if (!showDiscounted && params.get('category')) {
+      setSelectedCategory(params.get('category'));
+    }
+  }, [location.search]);
 
   // Calculate header height on mount and when window resizes
   useEffect(() => {
@@ -151,7 +168,7 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    let filtered = products;
+    let filtered = [...products]; // Create a copy to avoid mutating the original
 
     // Apply search filter
     if (searchQuery) {
@@ -185,14 +202,34 @@ function Home() {
     // Apply discount filter if showDiscountedOnly is true
     if (showDiscountedOnly) {
       filtered = filtered.filter(product => 
-        product.discountPercentage > 0 && 
-        product.discountEndDate && 
-        new Date(product.discountEndDate) > new Date()
+        product.discountPercentage > 0
       );
     }
 
     setFilteredProducts(filtered);
   }, [products, searchQuery, selectedCategory, showDiscountedOnly]);
+
+  // Handle category change with URL update
+  const handleCategoryChange = (e) => {
+    const newCategory = e.target.value;
+    setSelectedCategory(newCategory);
+    
+    // Update URL to reflect the new category
+    let params = new URLSearchParams(location.search);
+    
+    if (newCategory === 'all') {
+      params.delete('category');
+    } else {
+      params.set('category', newCategory);
+    }
+    
+    // Preserve showDiscounted parameter if it exists
+    if (showDiscountedOnly) {
+      params.set('showDiscounted', 'true');
+    }
+    
+    navigate({ search: params.toString() });
+  };
 
   if (loading) {
     return (
@@ -218,35 +255,34 @@ function Home() {
       </Helmet>
 
       {/* Hero Section - Fixed positioning based on initial header height */}
-      <section 
-        ref={heroRef} 
-        className="w-full" 
-        style={{ marginTop: `${headerHeight}px` }}
-      >
-        <div className="w-full overflow-hidden">
-          <div className="relative">
-            {heroSettings.type === 'image' ? (
-              <img
-                src={getImageUrl(heroSettings.mediaUrl)}
-                alt="Hero banner"
-                className="w-full h-auto"
-              />
-            ) : (
-              <video
-                src={getImageUrl(heroSettings.mediaUrl)}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-auto"
-              />
-            )}
-
-            {/* Gradient Overlay 
-            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" /> */}
+      {!showDiscountedOnly && !searchQuery && (
+        <section 
+          ref={heroRef} 
+          className="w-full" 
+          style={{ marginTop: `${headerHeight}px` }}
+        >
+          <div className="w-full overflow-hidden">
+            <div className="relative">
+              {heroSettings.type === 'image' ? (
+                <img
+                  src={getImageUrl(heroSettings.mediaUrl)}
+                  alt="Hero banner"
+                  className="w-full h-auto"
+                />
+              ) : (
+                <video
+                  src={getImageUrl(heroSettings.mediaUrl)}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-auto"
+                />
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Admin Panel Section */}
       {user && user.role === 'admin' && (
@@ -280,7 +316,27 @@ function Home() {
         </div>
       )}
 
-      {/* Main content - either normal homepage or search results */}
+      {/* Page Title for Discounted Products or Search Results */}
+      {(showDiscountedOnly || searchQuery) && (
+        <div className="pt-20 pb-6 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <div className="flex justify-between items-center">
+              <h1 className="text-3xl font-bold text-gray-900">
+                {showDiscountedOnly ? 'Special Offers' : `Search Results: "${searchQuery}"`}
+              </h1>
+              <button 
+                onClick={goToHome}
+                className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
+              >
+                <i className="fas fa-chevron-left text-sm"></i>
+                Back to Home
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Main content - either normal homepage or special views */}
       {!searchQuery && !showDiscountedOnly && (
         <>
           {/* Special Offers Section - Horizontal Scrollable Row */}
@@ -293,14 +349,20 @@ function Home() {
                 <h2 className="text-3xl font-bold">Special Offers</h2>
               </div>
               <div>
-                {discountedProducts.length > 0 && (
+                {discountedProducts.length > 0 ? (
                   <ProductList 
                     title=" " 
                     products={discountedProducts} 
                     scrollable={true}
                     viewAllUrl={viewAllDiscountedUrl}
-                    viewAllText="View all offers"
+                    viewAllText="View All Products"
                   />
+                ) : (
+                  <div className="text-center py-5">
+                    <p className="text-gray-500">
+                      No discounted products available at the moment.
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
@@ -310,14 +372,14 @@ function Home() {
           <section ref={productsRef} className="py-10">
             <div className="container mx-auto px-4">
               <div className="mb-6 text-center">
-                <h2 className="text-3xl font-bold">All Products</h2>
+                <h2 className="text-3xl font-bold">Explore Our Products</h2>
               </div>
               
               {/* Category Filter */}
               <div className="max-w-md mx-auto mb-8">
                 <select
                   value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  onChange={handleCategoryChange}
                   className="w-full border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
                 >
                   <option value="all">All Categories</option>
@@ -345,18 +407,11 @@ function Home() {
       {!searchQuery && showDiscountedOnly && (
         <section ref={productsRef} className="py-10">
           <div className="container mx-auto px-4">
-            <div className="mb-6 text-center">
-              <h2 className="text-3xl font-bold">
-                All Special Offers
-                {selectedCategory !== 'all' && ` in ${selectedCategory}`}
-              </h2>
-            </div>
-            
             {/* Category Filter */}
             <div className="max-w-md mx-auto mb-8">
               <select
                 value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
+                onChange={handleCategoryChange}
                 className="w-full border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
               >
                 <option value="all">All Categories</option>
@@ -379,17 +434,23 @@ function Home() {
               <div className="text-center py-8">
                 <div className="bg-gray-50 p-6 rounded-lg">
                   <h3 className="text-xl mb-2">No Discounted Products Found</h3>
-                  <p className="text-gray-600">
-                    No discounted products found
-                    {selectedCategory !== 'all' && ` in the "${selectedCategory}" category`}
-                    . Try selecting a different category.
+                  <p className="text-gray-600 mb-4">
+                    No discounted products available
+                    {selectedCategory !== 'all' && ` in the "${selectedCategory}" category`}.
                   </p>
+                  <button
+                    onClick={() => setSelectedCategory('all')}
+                    className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors"
+                  >
+                    View All Categories
+                  </button>
                 </div>
               </div>
             )}
             
             <div className="text-center mt-4 text-sm text-gray-500">
               Showing {filteredProducts.length} discounted products
+              {selectedCategory !== 'all' && ` in ${selectedCategory}`}
             </div>
           </div>
         </section>
@@ -397,12 +458,8 @@ function Home() {
 
       {/* Search Results Section */}
       {searchQuery && (
-        <section className="py-16 bg-gray-50">
+        <section className="py-10">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-8">
-              Search Results for "{searchQuery}"
-            </h2>
-
             {error ? (
               <div className="text-center py-8">
                 <div className="bg-red-50 p-6 rounded-lg">

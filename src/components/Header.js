@@ -182,10 +182,19 @@ function Header() {
                 className="h-8 w-auto"
               />
             </Link>
-            
+
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-6">
-              <Link to="/" className="nav-link text-sm">Home</Link>
+              <Link
+                to="/"
+                className="nav-link text-sm"
+                onClick={() => {
+                  // Force navigation to home and reset state
+                  window.location.href = '/';
+                }}
+              >
+                Home
+              </Link>
               <Link
                 to="/?scrollToProducts=true"
                 className="nav-link text-sm"
@@ -195,7 +204,7 @@ function Header() {
               <Link to="/contact" className="nav-link text-sm">Contact</Link>
               <Link to="/about" className="nav-link text-sm">About</Link>
             </nav>
-            
+
             {/* Right Section */}
             <div className="flex items-center space-x-3 md:space-x-4">
               {/* Desktop Search */}
@@ -310,7 +319,7 @@ function Header() {
                   </button>
                 </div>
               )}
-              
+
               {/* Mobile Menu Toggle */}
               <button
                 className="lg:hidden text-gray-700 hover:text-purple-600 transition-colors duration-300 icon-button"

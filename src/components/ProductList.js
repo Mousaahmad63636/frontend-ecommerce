@@ -12,8 +12,8 @@ function ProductList({
   scrollable = true, 
   mobileColumns = 2, 
   filterCategory = null,
-  viewAllUrl = null,  // New prop for custom View All URL
-  viewAllText = "View all"  // Customizable button text
+  viewAllUrl = null,
+  viewAllText = "View All Products"
 }) {
   const scrollContainerRef = useRef(null);
 
@@ -121,17 +121,14 @@ function ProductList({
         </div>
       )}
 
-      {/* New "View All" button - Only show when in scrollable mode and has products */}
+      {/* New "View All" button styled like the reference image - Only show when in scrollable mode and has products */}
       {scrollable && filteredProducts.length > 0 && (
-        <div className="flex justify-center mt-6">
+        <div className="flex justify-center mt-8 mb-4">
           <Link 
             to={finalViewAllUrl}
-            className="view-all-button flex items-center justify-center bg-white border border-gray-200 rounded-md px-8 py-3 shadow-sm transition-all hover:shadow-md hover:border-gray-300"
+            className="bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center min-w-[240px]"
           >
-            <span className="text-gray-700 font-medium mr-2">{viewAllText}</span>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            {viewAllText}
           </Link>
         </div>
       )}
