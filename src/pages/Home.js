@@ -450,10 +450,14 @@ function Home() {
         </>
       )}
 
+// src/pages/Home.js
+// I'll focus only on the parts that need to be updated
+
+// 1. Update the "View All Discounted Products" section:
 {!searchQuery && showDiscountedOnly && !showAllProducts && (
   <section ref={productsRef} className="py-10">
     <div className="container mx-auto px-4">
-      {/* Category Filter */}
+      {/* Category Filter remains the same */}
       <div className="max-w-md mx-auto mb-8">
         <select
           value={selectedCategory}
@@ -469,12 +473,12 @@ function Home() {
         </select>
       </div>
       
-      {/* Products Grid */}
+      {/* Products Grid - Changed mobileColumns to 2 */}
       {filteredProducts.length > 0 ? (
         <ProductList 
           products={filteredProducts}
           scrollable={false} 
-          mobileColumns={1}
+          mobileColumns={2} // Changed from 1 to 2 for mobile view
         />
       ) : (
         <div className="text-center py-8">
@@ -494,7 +498,7 @@ function Home() {
         </div>
       )}
       
-      {/* Return to Home Button - NEW */}
+      {/* Return to Home Button */}
       <div className="flex justify-center mt-8 mb-4">
         <button
           onClick={goToHome}
@@ -512,11 +516,11 @@ function Home() {
   </section>
 )}
 
-
+// 2. Update the "View All Products" section:
 {!searchQuery && !showDiscountedOnly && showAllProducts && (
   <section ref={productsRef} className="py-10">
     <div className="container mx-auto px-4">
-      {/* Category Filter */}
+      {/* Category Filter remains the same */}
       <div className="max-w-md mx-auto mb-8">
         <select
           value={selectedCategory}
@@ -532,12 +536,12 @@ function Home() {
         </select>
       </div>
       
-      {/* Products Grid */}
+      {/* Products Grid - Changed mobileColumns to 2 */}
       {filteredProducts.length > 0 ? (
         <ProductList 
           products={filteredProducts}
           scrollable={false}
-          mobileColumns={1}
+          mobileColumns={2} // Changed from 1 to 2 for mobile view
         />
       ) : (
         <div className="text-center py-8">
@@ -557,7 +561,7 @@ function Home() {
         </div>
       )}
       
-      {/* Return to Home Button - NEW */}
+      {/* Return to Home Button */}
       <div className="flex justify-center mt-8 mb-4">
         <button
           onClick={goToHome}
@@ -575,7 +579,7 @@ function Home() {
   </section>
 )}
 
-
+// 3. Keep the Search Results section with 1 column on mobile:
 {searchQuery && (
   <section className="py-10">
     <div className="container mx-auto px-4">
@@ -590,7 +594,7 @@ function Home() {
         <ProductList 
           products={filteredProducts} 
           scrollable={false}
-          mobileColumns={1}
+          mobileColumns={1} // Keeping this at 1 for search results
         />
       ) : (
         <div className="text-center py-8">
@@ -603,7 +607,7 @@ function Home() {
         </div>
       )}
 
-      {/* Return to Home Button - NEW */}
+      {/* Return to Home Button */}
       <div className="flex justify-center mt-8 mb-4">
         <button
           onClick={goToHome}
