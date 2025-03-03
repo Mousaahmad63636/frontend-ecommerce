@@ -13,126 +13,144 @@ import BlackFridayBanner from '../components/BlackFridayBanner/BlackFridayBanner
 import api from '../api/api';
 
 function Home() {
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [blackFridayData, setBlackFridayData] = useState(null);
+  const [searchParams] = useSearchParams();
+  const { user } = useAuth();
+  const searchQuery = searchParams.get('q');
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const heroRef = useRef(null);
   const location = useLocation();
-  const navigate = useNavigate();
-  const { showNotification } = useNotification();
   const productsRef = useRef(null);
 
-  // State
-  const [loading, setLoading] = useState(true);
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [settings, setSettings] = useState({});
-  const [filterCategory, setFilterCategory] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [sortBy, setSortBy] = useState('newest');
-  const [showDiscountedOnly, setShowDiscountedOnly] = useState(false);
-  const [heroSection, setHeroSection] = useState({
+  const [heroSettings, setHeroSettings] = useState({
     type: 'image',
-    title: 'Welcome to Our Store',
-    subtitle: 'Discover amazing products at great prices',
-    mediaUrl: ''
+    mediaUrl: '/hero.jpg',
+    title: 'Just Trendy - Where Trends Meet Need!',
+    subtitle: 'Discover Amazing Products at Great Prices'
   });
 
-  // Load products and settings
+  // Separate useEffect for scroll to products functionality
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('scrollToProducts') === 'true' && productsRef.current) {
+      productsRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [location]);
+
+  // Calculate header height on mount and when window resizes
+  useEffect(() => {
+    const updateHeaderHeight = () => {
+      const header = document.querySelector('header')?.parentElement;
+      if (header) {
+        const height = header.offsetHeight;
+        setHeaderHeight(height);
+      }
+    };
+    
+    // Initial calculation
+    updateHeaderHeight();
+
+    // Update only on resize, not on scroll
+    window.addEventListener('resize', updateHeaderHeight);
+
+    return () => {
+      window.removeEventListener('resize', updateHeaderHeight);
+    };
+  }, []);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await api.getSettings();
+        if (response?.heroSection) {
+          setHeroSettings(response.heroSection);
+        }
+      } catch (error) {
+        console.error('Error fetching hero settings:', error);
+      }
+    };
+
+    fetchSettings();
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-
-        // Fetch products
         const productsData = await api.getProducts();
         setProducts(productsData);
 
-        // Fetch categories
-        const categoriesResponse = await api.getCategories();
-        if (categoriesResponse?.categories) {
-          setCategories(categoriesResponse.categories);
-        }
+        // Extract ALL categories (primary and secondary) from products
+        const allCategories = new Set();
+        
+        productsData.forEach(product => {
+          // Add primary category
+          if (product.category) {
+            allCategories.add(product.category);
+          }
+          
+          // Add secondary categories from the categories array
+          if (Array.isArray(product.categories)) {
+            product.categories.forEach(category => {
+              if (category) allCategories.add(category);
+            });
+          }
+        });
+        
+        setCategories([...allCategories].sort());
 
-        // Fetch settings for hero section
-        const settingsData = await api.getSettings();
-        if (settingsData) {
-          setSettings(settingsData);
-          if (settingsData.heroSection) {
-            setHeroSection(settingsData.heroSection);
+        if (api.getBlackFridayData) {
+          try {
+            const blackFridayResponse = await api.getBlackFridayData();
+            if (blackFridayResponse?.isActive) {
+              setBlackFridayData({
+                discount: blackFridayResponse.discountPercentage,
+                endDate: blackFridayResponse.endDate
+              });
+            }
+          } catch (blackFridayError) {
+            console.log('Black Friday data not available');
           }
         }
       } catch (error) {
-        console.error('Error fetching data:', error);
-        showNotification('Failed to load products', 'error');
+        console.error('Error fetching products:', error);
+        setError('Failed to load products. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [showNotification]);
+  }, []);
 
-  // Parse URL parameters
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    
-    // Check for category filter
-    const categoryParam = queryParams.get('category');
-    if (categoryParam) {
-      setFilterCategory(categoryParam);
-    }
+    let filtered = products;
 
-    // Check for search query
-    const searchParam = queryParams.get('q');
-    if (searchParam) {
-      setSearchQuery(searchParam);
-    }
-
-    // Check for scroll to products
-    const scrollToProducts = queryParams.get('scrollToProducts');
-    if (scrollToProducts === 'true') {
-      setTimeout(() => {
-        if (productsRef.current) {
-          productsRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 300);
-    }
-
-    // Check for show discounted only
-    const showDiscounted = queryParams.get('showDiscounted');
-    if (showDiscounted === 'true') {
-      setShowDiscountedOnly(true);
-      
-      // Scroll to products section
-      setTimeout(() => {
-        if (productsRef.current) {
-          productsRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 300);
-    }
-  }, [location.search]);
-
-  // Filter and sort products based on criteria
-  useEffect(() => {
-    let result = [...products];
-
-    // Apply search filter
     if (searchQuery) {
       const searchLower = searchQuery.toLowerCase();
-      result = result.filter(product => 
-        product.name.toLowerCase().includes(searchLower) || 
-        product.description.toLowerCase().includes(searchLower)
+      filtered = filtered.filter(product =>
+        product.name.toLowerCase().includes(searchLower) ||
+        product.description.toLowerCase().includes(searchLower) ||
+        (product.category && product.category.toLowerCase().includes(searchLower)) ||
+        (Array.isArray(product.categories) && product.categories.some(cat => 
+          cat.toLowerCase().includes(searchLower)
+        ))
       );
-    }
-
-    // Apply category filter
-    if (filterCategory && filterCategory !== 'all') {
-      result = result.filter(product => {
+    } else if (selectedCategory !== 'all') {
+      filtered = filtered.filter(product => {
         // Check primary category
-        if (product.category === filterCategory) {
+        if (product.category === selectedCategory) {
           return true;
         }
         
-        // Check secondary categories array
-        if (Array.isArray(product.categories) && product.categories.includes(filterCategory)) {
+        // Check categories array for secondary categories
+        if (Array.isArray(product.categories) && product.categories.includes(selectedCategory)) {
           return true;
         }
         
@@ -140,327 +158,187 @@ function Home() {
       });
     }
 
-    // Apply discount filter
-    if (showDiscountedOnly) {
-      result = result.filter(product => 
-        product.discountPercentage > 0 && 
-        product.discountEndDate && 
-        new Date(product.discountEndDate) > new Date()
-      );
-    }
+    setFilteredProducts(filtered);
+  }, [products, searchQuery, selectedCategory]);
 
-    // Apply sorting
-    result.sort((a, b) => {
-      switch (sortBy) {
-        case 'priceAsc':
-          return a.price - b.price;
-        case 'priceDesc':
-          return b.price - a.price;
-        case 'name':
-          return a.name.localeCompare(b.name);
-        case 'discount':
-          return (b.discountPercentage || 0) - (a.discountPercentage || 0);
-        case 'newest':
-        default:
-          return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
-      }
-    });
-
-    setFilteredProducts(result);
-  }, [products, filterCategory, searchQuery, sortBy, showDiscountedOnly]);
-
-  const handleCategoryChange = (category) => {
-    setFilterCategory(category);
-    
-    // Update URL
-    const queryParams = new URLSearchParams(location.search);
-    if (category === 'all') {
-      queryParams.delete('category');
-    } else {
-      queryParams.set('category', category);
-    }
-    
-    navigate({ search: queryParams.toString() });
-  };
-
-  const handleSortChange = (e) => {
-    setSortBy(e.target.value);
-  };
-
-  const handleClearFilters = () => {
-    setFilterCategory('all');
-    setSearchQuery('');
-    setShowDiscountedOnly(false);
-    
-    // Clear URL parameters
-    navigate('/');
-  };
-
-  // Render hero section
-  const renderHeroSection = () => {
-    if (!heroSection?.mediaUrl) {
-      return null;
-    }
-
-    const heroStyle = heroSection.type === 'image' 
-      ? { backgroundImage: `url(${api.getBaseURL() + heroSection.mediaUrl})` }
-      : {};
-
+  if (loading) {
     return (
-      <section 
-        className="hero-section relative flex items-center justify-center mb-8"
-        style={heroStyle}
-      >
-        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-        <div className="container mx-auto px-4 py-20 relative z-10 text-center">
-          {heroSection.title && (
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
-              {heroSection.title}
-            </h1>
-          )}
-          {heroSection.subtitle && (
-            <p className="text-xl md:text-2xl text-white mb-8">
-              {heroSection.subtitle}
-            </p>
-          )}
-          {heroSection.type === 'video' && heroSection.mediaUrl && (
-            <video 
-              src={api.getBaseURL() + heroSection.mediaUrl} 
-              autoPlay 
-              muted 
-              loop 
-              className="absolute inset-0 w-full h-full object-cover z-0"
-            />
-          )}
-        </div>
-      </section>
+      <div className="flex justify-center items-center min-h-screen">
+        <Spinner size="xl" />
+      </div>
     );
-  };
+  }
 
   return (
-    <div className="pb-12">
-      {/* Hero Section */}
-      {renderHeroSection()}
+    <div className="min-h-screen bg-gray-50">
+      <Helmet>
+        <title>Trendy E-commerce Store | Discover Amazing Products</title>
+        <meta name="description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices." />
+      </Helmet>
 
-      {/* Timer Display */}
-      <TimerDisplay />
-
-      {/* Category Slider */}
-      <div className="container mx-auto px-4 mb-8">
-        <CategorySlider 
-          categories={categories} 
-          selectedCategory={filterCategory}
-          onSelectCategory={handleCategoryChange}
-        />
-      </div>
-
-      {/* Discounted Products Section */}
-      <DiscountedProducts />
-
-      {/* Best Selling Products */}
-      <div className="container mx-auto px-4 mb-8">
-        <BestSelling />
-      </div>
-
-      {/* Main Products Section */}
-      <div 
-        id="products-section" 
-        ref={productsRef}
-        className="container mx-auto px-4 mb-12"
+      {/* Hero Section - Fixed positioning based on initial header height */}
+      <section 
+        ref={heroRef} 
+        className="w-full" 
+        style={{ marginTop: `${headerHeight}px` }}
       >
-        {/* Filters and Controls */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-          <div className="w-full md:w-auto mb-4 md:mb-0">
-            {showDiscountedOnly ? (
-              <h2 className="text-2xl font-bold text-gray-900">
-                All Special Offers
-                {filterCategory !== 'all' && ` in ${filterCategory}`}
-              </h2>
-            ) : searchQuery ? (
-              <h2 className="text-2xl font-bold text-gray-900">
-                Search Results for "{searchQuery}"
-                {filterCategory !== 'all' && ` in ${filterCategory}`}
-              </h2>
+        <div className="w-full overflow-hidden">
+          <div className="relative">
+            {heroSettings.type === 'image' ? (
+              <img
+                src={getImageUrl(heroSettings.mediaUrl)}
+                alt="Hero banner"
+                className="w-full h-auto"
+              />
             ) : (
-              <h2 className="text-2xl font-bold text-gray-900">
-                All Products
-                {filterCategory !== 'all' && ` in ${filterCategory}`}
-              </h2>
-            )}
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3">
-            {(filterCategory !== 'all' || searchQuery || showDiscountedOnly) && (
-              <button
-                onClick={handleClearFilters}
-                className="btn btn-outline-secondary py-2 px-3 text-sm flex items-center"
-              >
-                <i className="fas fa-times-circle mr-2"></i>
-                Clear Filters
-              </button>
+              <video
+                src={getImageUrl(heroSettings.mediaUrl)}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-auto"
+              />
             )}
 
-            <select
-              className="form-select py-2 px-3 text-sm border rounded-md"
-              value={sortBy}
-              onChange={handleSortChange}
-            >
-              <option value="newest">Newest First</option>
-              <option value="priceAsc">Price: Low to High</option>
-              <option value="priceDesc">Price: High to Low</option>
-              <option value="name">Name: A to Z</option>
-              <option value="discount">Biggest Discount</option>
-            </select>
+            {/* Gradient Overlay 
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" /> */}
           </div>
         </div>
+      </section>
 
-        {/* Products Display */}
-        {loading ? (
-          <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+      {/* Admin Panel Section */}
+      {user && user.role === 'admin' && (
+        <section className="py-8 bg-gray-100">
+          <div className="container mx-auto px-0">
+            <div className="bg-white rounded-lg shadow-md p-6 text-center mx-4">
+              <h3 className="text-2xl font-bold mb-4">Admin Panel</h3>
+              <p className="mb-4">Manage your store, products, and orders</p>
+              <Link
+                to="/admin"
+                className="bg-primary-600 text-white px-6 py-2 rounded-full hover:bg-primary-700 transition-all duration-300"
+              >
+                Go to Admin Dashboard
+              </Link>
+            </div>
           </div>
-        ) : filteredProducts.length === 0 ? (
-          <div className="text-center py-12 bg-gray-50 rounded-lg">
-            <i className="fas fa-search fa-3x text-gray-300 mb-4"></i>
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">No Products Found</h3>
-            <p className="text-gray-500 mb-4">
-              {searchQuery 
-                ? `We couldn't find any products matching "${searchQuery}"`
-                : filterCategory !== 'all'
-                ? `No products found in the "${filterCategory}" category`
-                : showDiscountedOnly
-                ? "No discounted products available at the moment"
-                : "No products available at the moment"}
-            </p>
-            <button
-              onClick={handleClearFilters}
-              className="bg-purple-600 text-white py-2 px-6 rounded-lg hover:bg-purple-700 transition-colors"
-            >
-              Clear Filters
-            </button>
+        </section>
+      )}
+
+      {/* Black Friday Banner */}
+      {blackFridayData && (
+        <div className="bg-black text-white py-3">
+          <div className="container mx-auto px-0">
+            <div className="mx-4">
+              <BlackFridayBanner
+                endDate={blackFridayData.endDate}
+                discount={blackFridayData.discount}
+              />
+            </div>
           </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {filteredProducts.map(product => (
-              <div key={product._id}>
-                <ProductItem product={product} />
+        </div>
+      )}
+
+      {!searchQuery && (
+        <>
+          {/* Special Offers Section - Horizontal Scrollable Row */}
+          <section className="py-10">
+            <div className="container mx-auto px-0"> 
+              {/* Daily Timer added here - above the Special Offers title */}
+              <DailyTimer />
+              
+              <div className="mb-2 text-center">
+                <h2 className="text-3xl font-bold">Special Offers</h2>
               </div>
-            ))}
-          </div>
-        )}
+              <div>
+                {products.filter(p => p.discountPercentage > 0).length > 0 && (
+                  <ProductList 
+                    title=" " 
+                    products={products.filter(p => p.discountPercentage > 0)} 
+                    scrollable={true}
+                  />
+                )}
+              </div>
+            </div>
+          </section>
 
-        {/* Results Count */}
-        {filteredProducts.length > 0 && (
-          <div className="mt-4 text-sm text-gray-500 text-right">
-            Showing {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'}
-            {searchQuery && ` for "${searchQuery}"`}
-            {filterCategory !== 'all' && ` in ${filterCategory}`}
-            {showDiscountedOnly && ' with discount'}
-          </div>
-        )}
-      </div>
+          {/* All Products Section - Grid Layout */}
+          <section ref={productsRef} className="py-10">
+            <div className="container mx-auto px-4">
+              <div className="mb-6 text-center">
+                <h2 className="text-3xl font-bold">All Products</h2>
+              </div>
+              
+              {/* Category Filter */}
+              <div className="max-w-md mx-auto mb-8">
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="w-full border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                >
+                  <option value="all">All Categories</option>
+                  {categories.map(category => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              {/* Products Grid - Mobile: 1 per row, Tablet: 2 per row, Desktop: 4-5 per row */}
+              <ProductList 
+                products={products} 
+                filterCategory={selectedCategory}
+                scrollable={false} // Grid view for all products
+                mobileColumns={1} // 1 column for mobile view
+              />
+            </div>
+          </section>
+        </>
+      )}
 
-      {/* Contact Section */}
+      {/* Search Results Section */}
+      {searchQuery && (
+        <section className="py-16 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-8">
+              Search Results for "{searchQuery}"
+            </h2>
+
+            {error ? (
+              <div className="text-center py-8">
+                <div className="bg-red-50 p-6 rounded-lg">
+                  <h3 className="text-red-600 text-xl mb-2">Error</h3>
+                  <p className="text-red-700">{error}</p>
+                </div>
+              </div>
+            ) : filteredProducts.length > 0 ? (
+              <ProductList 
+                products={filteredProducts} 
+                scrollable={false} // Grid view for search results
+                mobileColumns={1} // 1 column for mobile view in search results too
+              />
+            ) : (
+              <div className="text-center py-8">
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <h3 className="text-xl mb-2">No Products Found</h3>
+                  <p className="text-gray-600">
+                    No results found for "{searchQuery}". Try a different search term or browse our categories.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <div className="text-center mt-4 text-sm text-gray-500">
+              Showing {filteredProducts.length} products
+            </div>
+          </div>
+        </section>
+      )}
+
       <ContactSection />
-
-      {/* WhatsApp Float */}
-      <WhatsAppFloat />
     </div>
   );
 }
-
-// Helper component for individual product items
-const ProductItem = ({ product }) => {
-  return (
-    <div className="product-card bg-white rounded-xl shadow-sm overflow-hidden transition-all hover:shadow-md relative border border-gray-100">
-      {/* Discount Badge */}
-      {product.discountPercentage > 0 && (
-        <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 text-xs font-medium z-10 rounded-full">
-          {product.discountType === 'fixed' 
-            ? `Save $${product.discountPercentage.toFixed(2)}`
-            : `${product.discountPercentage}% OFF`}
-        </div>
-      )}
-      
-      {/* Sold Out Overlay */}
-      {product.soldOut && (
-        <div className="absolute inset-0 bg-black bg-opacity-50 z-10 flex items-center justify-center">
-          <span className="text-white font-bold text-lg">SOLD OUT</span>
-        </div>
-      )}
-      
-      {/* Product Image */}
-      <Link to={`/product/${product._id}`}>
-        <div className="relative aspect-square overflow-hidden bg-gray-50">
-          <img
-            src={product.images && product.images.length > 0 
-              ? `${api.getBaseURL()}/uploads/products/${product.images[0]}` 
-              : '/placeholder.jpg'}
-            alt={product.name}
-            className="w-full h-full object-contain p-2 transition-transform hover:scale-105"
-            onError={(e) => {
-              e.target.src = '/placeholder.jpg';
-            }}
-          />
-        </div>
-      </Link>
-      
-      {/* Product Info */}
-      <div className="p-3">
-        <Link to={`/product/${product._id}`} className="block mb-1">
-          <h3 className="text-sm font-medium text-gray-900 line-clamp-1">{product.name}</h3>
-        </Link>
-        
-        {/* Categories */}
-        <div className="flex flex-wrap gap-1 mb-2">
-          {product.categories && product.categories.length > 0 
-            ? product.categories.map(category => (
-                <Link 
-                  key={category}
-                  to={`/?category=${encodeURIComponent(category)}`}
-                  className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-sm hover:bg-gray-200"
-                >
-                  {category}
-                </Link>
-              ))
-            : product.category && (
-                <Link 
-                  to={`/?category=${encodeURIComponent(product.category)}`}
-                  className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-sm hover:bg-gray-200"
-                >
-                  {product.category}
-                </Link>
-              )
-          }
-        </div>
-        
-        {/* Price */}
-        <div className="flex items-baseline mb-1.5">
-          {product.discountPercentage > 0 ? (
-            <>
-              <span className="text-sm font-bold text-red-500 mr-2">${product.price.toFixed(2)}</span>
-              <span className="text-xs text-gray-500 line-through">${product.originalPrice.toFixed(2)}</span>
-            </>
-          ) : (
-            <span className="text-sm font-bold text-gray-900">${product.price.toFixed(2)}</span>
-          )}
-        </div>
-        
-        {/* Star Rating */}
-        <div className="flex items-center mb-2">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <i 
-              key={star} 
-              className={`${star <= Math.round(product.rating || 4) ? 'text-yellow-400 fas' : 'text-gray-300 far'} fa-star text-xs`}
-            ></i>
-          ))}
-          <span className="ml-1 text-xs text-gray-500">
-            ({product.reviewCount !== undefined ? product.reviewCount : 0})
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 export default Home;
