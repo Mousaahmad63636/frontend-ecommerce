@@ -8,7 +8,7 @@ import BestSelling from '../components/BestSelling';
 import DiscountedProducts from '../components/DiscountedProducts';
 import CategorySlider from '../components/CategorySlider/CategorySlider';
 import TimerDisplay from '../components/Admin/TimerDisplay';
-import WhatsAppFloat from '../components/WhatsAppFloat';
+import WhatsAppFloat from '../components/ConsultingFloat/ConsultingFloat';
 import ContactSection from '../components/ContactSection';
 import './Home.css';
 
