@@ -357,6 +357,17 @@ function Home() {
           {/* Special Offers Section - Horizontal Scrollable Row */}
           <section className="py-10">
             <div className="container mx-auto px-0"> 
+              {/* NEW: Back to Home Button above the title */}
+              <div className="flex justify-end mb-4 px-4">
+                <button 
+                  onClick={goToHome}
+                  className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
+                >
+                  <i className="fas fa-home text-sm mr-1"></i>
+                  Back to Home
+                </button>
+              </div>
+              
               {/* Daily Timer added here - above the Special Offers title */}
               <DailyTimer />
               <br></br>
@@ -386,6 +397,17 @@ function Home() {
           {/* Explore Our Products Section - Now also Horizontal Scrollable */}
           <section ref={productsRef} className="py-10">
             <div className="container mx-auto px-0">
+              {/* NEW: Back to Home Button above the title */}
+              <div className="flex justify-end mb-4 px-4">
+                <button 
+                  onClick={goToHome}
+                  className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
+                >
+                  <i className="fas fa-home text-sm mr-1"></i>
+                  Back to Home
+                </button>
+              </div>
+              
               <div className="mb-2 text-center">
                 <h2 className="text-3xl font-bold">Explore Our Products</h2>
               </div>
