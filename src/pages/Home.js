@@ -6,7 +6,7 @@ import { Spinner } from 'flowbite-react';
 import { useLocation } from 'react-router-dom';
 import { getImageUrl } from '../utils/imageUtils';
 import { useAuth } from '../contexts/AuthContext';
-import DailyTimer from '../components/DailyTimer/DailyTimer'; 
+import DailyTimer from '../components/DailyTimer/DailyTimer';
 // Component imports
 import ProductList from '../components/ProductList';
 import ContactSection from '../components/ContactSection';
@@ -51,24 +51,24 @@ function Home() {
   // Separate useEffect for URL parameters and scroll functionality
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    
+
     // Handle scrollToProducts parameter
     if (params.get('scrollToProducts') === 'true' && productsRef.current) {
       productsRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-    
+
     // Handle showDiscounted parameter
     const showDiscounted = params.get('showDiscounted');
     if (showDiscounted === 'true') {
       setShowDiscountedOnly(true);
       setShowAllProducts(false); // Ensure only one view mode is active
-      
+
       // If there's also a category parameter, set it
       const categoryParam = params.get('category');
       if (categoryParam) {
         setSelectedCategory(categoryParam);
       }
-      
+
       // Scroll to products section
       setTimeout(() => {
         if (productsRef.current) {
@@ -85,13 +85,13 @@ function Home() {
     if (showAll === 'true') {
       setShowAllProducts(true);
       setShowDiscountedOnly(false); // Ensure only one view mode is active
-      
+
       // If there's also a category parameter, set it
       const categoryParam = params.get('category');
       if (categoryParam) {
         setSelectedCategory(categoryParam);
       }
-      
+
       // Scroll to products section
       setTimeout(() => {
         if (productsRef.current) {
@@ -118,7 +118,7 @@ function Home() {
         setHeaderHeight(height);
       }
     };
-    
+
     // Initial calculation
     updateHeaderHeight();
 
@@ -154,13 +154,13 @@ function Home() {
 
         // Extract ALL categories (primary and secondary) from products
         const allCategories = new Set();
-        
+
         productsData.forEach(product => {
           // Add primary category
           if (product.category) {
             allCategories.add(product.category);
           }
-          
+
           // Add secondary categories from the categories array
           if (Array.isArray(product.categories)) {
             product.categories.forEach(category => {
@@ -168,7 +168,7 @@ function Home() {
             });
           }
         });
-        
+
         setCategories([...allCategories].sort());
 
         if (api.getBlackFridayData) {
@@ -205,11 +205,11 @@ function Home() {
         product.name.toLowerCase().includes(searchLower) ||
         product.description.toLowerCase().includes(searchLower) ||
         (product.category && product.category.toLowerCase().includes(searchLower)) ||
-        (Array.isArray(product.categories) && product.categories.some(cat => 
+        (Array.isArray(product.categories) && product.categories.some(cat =>
           cat.toLowerCase().includes(searchLower)
         ))
       );
-    } 
+    }
     // Apply category filter
     else if (selectedCategory !== 'all') {
       filtered = filtered.filter(product => {
@@ -217,19 +217,19 @@ function Home() {
         if (product.category === selectedCategory) {
           return true;
         }
-        
+
         // Check categories array for secondary categories
         if (Array.isArray(product.categories) && product.categories.includes(selectedCategory)) {
           return true;
         }
-        
+
         return false;
       });
     }
 
     // Apply discount filter if showDiscountedOnly is true
     if (showDiscountedOnly) {
-      filtered = filtered.filter(product => 
+      filtered = filtered.filter(product =>
         product.discountPercentage > 0
       );
     }
@@ -241,23 +241,23 @@ function Home() {
   const handleCategoryChange = (e) => {
     const newCategory = e.target.value;
     setSelectedCategory(newCategory);
-    
+
     // Update URL to reflect the new category
     let params = new URLSearchParams(location.search);
-    
+
     if (newCategory === 'all') {
       params.delete('category');
     } else {
       params.set('category', newCategory);
     }
-    
+
     // Preserve view mode parameters if they exist
     if (showDiscountedOnly) {
       params.set('showDiscounted', 'true');
     } else if (showAllProducts) {
       params.set('showAllProducts', 'true');
     }
-    
+
     navigate({ search: params.toString() });
   };
 
@@ -271,7 +271,7 @@ function Home() {
 
   // Get discounted products
   const discountedProducts = products.filter(p => p.discountPercentage > 0);
-  
+
   // Create the custom URL for viewing all discounted products
   const viewAllDiscountedUrl = selectedCategory !== 'all'
     ? `/?showDiscounted=true&category=${encodeURIComponent(selectedCategory)}`
@@ -291,9 +291,9 @@ function Home() {
 
       {/* Hero Section - Fixed positioning based on initial header height */}
       {!showDiscountedOnly && !showAllProducts && !searchQuery && (
-        <section 
-          ref={heroRef} 
-          className="w-full" 
+        <section
+          ref={heroRef}
+          className="w-full"
           style={{ marginTop: `${headerHeight}px` }}
         >
           <div className="w-full overflow-hidden">
@@ -356,7 +356,7 @@ function Home() {
         <>
           {/* Special Offers Section - Horizontal Scrollable Row */}
           <section className="py-10">
-            <div className="container mx-auto px-0"> 
+            <div className="container mx-auto px-0">
               {/* Daily Timer added here - above the Special Offers title */}
               <DailyTimer />
               <br></br>
@@ -365,9 +365,9 @@ function Home() {
               </div>
               <div>
                 {discountedProducts.length > 0 ? (
-                  <ProductList 
-                    title=" " 
-                    products={discountedProducts} 
+                  <ProductList
+                    title=" "
+                    products={discountedProducts}
                     scrollable={true}
                     viewAllUrl={viewAllDiscountedUrl}
                     viewAllText="View All Offers"
@@ -389,7 +389,7 @@ function Home() {
               <div className="mb-2 text-center">
                 <h2 className="text-3xl font-bold">Explore Our Products</h2>
               </div>
-              
+
               {/* Category Filter */}
               <div className="max-w-md mx-auto mb-8 px-4">
                 <select
@@ -405,12 +405,12 @@ function Home() {
                   ))}
                 </select>
               </div>
-              
+
               {/* Products Horizontal Scrollable, just like Special Offers */}
               {filteredProducts.length > 0 ? (
-                <ProductList 
+                <ProductList
                   title=" "
-                  products={filteredProducts} 
+                  products={filteredProducts}
                   filterCategory={selectedCategory !== 'all' ? selectedCategory : null}
                   scrollable={true}
                   viewAllUrl={viewAllProductsUrl}
@@ -430,24 +430,28 @@ function Home() {
 
       {/* View All Discounted Products Section */}
       {!searchQuery && showDiscountedOnly && !showAllProducts && (
-        <section ref={productsRef} className="py-10">
+        <section
+          ref={productsRef}
+          className="py-10"
+          style={{ paddingTop: `${headerHeight + 40}px` }} // Add headerHeight
+        >
           <div className="container mx-auto px-4">
             {/* Back to Home Button - Above the title */}
             <div className="flex justify-between items-center mb-4">
-              <button 
+              <button
                 onClick={goToHome}
                 className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
               >
                 <i className="fas fa-arrow-left text-sm mr-1"></i>
                 Back to Home
               </button>
-              
+
               <h2 className="text-2xl font-bold text-center">Special Offers</h2>
-              
+
               {/* Empty div to maintain flex spacing */}
               <div className="w-[100px]"></div>
             </div>
-            
+
             {/* Category Filter */}
             <div className="max-w-md mx-auto mb-8">
               <select
@@ -463,12 +467,12 @@ function Home() {
                 ))}
               </select>
             </div>
-            
+
             {/* Products Grid */}
             {filteredProducts.length > 0 ? (
-              <ProductList 
+              <ProductList
                 products={filteredProducts}
-                scrollable={false} 
+                scrollable={false}
                 mobileColumns={2} // Changed from 1 to 2 for mobile view
               />
             ) : (
@@ -488,7 +492,7 @@ function Home() {
                 </div>
               </div>
             )}
-            
+
             {/* Return to Home Button */}
             <div className="flex justify-center mt-8 mb-4">
               <button
@@ -498,7 +502,7 @@ function Home() {
                 Return to Home
               </button>
             </div>
-            
+
             <div className="text-center mt-4 text-sm text-gray-500">
               Showing {filteredProducts.length} discounted products
               {selectedCategory !== 'all' && ` in ${selectedCategory}`}
@@ -509,24 +513,28 @@ function Home() {
 
       {/* View All Products Section */}
       {!searchQuery && !showDiscountedOnly && showAllProducts && (
-        <section ref={productsRef} className="py-10">
+        <section
+          ref={productsRef}
+          className="py-10"
+          style={{ paddingTop: `${headerHeight + 40}px` }} // Add headerHeight
+        >
           <div className="container mx-auto px-4">
             {/* Back to Home Button with Title */}
             <div className="flex justify-between items-center mb-4">
-              <button 
+              <button
                 onClick={goToHome}
                 className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
               >
                 <i className="fas fa-arrow-left text-sm mr-1"></i>
                 Back to Home
               </button>
-              
+
               <h2 className="text-2xl font-bold text-center">All Products</h2>
-              
+
               {/* Empty div to maintain flex spacing */}
               <div className="w-[100px]"></div>
             </div>
-            
+
             {/* Category Filter */}
             <div className="max-w-md mx-auto mb-8">
               <select
@@ -542,10 +550,10 @@ function Home() {
                 ))}
               </select>
             </div>
-            
+
             {/* Products Grid */}
             {filteredProducts.length > 0 ? (
-              <ProductList 
+              <ProductList
                 products={filteredProducts}
                 scrollable={false}
                 mobileColumns={2} // Changed from 1 to 2 for mobile view
@@ -567,7 +575,7 @@ function Home() {
                 </div>
               </div>
             )}
-            
+
             {/* Return to Home Button */}
             <div className="flex justify-center mt-8 mb-4">
               <button
@@ -577,7 +585,7 @@ function Home() {
                 Return to Home
               </button>
             </div>
-            
+
             <div className="text-center mt-4 text-sm text-gray-500">
               Showing {filteredProducts.length} products
               {selectedCategory !== 'all' && ` in ${selectedCategory}`}
@@ -588,20 +596,23 @@ function Home() {
 
       {/* Search Results Section */}
       {searchQuery && (
-        <section className="py-10">
+        <section
+          className="py-10"
+          style={{ paddingTop: `${headerHeight + 40}px` }} // Add headerHeight
+        >
           <div className="container mx-auto px-4">
             {/* Back to Home Button with Title */}
             <div className="flex justify-between items-center mb-4">
-              <button 
+              <button
                 onClick={goToHome}
                 className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
               >
                 <i className="fas fa-arrow-left text-sm mr-1"></i>
                 Back to Home
               </button>
-              
+
               <h2 className="text-2xl font-bold text-center">Search Results: "{searchQuery}"</h2>
-              
+
               {/* Empty div to maintain flex spacing */}
               <div className="w-[100px]"></div>
             </div>
@@ -614,8 +625,8 @@ function Home() {
                 </div>
               </div>
             ) : filteredProducts.length > 0 ? (
-              <ProductList 
-                products={filteredProducts} 
+              <ProductList
+                products={filteredProducts}
                 scrollable={false}
                 mobileColumns={1} // Keeping this at 1 for search results
               />
