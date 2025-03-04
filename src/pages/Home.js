@@ -351,28 +351,6 @@ function Home() {
         </div>
       )}
 
-      {/* Page Title for Discounted Products or Search Results */}
-      {(showDiscountedOnly || showAllProducts || searchQuery) && (
-        <div className="pt-20 pb-6 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <div className="flex justify-between items-center">
-              <h1 className="text-3xl font-bold text-gray-900">
-                {showDiscountedOnly && 'Special Offers'}
-                {showAllProducts && 'All Products'}
-                {searchQuery && `Search Results: "${searchQuery}"`}
-              </h1>
-              <button 
-                onClick={goToHome}
-                className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
-              >
-                <i className="fas fa-chevron-left text-sm"></i>
-                Back to Home
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Main content - either normal homepage or special views */}
       {!searchQuery && !showDiscountedOnly && !showAllProducts && (
         <>
@@ -381,18 +359,7 @@ function Home() {
             <div className="container mx-auto px-0"> 
               {/* Daily Timer added here - above the Special Offers title */}
               <DailyTimer />
-              
-              {/* Back to Home button - NEW (above Special Offers) */}
-              <div className="flex justify-end px-4 mb-2">
-                <button 
-                  onClick={goToHome}
-                  className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
-                >
-                  <i className="fas fa-home text-sm mr-1"></i>
-                  Back to Home
-                </button>
-              </div>
-              
+              <br></br>
               <div className="mb-2 text-center">
                 <h2 className="text-3xl font-bold">Special Offers</h2>
               </div>
@@ -419,17 +386,6 @@ function Home() {
           {/* Explore Our Products Section - Now also Horizontal Scrollable */}
           <section ref={productsRef} className="py-10">
             <div className="container mx-auto px-0">
-              {/* Back to Home button - NEW (above Explore Our Products) */}
-              <div className="flex justify-end px-4 mb-2">
-                <button 
-                  onClick={goToHome}
-                  className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
-                >
-                  <i className="fas fa-home text-sm mr-1"></i>
-                  Back to Home
-                </button>
-              </div>
-              
               <div className="mb-2 text-center">
                 <h2 className="text-3xl font-bold">Explore Our Products</h2>
               </div>
@@ -476,6 +432,22 @@ function Home() {
       {!searchQuery && showDiscountedOnly && !showAllProducts && (
         <section ref={productsRef} className="py-10">
           <div className="container mx-auto px-4">
+            {/* Back to Home Button - NEW (Above the title) */}
+            <div className="flex justify-end mb-4">
+              <button 
+                onClick={goToHome}
+                className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
+              >
+                <i className="fas fa-home text-sm mr-1"></i>
+                Back to Home
+              </button>
+            </div>
+
+            {/* Title with Back Button */}
+            <div className="mb-6 text-center">
+              <h2 className="text-3xl font-bold">Special Offers</h2>
+            </div>
+            
             {/* Category Filter */}
             <div className="max-w-md mx-auto mb-8">
               <select
@@ -539,6 +511,22 @@ function Home() {
       {!searchQuery && !showDiscountedOnly && showAllProducts && (
         <section ref={productsRef} className="py-10">
           <div className="container mx-auto px-4">
+            {/* Back to Home Button - NEW (Above the title) */}
+            <div className="flex justify-end mb-4">
+              <button 
+                onClick={goToHome}
+                className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
+              >
+                <i className="fas fa-home text-sm mr-1"></i>
+                Back to Home
+              </button>
+            </div>
+
+            {/* Title with Back Button */}
+            <div className="mb-6 text-center">
+              <h2 className="text-3xl font-bold">All Products</h2>
+            </div>
+            
             {/* Category Filter */}
             <div className="max-w-md mx-auto mb-8">
               <select
@@ -602,6 +590,22 @@ function Home() {
       {searchQuery && (
         <section className="py-10">
           <div className="container mx-auto px-4">
+            {/* Back to Home Button - NEW (Above the title) */}
+            <div className="flex justify-end mb-4">
+              <button 
+                onClick={goToHome}
+                className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
+              >
+                <i className="fas fa-home text-sm mr-1"></i>
+                Back to Home
+              </button>
+            </div>
+
+            {/* Title with Search Query */}
+            <div className="mb-6 text-center">
+              <h2 className="text-3xl font-bold">Search Results: "{searchQuery}"</h2>
+            </div>
+
             {error ? (
               <div className="text-center py-8">
                 <div className="bg-red-50 p-6 rounded-lg">
