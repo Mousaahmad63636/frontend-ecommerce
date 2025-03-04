@@ -381,7 +381,7 @@ function Home() {
             <div className="container mx-auto px-0"> 
               {/* Daily Timer added here - above the Special Offers title */}
               <DailyTimer />
-              
+              <br> </br>
               <div className="mb-2 text-center">
                 <h2 className="text-3xl font-bold">Special Offers</h2>
               </div>
