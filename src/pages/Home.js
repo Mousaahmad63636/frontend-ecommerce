@@ -357,17 +357,6 @@ function Home() {
           {/* Special Offers Section - Horizontal Scrollable Row */}
           <section className="py-10">
             <div className="container mx-auto px-0"> 
-              {/* NEW: Back to Home Button above the title */}
-              <div className="flex justify-end mb-4 px-4">
-                <button 
-                  onClick={goToHome}
-                  className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
-                >
-                  <i className="fas fa-home text-sm mr-1"></i>
-                  Back to Home
-                </button>
-              </div>
-              
               {/* Daily Timer added here - above the Special Offers title */}
               <DailyTimer />
               <br></br>
@@ -397,17 +386,6 @@ function Home() {
           {/* Explore Our Products Section - Now also Horizontal Scrollable */}
           <section ref={productsRef} className="py-10">
             <div className="container mx-auto px-0">
-              {/* NEW: Back to Home Button above the title */}
-              <div className="flex justify-end mb-4 px-4">
-                <button 
-                  onClick={goToHome}
-                  className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
-                >
-                  <i className="fas fa-home text-sm mr-1"></i>
-                  Back to Home
-                </button>
-              </div>
-              
               <div className="mb-2 text-center">
                 <h2 className="text-3xl font-bold">Explore Our Products</h2>
               </div>
@@ -454,20 +432,20 @@ function Home() {
       {!searchQuery && showDiscountedOnly && !showAllProducts && (
         <section ref={productsRef} className="py-10">
           <div className="container mx-auto px-4">
-            {/* Back to Home Button - NEW (Above the title) */}
-            <div className="flex justify-end mb-4">
+            {/* Back to Home Button - Above the title */}
+            <div className="flex justify-between items-center mb-4">
               <button 
                 onClick={goToHome}
                 className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
               >
-                <i className="fas fa-home text-sm mr-1"></i>
+                <i className="fas fa-arrow-left text-sm mr-1"></i>
                 Back to Home
               </button>
-            </div>
-
-            {/* Title with Back Button */}
-            <div className="mb-6 text-center">
-              <h2 className="text-3xl font-bold">Special Offers</h2>
+              
+              <h2 className="text-2xl font-bold text-center">Special Offers</h2>
+              
+              {/* Empty div to maintain flex spacing */}
+              <div className="w-[100px]"></div>
             </div>
             
             {/* Category Filter */}
@@ -533,20 +511,20 @@ function Home() {
       {!searchQuery && !showDiscountedOnly && showAllProducts && (
         <section ref={productsRef} className="py-10">
           <div className="container mx-auto px-4">
-            {/* Back to Home Button - NEW (Above the title) */}
-            <div className="flex justify-end mb-4">
+            {/* Back to Home Button with Title */}
+            <div className="flex justify-between items-center mb-4">
               <button 
                 onClick={goToHome}
                 className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
               >
-                <i className="fas fa-home text-sm mr-1"></i>
+                <i className="fas fa-arrow-left text-sm mr-1"></i>
                 Back to Home
               </button>
-            </div>
-
-            {/* Title with Back Button */}
-            <div className="mb-6 text-center">
-              <h2 className="text-3xl font-bold">All Products</h2>
+              
+              <h2 className="text-2xl font-bold text-center">All Products</h2>
+              
+              {/* Empty div to maintain flex spacing */}
+              <div className="w-[100px]"></div>
             </div>
             
             {/* Category Filter */}
@@ -612,20 +590,20 @@ function Home() {
       {searchQuery && (
         <section className="py-10">
           <div className="container mx-auto px-4">
-            {/* Back to Home Button - NEW (Above the title) */}
-            <div className="flex justify-end mb-4">
+            {/* Back to Home Button with Title */}
+            <div className="flex justify-between items-center mb-4">
               <button 
                 onClick={goToHome}
                 className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
               >
-                <i className="fas fa-home text-sm mr-1"></i>
+                <i className="fas fa-arrow-left text-sm mr-1"></i>
                 Back to Home
               </button>
-            </div>
-
-            {/* Title with Search Query */}
-            <div className="mb-6 text-center">
-              <h2 className="text-3xl font-bold">Search Results: "{searchQuery}"</h2>
+              
+              <h2 className="text-2xl font-bold text-center">Search Results: "{searchQuery}"</h2>
+              
+              {/* Empty div to maintain flex spacing */}
+              <div className="w-[100px]"></div>
             </div>
 
             {error ? (
