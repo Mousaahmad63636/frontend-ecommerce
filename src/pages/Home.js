@@ -443,7 +443,7 @@ function Home() {
                 className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
               >
                 <i className="fas fa-arrow-left text-sm mr-1"></i>
-                Back to Home
+                Home
               </button>
 
               <h2 className="text-2xl font-bold text-center">Special Offers</h2>
@@ -526,7 +526,7 @@ function Home() {
                 className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
               >
                 <i className="fas fa-arrow-left text-sm mr-1"></i>
-                Back to Home
+                Home
               </button>
 
               <h2 className="text-2xl font-bold text-center">All Products</h2>
@@ -608,7 +608,7 @@ function Home() {
                 className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
               >
                 <i className="fas fa-arrow-left text-sm mr-1"></i>
-                Back to Home
+               Home
               </button>
 
               <h2 className="text-2xl font-bold text-center">Search Results: "{searchQuery}"</h2>
