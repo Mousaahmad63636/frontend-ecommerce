@@ -1,6 +1,6 @@
-// src/pages/ProductDetail.js - with updated code for back button and price × quantity
+// src/pages/ProductDetail.js - with simplified pricing display
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom'; // Added useNavigate
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
@@ -16,7 +16,7 @@ import ProductList from '../components/ProductList';
 
 function ProductDetail() {
   const { id } = useParams();
-  const navigate = useNavigate(); // Added for back button functionality
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
@@ -31,6 +31,11 @@ function ProductDetail() {
   // Handle back button click
   const handleGoBack = () => {
     navigate(-1); // Go back to previous page
+  };
+
+  // Handle home button click
+  const goToHome = () => {
+    navigate('/'); // Go directly to homepage
   };
 
   // Fetch product data
@@ -293,39 +298,30 @@ function ProductDetail() {
       </Helmet>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Back Button - Added above breadcrumbs */}
-        <button 
-          onClick={handleGoBack}
-          className="mb-4 flex items-center text-purple-600 hover:text-purple-800 transition-colors"
-        >
-          <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-          Back
-        </button>
-
-        {/* Breadcrumbs */}
-        <nav className="mb-6">
-          <ol className="flex flex-wrap text-sm text-gray-600">
-            <li className="flex items-center">
-              <Link to="/" className="hover:text-purple-600">Home</Link>
-              <svg className="w-3 h-3 mx-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"></path>
-              </svg>
-            </li>
-            <li className="flex items-center">
-              <Link to={`/?category=${encodeURIComponent(product.category)}`} className="hover:text-purple-600">
-                {product.category}
-              </Link>
-              <svg className="w-3 h-3 mx-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"></path>
-              </svg>
-            </li>
-            <li className="text-gray-800 font-medium">
-              {product.name}
-            </li>
-          </ol>
-        </nav>
+        {/* Navigation Buttons Row */}
+        <div className="flex flex-wrap justify-between items-center mb-6">
+          {/* Back Button */}
+          <button 
+            onClick={handleGoBack}
+            className="flex items-center text-purple-600 hover:text-purple-800 transition-colors"
+          >
+            <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back
+          </button>
+          
+          {/* Back to Home Button */}
+          <button 
+            onClick={goToHome}
+            className="flex items-center bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            Back to Home
+          </button>
+        </div>
 
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="md:flex">
@@ -432,59 +428,42 @@ function ProductDetail() {
                 </span>
               </div>
 
-              {/* Price Section - Updated to show unit price and total */}
+              {/* Price Section - Simplified to show just one total price */}
               <div className="mb-6">
                 {hasDiscount ? (
-                  <div className="space-y-2">
-                    {/* Unit Price */}
+                  <div className="flex flex-col">
                     <div className="flex items-baseline flex-wrap">
-                      <span className="text-sm text-gray-500 mr-2">Unit Price:</span>
-                      <span className="text-lg font-bold text-purple-600 mr-2">
-                        {formatPrice(product.price)}
-                      </span>
-                      <span className="text-sm text-gray-500 line-through mr-2">
-                        {formatPrice(product.originalPrice)}
-                      </span>
-                      <span className="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded">
-                        Save {formatPrice(product.originalPrice - product.price)}
-                      </span>
-                    </div>
-                    
-                    {/* Total Price */}
-                    <div className="flex items-baseline">
-                      <span className="text-sm text-gray-500 mr-2">Total Price:</span>
-                      <span className="text-3xl font-bold text-purple-600">
+                      <span className="text-3xl font-bold text-purple-600 mr-2">
                         {formatPrice(getTotalPrice())}
                       </span>
+                      
                       {quantity > 1 && (
-                        <span className="ml-2 text-sm text-gray-500">
+                        <span className="text-sm text-gray-500">
                           ({quantity} × {formatPrice(product.price)})
                         </span>
                       )}
+                    </div>
+                    
+                    <div className="mt-1 flex items-center">
+                      <span className="text-lg text-gray-500 line-through mr-2">
+                        {formatPrice(product.originalPrice * quantity)}
+                      </span>
+                      <span className="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded">
+                        Save {formatPrice((product.originalPrice - product.price) * quantity)}
+                      </span>
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-2">
-                    {/* Unit Price */}
-                    <div className="flex items-baseline">
-                      <span className="text-sm text-gray-500 mr-2">Unit Price:</span>
-                      <span className="text-lg font-bold text-gray-900">
-                        {formatPrice(product.price)}
-                      </span>
-                    </div>
+                  <div className="flex items-baseline">
+                    <span className="text-3xl font-bold text-gray-900 mr-2">
+                      {formatPrice(getTotalPrice())}
+                    </span>
                     
-                    {/* Total Price */}
-                    <div className="flex items-baseline">
-                      <span className="text-sm text-gray-500 mr-2">Total Price:</span>
-                      <span className="text-3xl font-bold text-gray-900">
-                        {formatPrice(getTotalPrice())}
+                    {quantity > 1 && (
+                      <span className="text-sm text-gray-500">
+                        ({quantity} × {formatPrice(product.price)})
                       </span>
-                      {quantity > 1 && (
-                        <span className="ml-2 text-sm text-gray-500">
-                          ({quantity} × {formatPrice(product.price)})
-                        </span>
-                      )}
-                    </div>
+                    )}
                   </div>
                 )}
               </div>
