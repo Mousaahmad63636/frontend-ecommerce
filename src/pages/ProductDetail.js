@@ -428,48 +428,33 @@ function ProductDetail() {
                 </span>
               </div>
 
-              {/* Price Section - All in a single row */}
-              <div className="mb-6">
-                {hasDiscount ? (
-                  <div className="flex items-center flex-wrap">
-                    {/* Current price - bold */}
-                    <span className="text-3xl font-bold text-purple-600 mr-3">
-                      {formatPrice(getTotalPrice())}
-                    </span>
-
-                    {/* Original price - strikethrough */}
-                    <span className="text-lg text-gray-500 line-through mr-3">
-                      {formatPrice(product.originalPrice * quantity)}
-                    </span>
-
-                    {/* Savings amount */}
-                    <span className="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded">
-                      Save {formatPrice((product.originalPrice - product.price) * quantity)}
-                    </span>
-
-                    {/* REMOVE THIS ENTIRE BLOCK */}
-                    {quantity > 1 && (
-                      <span className="text-sm text-gray-500 ml-3">
-                        ({quantity} × {formatPrice(product.price)})
-                      </span>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex items-baseline">
-                    <span className="text-3xl font-bold text-gray-900 mr-2">
-                      {formatPrice(getTotalPrice())}
-                    </span>
-
-                    {/* REMOVE THIS ENTIRE BLOCK */}
-                    {quantity > 1 && (
-                      <span className="text-sm text-gray-500">
-                        ({quantity} × {formatPrice(product.price)})
-                      </span>
-                    )}
-                  </div>
-                )}
-
-              </div>
+       {/* Price Section - All in a single row */}
+<div className="mb-6">
+  {hasDiscount ? (
+    <div className="flex items-center flex-wrap">
+      {/* Current price - bold */}
+      <span className="text-3xl font-bold text-purple-600 mr-3">
+        {formatPrice(getTotalPrice())}
+      </span>
+      
+      {/* Original price - strikethrough */}
+      <span className="text-lg text-gray-500 line-through mr-3">
+        {formatPrice(product.originalPrice * quantity)}
+      </span>
+      
+      {/* Savings amount */}
+      <span className="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded">
+        Save {formatPrice((product.originalPrice - product.price) * quantity)}
+      </span>
+    </div>
+  ) : (
+    <div className="flex items-baseline">
+      <span className="text-3xl font-bold text-gray-900 mr-2">
+        {formatPrice(getTotalPrice())}
+      </span>
+    </div>
+  )}
+</div>
 
               {/* Discount Timer */}
               {product.discountEndDate && new Date(product.discountEndDate) > new Date() && (
