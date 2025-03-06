@@ -447,7 +447,7 @@ function ProductDetail() {
                       Save {formatPrice((product.originalPrice - product.price) * quantity)}
                     </span>
 
-                    {/* Quantity indicator */}
+                    {/* REMOVE THIS ENTIRE BLOCK */}
                     {quantity > 1 && (
                       <span className="text-sm text-gray-500 ml-3">
                         ({quantity} × {formatPrice(product.price)})
@@ -460,6 +460,7 @@ function ProductDetail() {
                       {formatPrice(getTotalPrice())}
                     </span>
 
+                    {/* REMOVE THIS ENTIRE BLOCK */}
                     {quantity > 1 && (
                       <span className="text-sm text-gray-500">
                         ({quantity} × {formatPrice(product.price)})
@@ -467,6 +468,7 @@ function ProductDetail() {
                     )}
                   </div>
                 )}
+
               </div>
 
               {/* Discount Timer */}
