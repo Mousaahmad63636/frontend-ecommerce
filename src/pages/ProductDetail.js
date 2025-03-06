@@ -1,6 +1,6 @@
-// src/pages/ProductDetail.js
+// src/pages/ProductDetail.js - with updated code for back button and price × quantity
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom'; // Added useNavigate
 import { Helmet } from 'react-helmet-async';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
@@ -16,6 +16,7 @@ import ProductList from '../components/ProductList';
 
 function ProductDetail() {
   const { id } = useParams();
+  const navigate = useNavigate(); // Added for back button functionality
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
@@ -26,6 +27,11 @@ function ProductDetail() {
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const { showNotification } = useNotification();
   const [userRating, setUserRating] = useState(0);
+
+  // Handle back button click
+  const handleGoBack = () => {
+    navigate(-1); // Go back to previous page
+  };
 
   // Fetch product data
   useEffect(() => {
@@ -202,36 +208,39 @@ function ProductDetail() {
     return Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
   };
 
-  // Create view all URL for similar products
-// src/pages/ProductDetail.js
-// Updated getViewAllUrl function:
+  // Calculate total price based on quantity
+  const getTotalPrice = () => {
+    if (!product) return 0;
+    return product.price * quantity;
+  };
 
-const getViewAllUrl = () => {
-  if (!product) return '/';
-  
-  // Gather all categories associated with the product
-  const categories = [];
-  
-  // Add primary category
-  if (product.category) {
-    categories.push(product.category);
-  }
-  
-  // Add all categories from the categories array if it exists
-  if (Array.isArray(product.categories) && product.categories.length > 0) {
-    product.categories.forEach(cat => {
-      if (cat && !categories.includes(cat)) {
-        categories.push(cat);
-      }
-    });
-  }
-  
-  // If no categories found, return home
-  if (categories.length === 0) return '/';
-  
-  // Use the first category for filtering and add product ID to context
-  return `/?relatedTo=${encodeURIComponent(product._id)}&category=${encodeURIComponent(categories[0])}`;
-};
+  // Create view all URL for similar products
+  const getViewAllUrl = () => {
+    if (!product) return '/';
+    
+    // Gather all categories associated with the product
+    const categories = [];
+    
+    // Add primary category
+    if (product.category) {
+      categories.push(product.category);
+    }
+    
+    // Add all categories from the categories array if it exists
+    if (Array.isArray(product.categories) && product.categories.length > 0) {
+      product.categories.forEach(cat => {
+        if (cat && !categories.includes(cat)) {
+          categories.push(cat);
+        }
+      });
+    }
+    
+    // If no categories found, return home
+    if (categories.length === 0) return '/';
+    
+    // Use the first category for filtering and add product ID to context
+    return `/?relatedTo=${encodeURIComponent(product._id)}&category=${encodeURIComponent(categories[0])}`;
+  };
 
   if (loading) {
     return (
@@ -284,6 +293,17 @@ const getViewAllUrl = () => {
       </Helmet>
 
       <div className="container mx-auto px-4 py-8">
+        {/* Back Button - Added above breadcrumbs */}
+        <button 
+          onClick={handleGoBack}
+          className="mb-4 flex items-center text-purple-600 hover:text-purple-800 transition-colors"
+        >
+          <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Back
+        </button>
+
         {/* Breadcrumbs */}
         <nav className="mb-6">
           <ol className="flex flex-wrap text-sm text-gray-600">
@@ -412,24 +432,60 @@ const getViewAllUrl = () => {
                 </span>
               </div>
 
-              {/* Price */}
+              {/* Price Section - Updated to show unit price and total */}
               <div className="mb-6">
                 {hasDiscount ? (
-                  <div className="flex items-baseline flex-wrap">
-                    <span className="text-3xl font-bold text-purple-600 mr-2">
-                      {formatPrice(product.price)}
-                    </span>
-                    <span className="text-lg text-gray-500 line-through mr-2">
-                      {formatPrice(product.originalPrice)}
-                    </span>
-                    <span className="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded">
-                      Save {formatPrice(product.originalPrice - product.price)}
-                    </span>
+                  <div className="space-y-2">
+                    {/* Unit Price */}
+                    <div className="flex items-baseline flex-wrap">
+                      <span className="text-sm text-gray-500 mr-2">Unit Price:</span>
+                      <span className="text-lg font-bold text-purple-600 mr-2">
+                        {formatPrice(product.price)}
+                      </span>
+                      <span className="text-sm text-gray-500 line-through mr-2">
+                        {formatPrice(product.originalPrice)}
+                      </span>
+                      <span className="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded">
+                        Save {formatPrice(product.originalPrice - product.price)}
+                      </span>
+                    </div>
+                    
+                    {/* Total Price */}
+                    <div className="flex items-baseline">
+                      <span className="text-sm text-gray-500 mr-2">Total Price:</span>
+                      <span className="text-3xl font-bold text-purple-600">
+                        {formatPrice(getTotalPrice())}
+                      </span>
+                      {quantity > 1 && (
+                        <span className="ml-2 text-sm text-gray-500">
+                          ({quantity} × {formatPrice(product.price)})
+                        </span>
+                      )}
+                    </div>
                   </div>
                 ) : (
-                  <span className="text-3xl font-bold text-gray-900">
-                    {formatPrice(product.price)}
-                  </span>
+                  <div className="space-y-2">
+                    {/* Unit Price */}
+                    <div className="flex items-baseline">
+                      <span className="text-sm text-gray-500 mr-2">Unit Price:</span>
+                      <span className="text-lg font-bold text-gray-900">
+                        {formatPrice(product.price)}
+                      </span>
+                    </div>
+                    
+                    {/* Total Price */}
+                    <div className="flex items-baseline">
+                      <span className="text-sm text-gray-500 mr-2">Total Price:</span>
+                      <span className="text-3xl font-bold text-gray-900">
+                        {formatPrice(getTotalPrice())}
+                      </span>
+                      {quantity > 1 && (
+                        <span className="ml-2 text-sm text-gray-500">
+                          ({quantity} × {formatPrice(product.price)})
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 )}
               </div>
 
