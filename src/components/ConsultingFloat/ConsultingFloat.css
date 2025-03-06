@@ -1,0 +1,58 @@
+.consulting-float {
+  position: fixed;
+  bottom: 110px;
+  right: 40px;
+  background-color: #25d366;
+  color: #FFF;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 2px 2px 3px #999;
+  z-index: 100;
+}
+
+.consulting-float:hover {
+  background-color: #128C7E;
+  transform: scale(1.1);
+}
+
+.consulting-icon {
+  font-size: 30px;
+}
+
+.consulting-float .tooltip {
+  position: absolute;
+  right: 60px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.consulting-float:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media screen and (max-width: 768px) {
+  .consulting-float {
+    right: 20px;
+    bottom: 90px;
+    width: 45px;
+    height: 45px;
+  }
+
+  .consulting-icon {
+    font-size: 25px;
+  }
+}

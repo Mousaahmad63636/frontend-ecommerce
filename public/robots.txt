@@ -1,0 +1,28 @@
+User-agent: *
+Allow: /
+
+# WhatsApp crawler - explicitly allow
+User-agent: WhatsApp
+Allow: /
+Allow: /uploads/
+Allow: /uploads/products/
+
+# Other crawlers
+User-agent: Twitterbot
+Allow: /
+Allow: /uploads/
+
+User-agent: facebookexternalhit
+Allow: /
+Allow: /uploads/
+
+# Sitemaps
+Sitemap: https://spotlylb.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 10
+
+# Disallow
+Disallow: /admin/
+Disallow: /checkout/
+Disallow: /api/

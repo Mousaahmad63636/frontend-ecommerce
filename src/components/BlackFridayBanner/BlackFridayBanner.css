@@ -1,0 +1,59 @@
+/* src/components/BlackFridayBanner/BlackFridayBanner.css */
+.black-friday-banner {
+    background: linear-gradient(45deg, #000, #333);
+    color: white;
+    padding: 2rem 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .banner-content {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .black-friday-banner h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+  
+  .discount-text {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #ff0000;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  .hurry-text {
+    font-size: 1.2rem;
+    margin-top: 1rem;
+  }
+  
+  .black-friday-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.1),
+      rgba(255, 255, 255, 0.1) 10px,
+      transparent 10px,
+      transparent 20px
+    );
+  }
+  
+  @media (max-width: 576px) {
+    .black-friday-banner h2 {
+      font-size: 2rem;
+    }
+  
+    .discount-text {
+      font-size: 2.5rem;
+    }
+  }
