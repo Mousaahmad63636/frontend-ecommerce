@@ -298,8 +298,8 @@ function ProductDetail() {
       </Helmet>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Single Back to Home Button */}
-        <div className="mb-6">
+        {/* Single Back to Home Button - With added margin/padding for visibility */}
+        <div className="mb-6 mt-14 pt-4"> {/* Added mt-14 (margin-top) and pt-4 (padding-top) */}
           <button
             onClick={goToHome}
             className="flex items-center text-purple-600 hover:text-purple-800 transition-colors"
@@ -424,12 +424,12 @@ function ProductDetail() {
                     <span className="text-3xl font-bold text-purple-600 mr-3">
                       {formatPrice(getTotalPrice())}
                     </span>
-                    
+
                     {/* Original price - strikethrough */}
                     <span className="text-lg text-gray-500 line-through mr-3">
                       {formatPrice(product.originalPrice * quantity)}
                     </span>
-                    
+
                     {/* Savings amount */}
                     <span className="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded">
                       Save {formatPrice((product.originalPrice - product.price) * quantity)}
