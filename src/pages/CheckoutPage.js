@@ -269,14 +269,6 @@ function CheckoutPage() {
             <div className="bg-white rounded-lg shadow p-4">
               <div className="flex justify-between items-center pb-3 border-b border-gray-100">
                 <h2 className="text-lg font-bold text-purple-800">Customer Information</h2>
-                {!isAuthenticated && (
-                  <button
-                    onClick={handleLoginClick}
-                    className="text-sm text-purple-600 hover:text-purple-800"
-                  >
-                    Sign in for faster checkout
-                  </button>
-                )}
               </div>
 
               <form onSubmit={handleSubmit} className="mt-4">
