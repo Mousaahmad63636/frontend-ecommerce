@@ -298,26 +298,14 @@ function ProductDetail() {
       </Helmet>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Navigation Buttons Row */}
-        <div className="flex flex-wrap justify-between items-center mb-6">
-          {/* Back Button */}
+        {/* Single Back to Home Button */}
+        <div className="mb-6">
           <button
-            onClick={handleGoBack}
+            onClick={goToHome}
             className="flex items-center text-purple-600 hover:text-purple-800 transition-colors"
           >
             <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Back
-          </button>
-
-          {/* Back to Home Button */}
-          <button
-            onClick={goToHome}
-            className="flex items-center bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors"
-          >
-            <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
             Back to Home
           </button>
@@ -428,33 +416,33 @@ function ProductDetail() {
                 </span>
               </div>
 
-       {/* Price Section - All in a single row */}
-<div className="mb-6">
-  {hasDiscount ? (
-    <div className="flex items-center flex-wrap">
-      {/* Current price - bold */}
-      <span className="text-3xl font-bold text-purple-600 mr-3">
-        {formatPrice(getTotalPrice())}
-      </span>
-      
-      {/* Original price - strikethrough */}
-      <span className="text-lg text-gray-500 line-through mr-3">
-        {formatPrice(product.originalPrice * quantity)}
-      </span>
-      
-      {/* Savings amount */}
-      <span className="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded">
-        Save {formatPrice((product.originalPrice - product.price) * quantity)}
-      </span>
-    </div>
-  ) : (
-    <div className="flex items-baseline">
-      <span className="text-3xl font-bold text-gray-900 mr-2">
-        {formatPrice(getTotalPrice())}
-      </span>
-    </div>
-  )}
-</div>
+              {/* Price Section - All in a single row */}
+              <div className="mb-6">
+                {hasDiscount ? (
+                  <div className="flex items-center flex-wrap">
+                    {/* Current price - bold */}
+                    <span className="text-3xl font-bold text-purple-600 mr-3">
+                      {formatPrice(getTotalPrice())}
+                    </span>
+                    
+                    {/* Original price - strikethrough */}
+                    <span className="text-lg text-gray-500 line-through mr-3">
+                      {formatPrice(product.originalPrice * quantity)}
+                    </span>
+                    
+                    {/* Savings amount */}
+                    <span className="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded">
+                      Save {formatPrice((product.originalPrice - product.price) * quantity)}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-baseline">
+                    <span className="text-3xl font-bold text-gray-900 mr-2">
+                      {formatPrice(getTotalPrice())}
+                    </span>
+                  </div>
+                )}
+              </div>
 
               {/* Discount Timer */}
               {product.discountEndDate && new Date(product.discountEndDate) > new Date() && (
