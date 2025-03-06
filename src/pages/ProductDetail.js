@@ -64,50 +64,50 @@ function ProductDetail() {
 
     try {
       setLoadingSimilar(true);
-      
+
       // Get all categories associated with the product (both primary and from categories array)
       const productCategories = new Set();
-      
+
       // Add primary category
       if (currentProduct.category) {
         productCategories.add(currentProduct.category);
       }
-      
+
       // Add all categories from the categories array if it exists
       if (Array.isArray(currentProduct.categories) && currentProduct.categories.length > 0) {
         currentProduct.categories.forEach(cat => {
           if (cat) productCategories.add(cat);
         });
       }
-      
+
       // If no categories found, return
       if (productCategories.size === 0) {
         setLoadingSimilar(false);
         return;
       }
-      
+
       // Convert Set to Array for easier use
       const categoriesArray = Array.from(productCategories);
       console.log('Looking for similar products in categories:', categoriesArray);
-      
+
       const products = await api.getProducts();
-      
+
       // Filter products that match any of the current product's categories
       const filtered = products.filter(p => {
         // Skip the current product
         if (p._id === currentProduct._id) return false;
-        
+
         // Check if primary category matches any of our product's categories
         if (p.category && categoriesArray.includes(p.category)) return true;
-        
+
         // Check if any category in the categories array matches
         if (Array.isArray(p.categories) && p.categories.length > 0) {
           return p.categories.some(cat => categoriesArray.includes(cat));
         }
-        
+
         return false;
       });
-      
+
       // Take only the first 10 matches instead of 4 for a better scrolling experience
       setSimilarProducts(filtered.slice(0, 10));
     } catch (error) {
@@ -222,15 +222,15 @@ function ProductDetail() {
   // Create view all URL for similar products
   const getViewAllUrl = () => {
     if (!product) return '/';
-    
+
     // Gather all categories associated with the product
     const categories = [];
-    
+
     // Add primary category
     if (product.category) {
       categories.push(product.category);
     }
-    
+
     // Add all categories from the categories array if it exists
     if (Array.isArray(product.categories) && product.categories.length > 0) {
       product.categories.forEach(cat => {
@@ -239,10 +239,10 @@ function ProductDetail() {
         }
       });
     }
-    
+
     // If no categories found, return home
     if (categories.length === 0) return '/';
-    
+
     // Use the first category for filtering and add product ID to context
     return `/?relatedTo=${encodeURIComponent(product._id)}&category=${encodeURIComponent(categories[0])}`;
   };
@@ -301,7 +301,7 @@ function ProductDetail() {
         {/* Navigation Buttons Row */}
         <div className="flex flex-wrap justify-between items-center mb-6">
           {/* Back Button */}
-          <button 
+          <button
             onClick={handleGoBack}
             className="flex items-center text-purple-600 hover:text-purple-800 transition-colors"
           >
@@ -310,9 +310,9 @@ function ProductDetail() {
             </svg>
             Back
           </button>
-          
+
           {/* Back to Home Button */}
-          <button 
+          <button
             onClick={goToHome}
             className="flex items-center bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors"
           >
@@ -428,37 +428,38 @@ function ProductDetail() {
                 </span>
               </div>
 
-              {/* Price Section - Simplified to show just one total price */}
+              {/* Price Section - All in a single row */}
               <div className="mb-6">
                 {hasDiscount ? (
-                  <div className="flex flex-col">
-                    <div className="flex items-baseline flex-wrap">
-                      <span className="text-3xl font-bold text-purple-600 mr-2">
-                        {formatPrice(getTotalPrice())}
+                  <div className="flex items-center flex-wrap">
+                    {/* Current price - bold */}
+                    <span className="text-3xl font-bold text-purple-600 mr-3">
+                      {formatPrice(getTotalPrice())}
+                    </span>
+
+                    {/* Original price - strikethrough */}
+                    <span className="text-lg text-gray-500 line-through mr-3">
+                      {formatPrice(product.originalPrice * quantity)}
+                    </span>
+
+                    {/* Savings amount */}
+                    <span className="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded">
+                      Save {formatPrice((product.originalPrice - product.price) * quantity)}
+                    </span>
+
+                    {/* Quantity indicator */}
+                    {quantity > 1 && (
+                      <span className="text-sm text-gray-500 ml-3">
+                        ({quantity} × {formatPrice(product.price)})
                       </span>
-                      
-                      {quantity > 1 && (
-                        <span className="text-sm text-gray-500">
-                          ({quantity} × {formatPrice(product.price)})
-                        </span>
-                      )}
-                    </div>
-                    
-                    <div className="mt-1 flex items-center">
-                      <span className="text-lg text-gray-500 line-through mr-2">
-                        {formatPrice(product.originalPrice * quantity)}
-                      </span>
-                      <span className="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded">
-                        Save {formatPrice((product.originalPrice - product.price) * quantity)}
-                      </span>
-                    </div>
+                    )}
                   </div>
                 ) : (
                   <div className="flex items-baseline">
                     <span className="text-3xl font-bold text-gray-900 mr-2">
                       {formatPrice(getTotalPrice())}
                     </span>
-                    
+
                     {quantity > 1 && (
                       <span className="text-sm text-gray-500">
                         ({quantity} × {formatPrice(product.price)})
