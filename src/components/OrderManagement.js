@@ -249,7 +249,8 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
     }
   };
 
-// In src/components/OrderManagement.js - modify the handleWhatsAppMessage function
+// In src/components/OrderManagement.js
+// Find the handleWhatsAppMessage function and replace it with this:
 
 const handleWhatsAppMessage = (order, type = 'pending') => {
   // Get templates from settings or use defaults
@@ -272,7 +273,7 @@ const handleWhatsAppMessage = (order, type = 'pending') => {
   const discount = order.promoDiscount ? (subtotal * order.promoDiscount) / 100 : 0;
   const finalTotal = subtotal + deliveryFee - discount;
 
-  // Generate the message content
+  // Generate message content (either from template or default)
   let messageContent;
   if (!templates.arabic) {
     messageContent = getDefaultMessage(
@@ -284,7 +285,6 @@ const handleWhatsAppMessage = (order, type = 'pending') => {
       discount
     );
   } else {
-    // Use template if available
     messageContent = templates.arabic
       .replace('{{customerName}}', order.customerName)
       .replace('{{orderId}}', order.orderId)
@@ -296,27 +296,36 @@ const handleWhatsAppMessage = (order, type = 'pending') => {
       .replace('{{discount}}', discount ? `💎 الخصم: -${safeToFixed(discount)}$\n` : '');
   }
 
-  // Format phone number correctly
+  // Format phone number correctly using our enhanced function
   const phoneNumber = formatPhoneForWhatsApp(order.phoneNumber);
   
-  // For debugging
-  console.log('Formatted phone number:', phoneNumber);
-  console.log('Original phone number:', order.phoneNumber);
+  // Log for debugging purposes
+  console.log('Formatting phone for WhatsApp:', {
+    original: order.phoneNumber,
+    formatted: phoneNumber
+  });
 
-  // Create both mobile and web URLs
-  const whatsappMobileURI = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(messageContent)}`;
+  // Create both URI schemes
+  const whatsappURI = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(messageContent)}`;
   const whatsappWebURL = `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(messageContent)}`;
 
-  // Try to open WhatsApp app first (will work on both mobile and desktop if app is installed)
-  const mobileAppOpened = window.open(whatsappMobileURI);
-  
-  // If mobile URI didn't work (returns null or undefined on desktop browsers without the app),
-  // try the web version
-  setTimeout(() => {
-    if (!mobileAppOpened || mobileAppOpened.closed) {
-      window.open(whatsappWebURL, '_blank', 'noopener,noreferrer');
+  // First try to use the app protocol (works on mobile and desktop with WhatsApp app)
+  let appOpened = false;
+  try {
+    const newWindow = window.open(whatsappURI);
+    if (newWindow) {
+      appOpened = true;
     }
-  }, 500);
+  } catch (error) {
+    console.error('Error opening WhatsApp app:', error);
+  }
+
+  // If app protocol failed, use web version after a short delay
+  if (!appOpened) {
+    setTimeout(() => {
+      window.open(whatsappWebURL, '_blank');
+    }, 300);
+  }
 };
 
   const filteredOrders = sortOrders(
