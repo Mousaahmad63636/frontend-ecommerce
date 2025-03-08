@@ -252,32 +252,27 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
   const handleWhatsAppMessage = (order, type = 'pending') => {
     // Get templates from settings or use defaults
     const templates = settings.whatsappMessageTemplate || {};
-    
+  
     // Calculate the subtotal properly
     const subtotal = order.products.reduce((sum, item) =>
       sum + (item.product?.price || 0) * item.quantity, 0
     );
-    
+  
     // Format order details
     const orderDetailsArabic = order.products.map(item =>
       `📦 ${item.product?.name || ''}
-          القيمة: ${safeToFixed(item.product?.price)}$ × ${item.quantity}
-          المجموع: ${safeToFixed((item.product?.price || 0) * item.quantity)}$`
+        القيمة: ${safeToFixed(item.product?.price)}$ × ${item.quantity}
+        المجموع: ${safeToFixed((item.product?.price || 0) * item.quantity)}$`
     ).join('\n');
-    
+  
     // Calculate final values
     const deliveryFee = order.shippingFee || 0;
     const discount = order.promoDiscount ? (subtotal * order.promoDiscount) / 100 : 0;
     const finalTotal = subtotal + deliveryFee - discount;
-    
-    // Get the formatted phone number
-    const phoneNumber = formatPhoneForWhatsApp(order.phoneNumber);
-    console.log('Formatted phone number:', phoneNumber);
-    
-    // Determine which message to use
-    let messageToSend;
+  
+    // If no template is set in settings, use default message
     if (!templates.arabic) {
-      messageToSend = getDefaultMessage(
+      const message = getDefaultMessage(
         order,
         type,
         orderDetailsArabic,
@@ -285,49 +280,43 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
         finalTotal,
         discount
       );
-    } else {
-      // Use template if available
-      messageToSend = templates.arabic
-        .replace(/\{\{customerName\}\}/g, order.customerName || '')
-        .replace(/\{\{orderId\}\}/g, order.orderId || '')
-        .replace(/\{\{orderDetails\}\}/g, orderDetailsArabic || '')
-        .replace(/\{\{subtotal\}\}/g, safeToFixed(subtotal))
-        .replace(/\{\{deliveryFee\}\}/g, safeToFixed(deliveryFee))
-        .replace(/\{\{total\}\}/g, safeToFixed(finalTotal))
-        .replace(/\{\{address\}\}/g, order.address || '')
-        .replace(/\{\{discount\}\}/g, discount ? `💎 الخصم: -${safeToFixed(discount)}$\n` : '');
-    }
-    
-    // Use a timeout to properly handle the message passing
-    setTimeout(() => {
-      try {
-        // Create the link and click it programmatically
-        const encodedMessage = encodeURIComponent(messageToSend);
-        
-        // Create a temporary link element
-        const link = document.createElement('a');
-        link.setAttribute('href', `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`);
-        link.setAttribute('target', '_blank');
-        link.setAttribute('rel', 'noopener noreferrer');
-        
-        // Append to body, click, and remove
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        console.log("WhatsApp link created and clicked");
-      } catch (error) {
-        console.error("Error opening WhatsApp:", error);
-        
-        // Fallback to direct window.open as a last resort
-        window.open(`https://api.whatsapp.com/send?phone=${phoneNumber}`, '_blank');
-        
-        // Copy message to clipboard for manual pasting
-        navigator.clipboard.writeText(messageToSend)
-          .then(() => showNotification('Message copied to clipboard. Please paste it manually.', 'info'))
-          .catch(err => console.error('Failed to copy message:', err));
+  
+      // Send message using WhatsApp app URI scheme
+      // FIX: Use formatPhoneForWhatsApp to properly format Lebanese phone numbers
+      const phoneNumber = formatPhoneForWhatsApp(order.phoneNumber);
+      const whatsappURI = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+      
+      // Try to open WhatsApp app, fall back to web if it fails
+      if (!window.open(whatsappURI)) {
+        // If app opening fails, fall back to web version
+        const whatsappURL = `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+        window.open(whatsappURL, '_blank', 'noopener,noreferrer');
       }
-    }, 100);
+      return;
+    }
+  
+    // Use template if available
+    let messageArabic = templates.arabic
+      .replace('{{customerName}}', order.customerName)
+      .replace('{{orderId}}', order.orderId)
+      .replace('{{orderDetails}}', orderDetailsArabic)
+      .replace('{{subtotal}}', safeToFixed(subtotal))
+      .replace('{{deliveryFee}}', safeToFixed(deliveryFee))
+      .replace('{{total}}', safeToFixed(finalTotal))
+      .replace('{{address}}', order.address || '')
+      .replace('{{discount}}', discount ? `💎 الخصم: -${safeToFixed(discount)}$\n` : '');
+  
+    // Send message using WhatsApp app URI scheme
+    // FIX: Use formatPhoneForWhatsApp to properly format Lebanese phone numbers
+    const phoneNumber = formatPhoneForWhatsApp(order.phoneNumber);
+    const whatsappURI = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(messageArabic)}`;
+    
+    // Try to open WhatsApp app, fall back to web if it fails
+    if (!window.open(whatsappURI)) {
+      // If app opening fails, fall back to web version
+      const whatsappURL = `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(messageArabic)}`;
+      window.open(whatsappURL, '_blank', 'noopener,noreferrer');
+    }
   };
 
   const filteredOrders = sortOrders(
