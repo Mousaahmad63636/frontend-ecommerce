@@ -252,24 +252,24 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
   const handleWhatsAppMessage = (order, type = 'pending') => {
     // Get templates from settings or use defaults
     const templates = settings.whatsappMessageTemplate || {};
-  
+    
     // Calculate the subtotal properly
     const subtotal = order.products.reduce((sum, item) =>
       sum + (item.product?.price || 0) * item.quantity, 0
     );
-  
+    
     // Format order details
     const orderDetailsArabic = order.products.map(item =>
       `📦 ${item.product?.name || ''}
-        القيمة: ${safeToFixed(item.product?.price)}$ × ${item.quantity}
-        المجموع: ${safeToFixed((item.product?.price || 0) * item.quantity)}$`
+          القيمة: ${safeToFixed(item.product?.price)}$ × ${item.quantity}
+          المجموع: ${safeToFixed((item.product?.price || 0) * item.quantity)}$`
     ).join('\n');
-  
+    
     // Calculate final values
     const deliveryFee = order.shippingFee || 0;
     const discount = order.promoDiscount ? (subtotal * order.promoDiscount) / 100 : 0;
     const finalTotal = subtotal + deliveryFee - discount;
-  
+    
     // If no template is set in settings, use default message
     if (!templates.arabic) {
       const message = getDefaultMessage(
@@ -280,9 +280,8 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
         finalTotal,
         discount
       );
-  
+    
       // Send message using WhatsApp app URI scheme
-      // FIX: Use formatPhoneForWhatsApp to properly format Lebanese phone numbers
       const phoneNumber = formatPhoneForWhatsApp(order.phoneNumber);
       const whatsappURI = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
       
@@ -294,21 +293,21 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
       }
       return;
     }
-  
+    
     // Use template if available
     let messageArabic = templates.arabic
-      .replace('{{customerName}}', order.customerName)
-      .replace('{{orderId}}', order.orderId)
-      .replace('{{orderDetails}}', orderDetailsArabic)
+      .replace('{{customerName}}', order.customerName || '')
+      .replace('{{orderId}}', order.orderId || '')
+      .replace('{{orderDetails}}', orderDetailsArabic || '')
       .replace('{{subtotal}}', safeToFixed(subtotal))
       .replace('{{deliveryFee}}', safeToFixed(deliveryFee))
       .replace('{{total}}', safeToFixed(finalTotal))
       .replace('{{address}}', order.address || '')
       .replace('{{discount}}', discount ? `💎 الخصم: -${safeToFixed(discount)}$\n` : '');
-  
+    
     // Send message using WhatsApp app URI scheme
-    // FIX: Use formatPhoneForWhatsApp to properly format Lebanese phone numbers
     const phoneNumber = formatPhoneForWhatsApp(order.phoneNumber);
+    console.log('Formatted phone number:', phoneNumber); // Debugging line
     const whatsappURI = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(messageArabic)}`;
     
     // Try to open WhatsApp app, fall back to web if it fails
