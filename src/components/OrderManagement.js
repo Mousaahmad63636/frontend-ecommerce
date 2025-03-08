@@ -270,9 +270,14 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
     const discount = order.promoDiscount ? (subtotal * order.promoDiscount) / 100 : 0;
     const finalTotal = subtotal + deliveryFee - discount;
     
-    // If no template is set in settings, use default message
+    // Get the formatted phone number
+    const phoneNumber = formatPhoneForWhatsApp(order.phoneNumber);
+    console.log('Formatted phone number:', phoneNumber); // Debugging line
+    
+    // Determine which message to use
+    let messageToSend;
     if (!templates.arabic) {
-      const message = getDefaultMessage(
+      messageToSend = getDefaultMessage(
         order,
         type,
         orderDetailsArabic,
@@ -280,42 +285,24 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
         finalTotal,
         discount
       );
-    
-      // Send message using WhatsApp app URI scheme
-      const phoneNumber = formatPhoneForWhatsApp(order.phoneNumber);
-      const whatsappURI = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
-      
-      // Try to open WhatsApp app, fall back to web if it fails
-      if (!window.open(whatsappURI)) {
-        // If app opening fails, fall back to web version
-        const whatsappURL = `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
-        window.open(whatsappURL, '_blank', 'noopener,noreferrer');
-      }
-      return;
+    } else {
+      // Use template if available
+      messageToSend = templates.arabic
+        .replace(/\{\{customerName\}\}/g, order.customerName || '')
+        .replace(/\{\{orderId\}\}/g, order.orderId || '')
+        .replace(/\{\{orderDetails\}\}/g, orderDetailsArabic || '')
+        .replace(/\{\{subtotal\}\}/g, safeToFixed(subtotal))
+        .replace(/\{\{deliveryFee\}\}/g, safeToFixed(deliveryFee))
+        .replace(/\{\{total\}\}/g, safeToFixed(finalTotal))
+        .replace(/\{\{address\}\}/g, order.address || '')
+        .replace(/\{\{discount\}\}/g, discount ? `💎 الخصم: -${safeToFixed(discount)}$\n` : '');
     }
     
-    // Use template if available
-    let messageArabic = templates.arabic
-      .replace('{{customerName}}', order.customerName || '')
-      .replace('{{orderId}}', order.orderId || '')
-      .replace('{{orderDetails}}', orderDetailsArabic || '')
-      .replace('{{subtotal}}', safeToFixed(subtotal))
-      .replace('{{deliveryFee}}', safeToFixed(deliveryFee))
-      .replace('{{total}}', safeToFixed(finalTotal))
-      .replace('{{address}}', order.address || '')
-      .replace('{{discount}}', discount ? `💎 الخصم: -${safeToFixed(discount)}$\n` : '');
+    // Modified approach: try the web version directly for more reliability
+    const encodedMessage = encodeURIComponent(messageToSend);
     
-    // Send message using WhatsApp app URI scheme
-    const phoneNumber = formatPhoneForWhatsApp(order.phoneNumber);
-    console.log('Formatted phone number:', phoneNumber); // Debugging line
-    const whatsappURI = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(messageArabic)}`;
-    
-    // Try to open WhatsApp app, fall back to web if it fails
-    if (!window.open(whatsappURI)) {
-      // If app opening fails, fall back to web version
-      const whatsappURL = `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(messageArabic)}`;
-      window.open(whatsappURL, '_blank', 'noopener,noreferrer');
-    }
+    // Open WhatsApp Web directly
+    window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
   };
 
   const filteredOrders = sortOrders(

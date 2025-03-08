@@ -37,13 +37,14 @@ export const formatPhoneForWhatsApp = (phone) => {
     return '961' + cleaned;
   }
   
-  // Handle Lebanese numbers starting with 81 but with leading 0
-  if (cleaned.startsWith('081') && cleaned.length === 9) {
-    return '961' + cleaned.substring(1);
-  }
-  
-  // Handle numbers that start with 0
-  if (cleaned.startsWith('0') && cleaned.length === 8) {
+  // Handle Lebanese numbers with 03, 71, 76, etc.
+  if ((cleaned.startsWith('03') || 
+       cleaned.startsWith('71') || 
+       cleaned.startsWith('76') || 
+       cleaned.startsWith('78') ||
+       cleaned.startsWith('79') ||
+       cleaned.startsWith('86')) && 
+      cleaned.length === 8) {
     return '961' + cleaned.substring(1);
   }
   
@@ -57,6 +58,11 @@ export const formatPhoneForWhatsApp = (phone) => {
     return cleaned.substring(2); // Remove the leading 00
   }
   
-  // Default case - just return the cleaned number
+  // Default case - if it's 8 digits, assume it's a Lebanese number
+  else if (cleaned.length === 8) {
+    return '961' + cleaned;
+  }
+  
+  // If nothing matches, just return the cleaned number
   return cleaned;
 };
