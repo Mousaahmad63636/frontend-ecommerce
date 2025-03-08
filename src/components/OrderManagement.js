@@ -272,7 +272,7 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
     
     // Get the formatted phone number
     const phoneNumber = formatPhoneForWhatsApp(order.phoneNumber);
-    console.log('Formatted phone number:', phoneNumber); // Debugging line
+    console.log('Formatted phone number:', phoneNumber);
     
     // Determine which message to use
     let messageToSend;
@@ -298,11 +298,36 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
         .replace(/\{\{discount\}\}/g, discount ? `💎 الخصم: -${safeToFixed(discount)}$\n` : '');
     }
     
-    // Modified approach: try the web version directly for more reliability
-    const encodedMessage = encodeURIComponent(messageToSend);
-    
-    // Open WhatsApp Web directly
-    window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+    // Use a timeout to properly handle the message passing
+    setTimeout(() => {
+      try {
+        // Create the link and click it programmatically
+        const encodedMessage = encodeURIComponent(messageToSend);
+        
+        // Create a temporary link element
+        const link = document.createElement('a');
+        link.setAttribute('href', `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`);
+        link.setAttribute('target', '_blank');
+        link.setAttribute('rel', 'noopener noreferrer');
+        
+        // Append to body, click, and remove
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        console.log("WhatsApp link created and clicked");
+      } catch (error) {
+        console.error("Error opening WhatsApp:", error);
+        
+        // Fallback to direct window.open as a last resort
+        window.open(`https://api.whatsapp.com/send?phone=${phoneNumber}`, '_blank');
+        
+        // Copy message to clipboard for manual pasting
+        navigator.clipboard.writeText(messageToSend)
+          .then(() => showNotification('Message copied to clipboard. Please paste it manually.', 'info'))
+          .catch(err => console.error('Failed to copy message:', err));
+      }
+    }, 100);
   };
 
   const filteredOrders = sortOrders(
