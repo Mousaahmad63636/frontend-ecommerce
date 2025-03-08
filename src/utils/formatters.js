@@ -28,61 +28,35 @@ export const generateOrderNumber = () => {
   return `ORD-${year}${month}${day}-${random}`;
 };
 
-/**
- * Formats a Lebanese phone number for WhatsApp using the E.164 standard
- * Handles all Lebanese prefixes (03, 71, 76, 78, 81, 79, 86)
- * 
- * @param {string} phoneNumber - The phone number to format
- * @returns {string} - The formatted phone number for WhatsApp
- */
-export const formatPhoneForWhatsApp = (phoneNumber) => {
-  if (!phoneNumber) return '';
-  
+export const formatPhoneForWhatsApp = (phone) => {
   // Remove any non-digit characters
-  const digits = phoneNumber.replace(/\D/g, '');
+  let cleaned = ('' + phone).replace(/\D/g, '');
   
-  // If it already includes the country code with leading zeros
-  if (digits.startsWith('00961')) {
-    return digits.substring(2); // Remove the '00' prefix
+  // Special case for "81" prefixed numbers
+  if (cleaned.startsWith('81') && cleaned.length === 8) {
+    return '961' + cleaned;
   }
   
-  // If it already includes the country code without leading zeros
-  if (digits.startsWith('961')) {
-    return digits;
+  // Handle Lebanese numbers starting with 81 but with leading 0
+  if (cleaned.startsWith('081') && cleaned.length === 9) {
+    return '961' + cleaned.substring(1);
   }
   
-  // Handle the case where number starts with 0 (like 03xxxxxx)
-  if (digits.startsWith('0')) {
-    return '961' + digits.substring(1);
+  // Handle numbers that start with 0
+  if (cleaned.startsWith('0') && cleaned.length === 8) {
+    return '961' + cleaned.substring(1);
   }
   
-  // Lebanese mobile prefixes - must check these explicitly
-  const lebanesePrefixes = ['03', '71', '76', '78', '81', '79', '86'];
-  
-  // Check if it's a Lebanese number without leading 0
-  for (const prefix of lebanesePrefixes) {
-    // Check if it starts with the prefix (without 0)
-    if (digits.startsWith(prefix.substring(1)) && digits.length === 7) {
-      return '961' + digits;
-    }
-    
-    // Check if it starts with the prefix (with 0)
-    if (digits.startsWith(prefix) && digits.length === 8) {
-      return '961' + digits.substring(1);
-    }
+  // Handle numbers that already start with 961
+  else if (cleaned.startsWith('961')) {
+    return cleaned;
   }
   
-  // Handle international format with + (which would be removed by regex)
-  if (digits.length === 11 && digits.startsWith('961')) {
-    return digits;
+  // Handle numbers that start with 00961
+  else if (cleaned.startsWith('00961')) {
+    return cleaned.substring(2); // Remove the leading 00
   }
   
-  // For any other case, assume it might be a Lebanese number and add country code
-  // If it's already 8 digits, assume it's a complete number without country code
-  if (digits.length === 8) {
-    return '961' + digits;
-  }
-  
-  // Default - just return the number as is
-  return digits;
+  // Default case - just return the cleaned number
+  return cleaned;
 };
