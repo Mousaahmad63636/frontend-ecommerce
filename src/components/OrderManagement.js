@@ -349,58 +349,7 @@ const showWhatsAppModal = (phoneNumber, messageContent) => {
   });
 };
 
-// Then modify handleWhatsAppMessage to use the modal:
-const handleWhatsAppMessage = async (order, type = 'pending') => {
-  // [All the existing code to prepare the message content]
-  
-  // Format phone number correctly
-  const phoneNumber = formatPhoneForWhatsApp(order.phoneNumber);
-  
-  // Show the WhatsApp modal and wait for user choice
-  const choice = await showWhatsAppModal(phoneNumber, messageContent);
-  
-  if (choice === 'send') {
-    // Option 1: Send direct message (works if already a contact)
-    const whatsappURI = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(messageContent)}`;
-    const webWhatsappURL = `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(messageContent)}`;
-    
-    // Try app first, fall back to web
-    const appWindow = window.open(whatsappURI);
-    
-    setTimeout(() => {
-      if (!appWindow || appWindow.closed) {
-        window.open(webWhatsappURL, '_blank');
-      }
-    }, 500);
-  } 
-  else if (choice === 'open') {
-    // Option 2: Just open chat (better for new contacts)
-    const chatOnlyURI = `whatsapp://send?phone=${phoneNumber}`;
-    const webChatOnlyURL = `https://web.whatsapp.com/send?phone=${phoneNumber}`;
-    
-    // Copy message to clipboard
-    try {
-      await navigator.clipboard.writeText(messageContent);
-      showNotification('Message copied to clipboard! Paste it in WhatsApp.', 'success');
-    } catch (err) {
-      console.error('Failed to copy message:', err);
-      showNotification('Could not copy to clipboard. Please copy the message manually.', 'warning');
-    }
-    
-    // Open WhatsApp
-    const chatWindow = window.open(chatOnlyURI);
-    
-    // Fallback to web version
-    setTimeout(() => {
-      if (!chatWindow || chatWindow.closed) {
-        window.open(webChatOnlyURL, '_blank');
-      }
-    }, 500);
-  }
-};
 
-// src/components/OrderManagement.js
-// Updated handleWhatsAppMessage function with two-step process
 
 const handleWhatsAppMessage = (order, type = 'pending') => {
   // Get templates from settings or use defaults
