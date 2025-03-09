@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNotification } from '../components/Notification/NotificationProvider';
 import api from '../api/api';
 import { getImageUrl } from '../utils/imageUtils';
-import { formatPhoneForWhatsApp } from '../utils/formatters';
 
 function OrderManagement() {
   const [orders, setOrders] = useState([]);
@@ -282,8 +281,7 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
       );
   
       // Send message using WhatsApp app URI scheme
-      // FIX: Use formatPhoneForWhatsApp to properly format Lebanese phone numbers
-      const phoneNumber = formatPhoneForWhatsApp(order.phoneNumber);
+      const phoneNumber = order.phoneNumber.replace(/\D/g, '');
       const whatsappURI = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
       
       // Try to open WhatsApp app, fall back to web if it fails
@@ -307,8 +305,7 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
       .replace('{{discount}}', discount ? `💎 الخصم: -${safeToFixed(discount)}$\n` : '');
   
     // Send message using WhatsApp app URI scheme
-    // FIX: Use formatPhoneForWhatsApp to properly format Lebanese phone numbers
-    const phoneNumber = formatPhoneForWhatsApp(order.phoneNumber);
+    const phoneNumber = order.phoneNumber.replace(/\D/g, '');
     const whatsappURI = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(messageArabic)}`;
     
     // Try to open WhatsApp app, fall back to web if it fails
@@ -318,7 +315,6 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
       window.open(whatsappURL, '_blank', 'noopener,noreferrer');
     }
   };
-
   const filteredOrders = sortOrders(
     filterOrdersByDate(orders).filter(order => {
       const matchesStatus = statusFilter === 'all' ? true : order.status.toLowerCase() === statusFilter;
