@@ -35,7 +35,6 @@ const SideCart = ({ isOpen, onClose }) => {
   }, [isOpen]);
 
   const handleApplyPromo = async () => {
-    // Rest of the code unchanged
     if (!promoCode.trim()) {
       showNotification('Please enter a promo code', 'error');
       return;
@@ -62,7 +61,6 @@ const SideCart = ({ isOpen, onClose }) => {
     }
   };
   
-  // Rest of the component remains unchanged...
   const calculateSubtotal = () => {
     return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
   };
@@ -134,7 +132,6 @@ const SideCart = ({ isOpen, onClose }) => {
           ></button>
         </div>
         
-        {/* Rest of your component remains unchanged */}
         {/* Cart body */}
         <div className="side-cart-body">
           {cartItems.length === 0 ? (
@@ -147,7 +144,7 @@ const SideCart = ({ isOpen, onClose }) => {
               {/* Cart items - scrollable area */}
               <div className={`cart-items ${getCartItemsClass()}`}>
                 {cartItems.map(item => (
-                  <div className="cart-item" key={item._id}>
+                  <div className="cart-item" key={item.itemId || item._id}>
                     <img
                       src={item.images?.length > 0
                         ? getImageUrl(item.images[0])
@@ -160,18 +157,41 @@ const SideCart = ({ isOpen, onClose }) => {
                     />
                     <div className="cart-item-details">
                       <h6 className="item-name">{item.name}</h6>
+                      
+                      {/* Display selected color and size if available */}
+                      {(item.selectedColor || item.selectedSize) && (
+                        <div className="item-variants text-xs text-gray-600 mb-1">
+                          {item.selectedColor && (
+                            <div className="flex items-center">
+                              <span className="variant-label">Color:</span>
+                              <div 
+                                className="color-dot ml-1 w-3 h-3 rounded-full inline-block" 
+                                style={{backgroundColor: item.selectedColor}}
+                                title={item.selectedColor}
+                              ></div>
+                            </div>
+                          )}
+                          {item.selectedSize && (
+                            <div className="flex items-center mt-0.5">
+                              <span className="variant-label">Size:</span>
+                              <span className="font-medium ml-1">{item.selectedSize}</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      
                       <div className="price">${(item.price * item.quantity).toFixed(2)}</div>
                       <div className="quantity-controls">
                         <button
                           className="btn btn-sm btn-outline-secondary"
-                          onClick={() => updateQuantity(item._id, Math.max(1, item.quantity - 1))}
+                          onClick={() => updateQuantity(item.itemId || item._id, Math.max(1, item.quantity - 1))}
                         >
                           <i className="fas fa-minus"></i>
                         </button>
                         <span className="quantity">{item.quantity}</span>
                         <button
                           className="btn btn-sm btn-outline-secondary"
-                          onClick={() => updateQuantity(item._id, item.quantity + 1)}
+                          onClick={() => updateQuantity(item.itemId || item._id, item.quantity + 1)}
                         >
                           <i className="fas fa-plus"></i>
                         </button>
@@ -180,7 +200,7 @@ const SideCart = ({ isOpen, onClose }) => {
                     <button
                       className="btn btn-link text-danger remove-item"
                       onClick={() => {
-                        removeFromCart(item._id);
+                        removeFromCart(item.itemId || item._id);
                       }}
                     >
                       <i className="fas fa-trash"></i>

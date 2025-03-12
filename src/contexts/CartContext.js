@@ -36,50 +36,90 @@ export const CartProvider = ({ children }) => {
         }
     }, [cartItems, showNotification]);
 
-    const addToCart = (product, quantity = 1) => {
+    const addToCart = (product, quantity = 1, selectedColor = '', selectedSize = '') => {
         if (product.soldOut) {
             showNotification('This product is sold out', 'error');
             return;
         }
 
         setCartItems(prevItems => {
-            const existingItem = prevItems.find(item => item._id === product._id);
+            // Create a unique identifier for this product + options combination
+            const itemId = `${product._id}${selectedColor ? `-${selectedColor}` : ''}${selectedSize ? `-${selectedSize}` : ''}`;
             
-            if (existingItem) {
-                // Check if new total quantity would exceed any limit
-                const newQuantity = existingItem.quantity + quantity;
-                if (newQuantity > 10) { // Example limit of 10 items
+            // Find if this exact combination already exists in cart
+            const existingItemIndex = prevItems.findIndex(item => 
+                item._id === product._id && 
+                item.selectedColor === selectedColor && 
+                item.selectedSize === selectedSize
+            );
+            
+            if (existingItemIndex !== -1) {
+                // Item exists, update quantity
+                const newQuantity = prevItems[existingItemIndex].quantity + quantity;
+                
+                // Check if exceeds limit
+                if (newQuantity > 10) {
                     showNotification('Maximum quantity limit reached for this item', 'warning');
                     return prevItems;
                 }
-
-                return prevItems.map(item =>
-                    item._id === product._id
-                        ? { ...item, quantity: newQuantity }
+                
+                return prevItems.map((item, index) => 
+                    index === existingItemIndex 
+                        ? { ...item, quantity: newQuantity } 
                         : item
                 );
+            } else {
+                // Item doesn't exist, add new
+                return [...prevItems, { 
+                    ...product, 
+                    quantity,
+                    selectedColor,
+                    selectedSize,
+                    itemId // Store unique identifier
+                }];
+            }
+        });
+
+        const colorInfo = selectedColor ? ` (${selectedColor})` : '';
+        const sizeInfo = selectedSize ? ` (Size: ${selectedSize})` : '';
+        showNotification(`${quantity} ${product.name}${colorInfo}${sizeInfo} added to cart`, 'success');
+    };
+
+    const removeFromCart = (itemIdentifier) => {
+        setCartItems(prevItems => {
+            const filteredItems = prevItems.filter(item => {
+                // Check if we're using the composite itemId or just the product._id
+                if (item.itemId) {
+                    return item.itemId !== itemIdentifier;
+                } else {
+                    return item._id !== itemIdentifier;
+                }
+            });
+            
+            // If we found and removed an item, show notification
+            if (filteredItems.length < prevItems.length) {
+                const removedItem = prevItems.find(item => {
+                    if (item.itemId) {
+                        return item.itemId === itemIdentifier;
+                    } else {
+                        return item._id === itemIdentifier;
+                    }
+                });
+                
+                if (removedItem) {
+                    const colorInfo = removedItem.selectedColor ? ` (${removedItem.selectedColor})` : '';
+                    const sizeInfo = removedItem.selectedSize ? ` (Size: ${removedItem.selectedSize})` : '';
+                    showNotification(`${removedItem.name}${colorInfo}${sizeInfo} removed from cart`, 'success');
+                }
             }
             
-            return [...prevItems, { ...product, quantity }];
-        });
-
-        showNotification(`${quantity} ${product.name}${quantity > 1 ? 's' : ''} added to cart`, 'success');
-    };
-
-    const removeFromCart = (productId) => {
-        setCartItems(prevItems => {
-            const itemToRemove = prevItems.find(item => item._id === productId);
-            if (itemToRemove) {
-                showNotification(`${itemToRemove.name} removed from cart`, 'success');
-                return prevItems.filter(item => item._id !== productId);
-            }
-            return prevItems;
+            return filteredItems;
         });
     };
 
-    const updateQuantity = (productId, quantity) => {
+    const updateQuantity = (itemIdentifier, quantity) => {
         if (quantity < 1) {
-            removeFromCart(productId);
+            removeFromCart(itemIdentifier);
             return;
         }
 
@@ -89,9 +129,14 @@ export const CartProvider = ({ children }) => {
         }
 
         setCartItems(prevItems =>
-            prevItems.map(item =>
-                item._id === productId ? { ...item, quantity } : item
-            )
+            prevItems.map(item => {
+                // Check if we're using the composite itemId or just the product._id
+                if ((item.itemId && item.itemId === itemIdentifier) || 
+                    (!item.itemId && item._id === itemIdentifier)) {
+                    return { ...item, quantity };
+                }
+                return item;
+            })
         );
     };
 
@@ -101,46 +146,49 @@ export const CartProvider = ({ children }) => {
         showNotification('Cart cleared', 'success');
     };
 
-    const getCartTotal = () => {
-        return cartItems.reduce((total, item) => {
-            const price = item.discountPrice || item.price;
-            return total + (price * item.quantity);
-        }, 0);
-    };
+// src/contexts/CartContext.js (continued)
+const getCartTotal = () => {
+    return cartItems.reduce((total, item) => {
+        const price = item.discountPrice || item.price;
+        return total + (price * item.quantity);
+    }, 0);
+};
 
-    const getCartItemsCount = () => {
-        return cartItems.reduce((total, item) => total + item.quantity, 0);
-    };
+const getCartItemsCount = () => {
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
+};
 
-    const isInCart = (productId) => {
-        return cartItems.some(item => item._id === productId);
-    };
+const isInCart = (productId) => {
+    return cartItems.some(item => item._id === productId);
+};
 
-    const updateProductInCart = (productId, updates) => {
-        setCartItems(prevItems =>
-            prevItems.map(item =>
-                item._id === productId
-                    ? { ...item, ...updates }
-                    : item
-            )
-        );
-    };
-
-    return (
-        <CartContext.Provider value={{
-            cartItems,
-            addToCart,
-            removeFromCart,
-            updateQuantity,
-            clearCart,
-            getCartTotal,
-            getCartItemsCount,
-            isInCart,
-            updateProductInCart
-        }}>
-            {children}
-        </CartContext.Provider>
+const updateProductInCart = (itemId, updates) => {
+    setCartItems(prevItems =>
+        prevItems.map(item => {
+            if ((item.itemId && item.itemId === itemId) || 
+                (!item.itemId && item._id === itemId)) {
+                return { ...item, ...updates };
+            }
+            return item;
+        })
     );
+};
+
+return (
+    <CartContext.Provider value={{
+        cartItems,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        getCartTotal,
+        getCartItemsCount,
+        isInCart,
+        updateProductInCart
+    }}>
+        {children}
+    </CartContext.Provider>
+);
 };
 
 export default CartContext;

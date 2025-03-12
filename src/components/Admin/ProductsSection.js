@@ -18,6 +18,8 @@ function ProductsSection() {
     const [filterCategory, setFilterCategory] = useState('all');
     const [sortField, setSortField] = useState('date');
     const [sortOrder, setSortOrder] = useState('desc');
+    const [newColor, setNewColor] = useState('');
+    const [newSize, setNewSize] = useState('');
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -26,6 +28,8 @@ function ProductsSection() {
         categories: [],
         images: [],
         rating: 4,
+        colors: [],
+        sizes: [],
         reviewCount: 0
     });
 
@@ -54,12 +58,46 @@ function ProductsSection() {
         }
     };
 
+    const handleAddColor = () => {
+        if (newColor.trim() && !formData.colors.includes(newColor.trim())) {
+            setFormData(prev => ({
+                ...prev,
+                colors: [...prev.colors, newColor.trim()]
+            }));
+            setNewColor('');
+        }
+    };
+
+    const handleRemoveColor = (colorToRemove) => {
+        setFormData(prev => ({
+            ...prev,
+            colors: prev.colors.filter(color => color !== colorToRemove)
+        }));
+    };
+
+    const handleAddSize = () => {
+        if (newSize.trim() && !formData.sizes.includes(newSize.trim())) {
+            setFormData(prev => ({
+                ...prev,
+                sizes: [...prev.sizes, newSize.trim()]
+            }));
+            setNewSize('');
+        }
+    };
+
+    const handleRemoveSize = (sizeToRemove) => {
+        setFormData(prev => ({
+            ...prev,
+            sizes: prev.sizes.filter(size => size !== sizeToRemove)
+        }));
+    };
+
     const fetchProducts = async () => {
         try {
             setLoading(true);
             const data = await api.getProducts();
             setProducts(data);
-            
+
             // Fetch categories separately using the dedicated endpoint
             await fetchCategories();
         } catch (error) {
@@ -105,11 +143,11 @@ function ProductsSection() {
                     comparison = parseFloat(a.price) - parseFloat(b.price);
                     break;
                 case 'category':
-                    const aCategory = Array.isArray(a.categories) && a.categories.length > 0 
-                        ? a.categories[0] 
+                    const aCategory = Array.isArray(a.categories) && a.categories.length > 0
+                        ? a.categories[0]
                         : a.category || '';
-                    const bCategory = Array.isArray(b.categories) && b.categories.length > 0 
-                        ? b.categories[0] 
+                    const bCategory = Array.isArray(b.categories) && b.categories.length > 0
+                        ? b.categories[0]
                         : b.category || '';
                     comparison = aCategory.localeCompare(bCategory);
                     break;
@@ -173,7 +211,7 @@ function ProductsSection() {
 
         // Add the category
         const updatedCategories = [...formData.categories, categoryToAdd];
-        
+
         setFormData(prev => ({
             ...prev,
             categories: updatedCategories,
@@ -187,13 +225,13 @@ function ProductsSection() {
     // New function to remove a category from the product
     const handleRemoveCategoryFromProduct = (categoryToRemove) => {
         const updatedCategories = formData.categories.filter(category => category !== categoryToRemove);
-        
+
         setFormData(prev => ({
             ...prev,
             categories: updatedCategories,
             // Update primary category if removed
-            category: prev.category === categoryToRemove && updatedCategories.length > 0 
-                ? updatedCategories[0] 
+            category: prev.category === categoryToRemove && updatedCategories.length > 0
+                ? updatedCategories[0]
                 : (prev.category === categoryToRemove ? '' : prev.category),
         }));
 
@@ -219,7 +257,7 @@ function ProductsSection() {
             showNotification('Category added successfully', 'success');
             setNewCategory('');
             setShowCategoryModal(false);
-            
+
             // Refresh the categories list
             await fetchCategories();
         } catch (error) {
@@ -232,50 +270,54 @@ function ProductsSection() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         try {
             setLoading(true);
             const formDataToSend = new FormData();
-            
+
             // Validate categories
             if (formData.categories.length === 0) {
                 showNotification('Please select at least one category', 'error');
                 setLoading(false);
                 return;
             }
-            
+
             // Append all form data
             formDataToSend.append('name', formData.name);
             formDataToSend.append('description', formData.description);
             formDataToSend.append('price', formData.price);
-            
+
             // Add rating fields
             formDataToSend.append('rating', formData.rating);
             formDataToSend.append('reviewCount', formData.reviewCount);
-            
+
             // Send the primary category for backward compatibility
             // Use the first category as the main category if none is set
             const primaryCategory = formData.category || (formData.categories.length > 0 ? formData.categories[0] : '');
             formDataToSend.append('category', primaryCategory);
-            
+
             // Stringify the categories array properly
             formDataToSend.append('categories', JSON.stringify(formData.categories));
             
+            // Append colors and sizes
+            formDataToSend.append('colors', JSON.stringify(formData.colors));
+            formDataToSend.append('sizes', JSON.stringify(formData.sizes));
+
             if (formData.images && formData.images.length > 0) {
                 Array.from(formData.images).forEach(image => {
                     formDataToSend.append('images', image);
                 });
             }
-    
+
             if (editingId) {
                 formDataToSend.append('keepExisting', formData.keepExisting);
-                const response = await api.updateProduct(editingId, formDataToSend);
+                await api.updateProduct(editingId, formDataToSend);
                 showNotification('Product updated successfully', 'success');
             } else {
-                const response = await api.addProduct(formDataToSend);
+                await api.addProduct(formDataToSend);
                 showNotification('Product added successfully', 'success');
             }
-    
+
             clearForm();
             fetchProducts();
         } catch (error) {
@@ -303,7 +345,7 @@ function ProductsSection() {
 
     const handleEdit = (product) => {
         setEditingId(product._id);
-        
+
         // Ensure we properly handle both formats
         let categoryArray = [];
         if (Array.isArray(product.categories) && product.categories.length > 0) {
@@ -311,7 +353,7 @@ function ProductsSection() {
         } else if (product.category) {
             categoryArray = [product.category];
         }
-        
+
         setFormData({
             name: product.name,
             description: product.description,
@@ -321,7 +363,9 @@ function ProductsSection() {
             images: [],
             keepExisting: true,
             rating: product.rating || 4,
-            reviewCount: product.reviewCount || 0
+            reviewCount: product.reviewCount || 0,
+            colors: product.colors || [],
+            sizes: product.sizes || []
         });
         setImagePreviews((product.images || []).map(getImageUrl));
     };
@@ -348,7 +392,9 @@ function ProductsSection() {
             categories: [],
             images: [],
             rating: 4,
-            reviewCount: 0
+            reviewCount: 0,
+            colors: [],
+            sizes: []
         });
         setImagePreviews([]);
     };
@@ -475,7 +521,7 @@ function ProductsSection() {
                 <h3 className="text-lg font-medium text-gray-900 mb-4">
                     {editingId ? 'Edit Product' : 'Add New Product'}
                 </h3>
-                
+
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="col-span-1">
@@ -541,8 +587,8 @@ function ProductsSection() {
                                 />
                                 <div className="flex">
                                     {[1, 2, 3, 4, 5].map((star) => (
-                                        <span 
-                                            key={star} 
+                                        <span
+                                            key={star}
                                             className="text-xl cursor-pointer"
                                             style={{ color: star <= formData.rating ? '#FFD700' : '#D3D3D3' }}
                                             onClick={() => setFormData(prev => ({ ...prev, rating: star }))}
@@ -567,17 +613,109 @@ function ProductsSection() {
                             />
                         </div>
 
+                        {/* Colors Section */}
+                        <div className="col-span-2">
+                            <label htmlFor="colors" className="block text-sm font-medium text-gray-700 mb-2">Product Colors</label>
+                            <div className="flex flex-wrap gap-2 mb-3">
+                                {formData.colors.length > 0 ? (
+                                    formData.colors.map(color => (
+                                        <div 
+                                            key={color} 
+                                            className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-200"
+                                        >
+                                            <div 
+                                                className="w-4 h-4 rounded-full mr-2" 
+                                                style={{ backgroundColor: color }}
+                                            ></div>
+                                            <span>{color}</span>
+                                            <button 
+                                                type="button"
+                                                onClick={() => handleRemoveColor(color)}
+                                                className="ml-2 text-gray-500 hover:text-red-500"
+                                            >
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-gray-500 text-sm italic">No colors added. Add colors below.</p>
+                                )}
+                            </div>
+                            <div className="flex">
+                                <input
+                                    type="text"
+                                    className="flex-1 rounded-l-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+                                    placeholder="Add a color (e.g., Red, #FF0000)"
+                                    value={newColor}
+                                    onChange={(e) => setNewColor(e.target.value)}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={handleAddColor}
+                                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-indigo-600 hover:bg-indigo-700"
+                                >
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+                        
+                        {/* Sizes Section */}
+                        <div className="col-span-2">
+                            <label htmlFor="sizes" className="block text-sm font-medium text-gray-700 mb-2">Product Sizes</label>
+                            <div className="flex flex-wrap gap-2 mb-3">
+                                {formData.sizes.length > 0 ? (
+                                    formData.sizes.map(size => (
+                                        <div 
+                                            key={size} 
+                                            className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-200"
+                                        >
+                                            <span>{size}</span>
+                                            <button 
+                                                type="button"
+                                                onClick={() => handleRemoveSize(size)}
+                                                className="ml-2 text-gray-500 hover:text-red-500"
+                                            >
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-gray-500 text-sm italic">No sizes added. Add sizes below.</p>
+                                )}
+                            </div>
+                            <div className="flex">
+                                <input
+                                    type="text"
+                                    className="flex-1 rounded-l-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+                                    placeholder="Add a size (e.g., S, M, L, XL, 42, 44)"
+                                    value={newSize}
+                                    onChange={(e) => setNewSize(e.target.value)}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={handleAddSize}
+                                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-indigo-600 hover:bg-indigo-700"
+                                >
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+
                         {/* Categories Section - Using Chips/Tags */}
                         <div className="col-span-2">
                             <label htmlFor="categories" className="block text-sm font-medium text-gray-700 mb-2">Categories</label>
-                            
+
                             {/* Display selected categories as chips/tags */}
                             <div className="flex flex-wrap gap-2 mb-3">
                                 {formData.categories.length > 0 ? (
                                     formData.categories.map(category => (
                                         <div key={category} className="bg-indigo-100 px-3 py-1 rounded-full flex items-center gap-1">
                                             <span className="text-indigo-800 text-sm">{category}</span>
-                                            <button 
+                                            <button
                                                 type="button"
                                                 onClick={() => handleRemoveCategoryFromProduct(category)}
                                                 className="text-indigo-500 hover:text-indigo-700"
@@ -592,7 +730,7 @@ function ProductsSection() {
                                     <p className="text-gray-500 text-sm italic">No categories selected. Click on categories below to add them.</p>
                                 )}
                             </div>
-                            
+
                             {/* Category selection area */}
                             <div className="border border-gray-300 rounded-md p-3">
                                 <div className="flex justify-between items-center mb-2">
@@ -608,25 +746,24 @@ function ProductsSection() {
                                         Add New Category
                                     </button>
                                 </div>
-                                
+
                                 <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-2">
                                     {categories.map(category => (
                                         <button
                                             key={category}
                                             type="button"
                                             onClick={() => handleAddCategoryToProduct(category)}
-                                            className={`px-3 py-1 rounded-full text-sm ${
-                                                formData.categories.includes(category) 
-                                                ? 'bg-indigo-500 text-white cursor-not-allowed' 
-                                                : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-                                            }`}
+                                            className={`px-3 py-1 rounded-full text-sm ${formData.categories.includes(category)
+                                                    ? 'bg-indigo-500 text-white cursor-not-allowed'
+                                                    : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                                                }`}
                                             disabled={formData.categories.includes(category)}
                                         >
                                             {category}
                                         </button>
                                     ))}
                                 </div>
-                                
+
                                 {formData.categories.length === 0 && (
                                     <div className="mt-2 text-red-500 text-xs">
                                         Please select at least one category.
@@ -703,11 +840,10 @@ function ProductsSection() {
                         <button
                             type="submit"
                             disabled={loading || formData.categories.length === 0}
-                            className={`inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white ${
-                                loading || formData.categories.length === 0 
-                                ? 'bg-gray-400 cursor-not-allowed' 
-                                : 'bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
-                            }`}
+                            className={`inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white ${loading || formData.categories.length === 0
+                                    ? 'bg-gray-400 cursor-not-allowed'
+                                    : 'bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                                }`}
                         >
                             {loading ? (
                                 <>
@@ -766,7 +902,7 @@ function ProductsSection() {
                                         Price
                                     </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Rating
+                                        Variants
                                     </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Status
@@ -784,8 +920,8 @@ function ProductsSection() {
                                                 <div className="h-10 w-10 flex-shrink-0">
                                                     <img
                                                         className="h-10 w-10 rounded-sm object-cover"
-                                                        src={product.images && product.images.length > 0 
-                                                            ? getImageUrl(product.images[0]) 
+                                                        src={product.images && product.images.length > 0
+                                                            ? getImageUrl(product.images[0])
                                                             : 'https://placehold.co/60@3x.png'}
                                                         alt={product.name}
                                                         onError={(e) => {
@@ -802,8 +938,8 @@ function ProductsSection() {
                                         <td className="px-6 py-4">
                                             <div className="flex flex-wrap gap-1">
                                                 {getProductCategories(product).map(category => (
-                                                    <span 
-                                                        key={category} 
+                                                    <span
+                                                        key={category}
                                                         className="px-2 py-1 inline-flex text-xs leading-4 font-semibold rounded-full bg-green-100 text-green-800"
                                                     >
                                                         {category}
@@ -817,19 +953,33 @@ function ProductsSection() {
                                                 <div className="text-xs text-gray-500 line-through">${product.originalPrice.toFixed(2)}</div>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center">
-                                                <div className="flex mr-2">
-                                                    {[1, 2, 3, 4, 5].map((star) => (
-                                                        <span 
-                                                            key={star} 
-                                                            style={{ color: star <= (product.rating || 4) ? '#FFD700' : '#D3D3D3' }}
-                                                        >
-                                                            ★
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                                <span className="text-xs text-gray-500">({product.reviewCount || 0})</span>
+                                        <td className="px-6 py-4">
+                                            <div className="text-xs">
+                                                {product.colors && product.colors.length > 0 && (
+                                                    <div className="mb-1">
+                                                        <span className="font-medium">Colors:</span> 
+                                                        <div className="flex mt-1 space-x-1">
+                                                            {product.colors.map(color => (
+                                                                <div 
+                                                                    key={color} 
+                                                                    className="w-4 h-4 rounded-full border border-gray-300" 
+                                                                    style={{backgroundColor: color}}
+                                                                    title={color}
+                                                                ></div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {product.sizes && product.sizes.length > 0 && (
+                                                    <div>
+                                                        <span className="font-medium">Sizes:</span> 
+                                                        <span className="ml-1">{product.sizes.join(', ')}</span>
+                                                    </div>
+                                                )}
+                                                {(!product.colors || product.colors.length === 0) && 
+                                                 (!product.sizes || product.sizes.length === 0) && (
+                                                    <span className="text-gray-500">No variants</span>
+                                                )}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
@@ -872,7 +1022,7 @@ function ProductsSection() {
                 <div className="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
                     {/* Background overlay */}
                     <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
-                    
+
                     {/* Modal panel */}
                     <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
                         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">

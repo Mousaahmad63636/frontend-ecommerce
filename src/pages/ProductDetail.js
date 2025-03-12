@@ -1,4 +1,4 @@
-// src/pages/ProductDetail.js - with simplified pricing display
+// src/pages/ProductDetail.js
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -27,6 +27,8 @@ function ProductDetail() {
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const { showNotification } = useNotification();
   const [userRating, setUserRating] = useState(0);
+  const [selectedColor, setSelectedColor] = useState('');
+  const [selectedSize, setSelectedSize] = useState('');
 
   // Handle back button click
   const handleGoBack = () => {
@@ -45,6 +47,15 @@ function ProductDetail() {
         setLoading(true);
         const data = await api.getProductById(id);
         setProduct(data);
+        
+        // Set default color and size if available
+        if (data.colors && data.colors.length > 0) {
+          setSelectedColor(data.colors[0]);
+        }
+        if (data.sizes && data.sizes.length > 0) {
+          setSelectedSize(data.sizes[0]);
+        }
+        
         // Pass the complete product to fetchSimilarProducts instead of just the category
         fetchSimilarProducts(data);
       } catch (error) {
@@ -116,6 +127,7 @@ function ProductDetail() {
       setLoadingSimilar(false);
     }
   };
+  
   const containsArabic = (text) => {
     const arabicPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
     return arabicPattern.test(text);
@@ -141,7 +153,20 @@ function ProductDetail() {
   const handleAddToCart = () => {
     if (!product) return;
 
-    addToCart(product, quantity);
+    // Check if product has color options but none selected
+    if (product.colors && product.colors.length > 0 && !selectedColor) {
+      showNotification('Please select a color', 'error');
+      return;
+    }
+
+    // Check if product has size options but none selected
+    if (product.sizes && product.sizes.length > 0 && !selectedSize) {
+      showNotification('Please select a size', 'error');
+      return;
+    }
+
+    addToCart(product, quantity, selectedColor, selectedSize);
+    showNotification(`Added to cart: ${product.name}`, 'success');
   };
 
   // Handle wishlist toggle
@@ -167,9 +192,14 @@ function ProductDetail() {
 
     const phoneNumber = '96176919370';
     const productUrl = window.location.href;
+    
+    // Include color and size in the message if selected
+    let colorInfo = selectedColor ? `\n *Selected Color:* ${selectedColor}` : '';
+    let sizeInfo = selectedSize ? `\n *Selected Size:* ${selectedSize}` : '';
+    
     // Add preview parameter to help WhatsApp recognize this is a product page
     const messageWithPreview = encodeURIComponent(
-      `Hello! I want to buy the following product(s):\n *Product Name:* ${product.name} \n *Price:* ${product.price} $\n *URL:* ${productUrl}?preview=true`
+      `Hello! I want to buy the following product(s):\n *Product Name:* ${product.name} \n *Price:* ${product.price} $${colorInfo}${sizeInfo}\n *URL:* ${productUrl}?preview=true`
     );
 
     window.open(`https://wa.me/${phoneNumber}?text=${messageWithPreview}`, '_blank');
@@ -456,6 +486,58 @@ function ProductDetail() {
                 </div>
               )}
 
+              {/* Color Selection */}
+              {product.colors && product.colors.length > 0 && (
+                <div className="mb-6">
+                  <h5 className="font-medium text-gray-900 mb-2">Color:</h5>
+                  <div className="flex flex-wrap gap-2">
+                    {product.colors.map(color => (
+                      <button
+                        key={color}
+                        type="button"
+                        onClick={() => setSelectedColor(color)}
+                        className={`w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all ${
+                          selectedColor === color 
+                            ? 'border-purple-500 scale-110 shadow-md' 
+                            : 'border-gray-300'
+                        }`}
+                        style={{ backgroundColor: color }}
+                        title={color}
+                      >
+                        {selectedColor === color && (
+                          <svg className="w-6 h-6 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                          </svg>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Size Selection */}
+              {product.sizes && product.sizes.length > 0 && (
+                <div className="mb-6">
+                  <h5 className="font-medium text-gray-900 mb-2">Size:</h5>
+                  <div className="flex flex-wrap gap-2">
+                    {product.sizes.map(size => (
+                      <button
+                        key={size}
+                        type="button"
+                        onClick={() => setSelectedSize(size)}
+                        className={`h-10 min-w-[40px] px-3 rounded-md border transition-all ${
+                          selectedSize === size 
+                            ? 'border-purple-500 bg-purple-50 text-purple-700 font-medium' 
+                            : 'border-gray-300 bg-white text-gray-700'
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* User Rating Section */}
               <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                 <h5 className="font-medium text-gray-900 mb-3">Your Rating</h5>
@@ -499,6 +581,28 @@ function ProductDetail() {
                   </button>
                 </div>
               </div>
+
+              {/* Selected Options Summary */}
+              {(selectedColor || selectedSize) && (
+                <div className="mb-6 p-3 bg-gray-50 rounded-lg">
+                  <h5 className="font-medium text-gray-900 mb-2">Selected Options:</h5>
+                  <div className="flex flex-wrap gap-4">
+                    {selectedColor && (
+                      <div className="flex items-center">
+                        <span className="text-gray-700 mr-2">Color:</span>
+                        <div className="w-6 h-6 rounded-full border border-gray-300" style={{backgroundColor: selectedColor}}></div>
+                        <span className="ml-2 text-gray-900">{selectedColor}</span>
+                      </div>
+                    )}
+                    {selectedSize && (
+                      <div className="flex items-center">
+                        <span className="text-gray-700 mr-2">Size:</span>
+                        <span className="text-gray-900 font-medium">{selectedSize}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Action Buttons */}
               <div className="space-y-3">
