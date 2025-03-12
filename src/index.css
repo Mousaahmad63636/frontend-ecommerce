@@ -31,7 +31,17 @@
     justify-content: center;
     z-index: 2;
   }
-  
+  /* Add this to src/index.css */
+[dir="rtl"] {
+  text-align: right;
+  unicode-bidi: bidi-override;
+}
+
+[dir="rtl"] .emoji {
+  display: inline-block;
+  direction: ltr;
+  unicode-bidi: embed;
+}
   .image-dots {
     display: flex;
     gap: 6px;

@@ -116,6 +116,10 @@ function ProductDetail() {
       setLoadingSimilar(false);
     }
   };
+  const containsArabic = (text) => {
+    const arabicPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+    return arabicPattern.test(text);
+  };
 
   // Handle quantity changes
   const handleQuantityChange = (change) => {
@@ -555,7 +559,16 @@ function ProductDetail() {
           <div className="bg-white p-8 rounded-xl shadow-sm">
             <h2 className="text-2xl font-bold text-purple-600 mb-6">Product Description</h2>
             <div className="prose prose-lg mx-auto text-gray-700">
-              <p className="whitespace-pre-line">{product.description}</p>
+              <p
+                className={`whitespace-pre-line ${containsArabic(product.description) ? 'text-right' : ''}`}
+                dir={containsArabic(product.description) ? "rtl" : "ltr"}
+                style={containsArabic(product.description) ? {
+                  fontFamily: "'Tajawal', 'Noto Sans Arabic', sans-serif",
+                  lineHeight: 1.8
+                } : {}}
+              >
+                {product.description}
+              </p>
             </div>
           </div>
         </div>
