@@ -505,9 +505,6 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                                 key={index}
                                 className="product-item mb-2 p-2 border-bottom"
                               >
-                           // Update the product item rendering section in OrderManagement.js
-                                // Find this section in the component (around line 366-415)
-
                                 <div className="d-flex align-items-center">
                                   <img
                                     src={item.product?.images?.length > 0
