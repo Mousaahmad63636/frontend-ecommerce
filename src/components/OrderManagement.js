@@ -68,7 +68,12 @@ function OrderManagement() {
       setLoading(false);
     }
   };
-
+// Add this inside the component, somewhere near the fetchOrders function
+useEffect(() => {
+  if (orders.length > 0) {
+    console.log('Order products structure:', JSON.stringify(orders[0].products, null, 2));
+  }
+}, [orders]);
   const filterOrdersByDate = (orders) => {
     const start = new Date(selectedDate);
     const end = new Date(selectedDate);
@@ -502,7 +507,6 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                           {order.products && order.products.length > 0 ? (
                             order.products.map((item, index) => (
                               <div
-                              
                                 key={index}
                                 className="product-item mb-2 p-2 border-bottom"
                               >
@@ -523,8 +527,8 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                                       {item.product?.name || 'Unknown Product'} {!item.product && '(Deleted)'}
                                     </div>
                                     <div className="d-flex flex-wrap small text-muted">
-                                      {/* Color information with color swatch if available */}
-                                      {(item.selectedColor) && (
+                                      {/* Updated color section - check both possible field names */}
+                                      {item.selectedColor && (
                                         <div className="me-3 mb-1">
                                           <span className="d-inline-flex align-items-center">
                                             <span
@@ -540,8 +544,8 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                                         </div>
                                       )}
 
-                                      {/* Size information */}
-                                      {(item.selectedSize) && (
+                                      {/* Updated size section - check both possible field names */}
+                                      {item.selectedSize && (
                                         <div className="me-3 mb-1">
                                           <span>Size: {item.selectedSize}</span>
                                         </div>
@@ -553,7 +557,7 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                                       </div>
                                     </div>
 
-                                    {/* Product total - Fix the calculation */}
+                                    {/* Product total */}
                                     <div className="small fw-bold text-end">
                                       Total: ${safeToFixed((item.price || 0) * (item.quantity || 0))}
                                     </div>
