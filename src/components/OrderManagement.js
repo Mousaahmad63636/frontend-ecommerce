@@ -526,8 +526,6 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                                     <div className="small fw-bold">
                                       {item.product?.name || 'Unknown Product'} {!item.product && '(Deleted)'}
                                     </div>
-                                    // In src/components/OrderManagement.js
-                                    // Update the product item rendering section
 
                                     <div className="d-flex flex-wrap small text-muted">
                                       {/* Color information with fallback to product colors */}
