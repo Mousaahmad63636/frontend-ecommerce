@@ -505,6 +505,9 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                                 key={index}
                                 className="product-item mb-2 p-2 border-bottom"
                               >
+                           // Update the product item rendering section in OrderManagement.js
+                                // Find this section in the component (around line 366-415)
+
                                 <div className="d-flex align-items-center">
                                   <img
                                     src={item.product?.images?.length > 0
@@ -523,36 +526,36 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                                     </div>
                                     <div className="d-flex flex-wrap small text-muted">
                                       {/* Color information with color swatch if available */}
-                                      {(item.selectedColor || item.color) && (
+                                      {(item.selectedColor) && (
                                         <div className="me-3 mb-1">
                                           <span className="d-inline-flex align-items-center">
-                                            <span 
-                                              className="d-inline-block me-1 rounded-circle border" 
+                                            <span
+                                              className="d-inline-block me-1 rounded-circle border"
                                               style={{
-                                                backgroundColor: item.selectedColor || item.color,
+                                                backgroundColor: item.selectedColor,
                                                 width: '12px',
                                                 height: '12px'
                                               }}
                                             ></span>
-                                            <span>Color: {item.selectedColor || item.color}</span>
+                                            <span>Color: {item.selectedColor}</span>
                                           </span>
                                         </div>
                                       )}
-                                      
+
                                       {/* Size information */}
-                                      {(item.selectedSize || item.size) && (
+                                      {(item.selectedSize) && (
                                         <div className="me-3 mb-1">
-                                          <span>Size: {item.selectedSize || item.size}</span>
+                                          <span>Size: {item.selectedSize}</span>
                                         </div>
                                       )}
-                                      
+
                                       {/* Quantity and price */}
                                       <div className="mb-1">
                                         <span>Qty: {item.quantity || 0} × ${safeToFixed(item.price || 0)}</span>
                                       </div>
                                     </div>
-                                    
-                                    {/* Product total */}
+
+                                    {/* Product total - Fix the calculation */}
                                     <div className="small fw-bold text-end">
                                       Total: ${safeToFixed((item.price || 0) * (item.quantity || 0))}
                                     </div>
