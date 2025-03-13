@@ -68,12 +68,12 @@ function OrderManagement() {
       setLoading(false);
     }
   };
-// Add this inside the component, somewhere near the fetchOrders function
-useEffect(() => {
-  if (orders.length > 0) {
-    console.log('Order products structure:', JSON.stringify(orders[0].products, null, 2));
-  }
-}, [orders]);
+  // Add this inside the component, somewhere near the fetchOrders function
+  useEffect(() => {
+    if (orders.length > 0) {
+      console.log('Order products structure:', JSON.stringify(orders[0].products, null, 2));
+    }
+  }, [orders]);
   const filterOrdersByDate = (orders) => {
     const start = new Date(selectedDate);
     const end = new Date(selectedDate);
@@ -526,28 +526,31 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                                     <div className="small fw-bold">
                                       {item.product?.name || 'Unknown Product'} {!item.product && '(Deleted)'}
                                     </div>
+                                    // In src/components/OrderManagement.js
+                                    // Update the product item rendering section
+
                                     <div className="d-flex flex-wrap small text-muted">
-                                      {/* Updated color section - check both possible field names */}
-                                      {item.selectedColor && (
+                                      {/* Color information with fallback to product colors */}
+                                      {(item.selectedColor || (item.product?.colors && item.product.colors.length > 0)) && (
                                         <div className="me-3 mb-1">
                                           <span className="d-inline-flex align-items-center">
                                             <span
                                               className="d-inline-block me-1 rounded-circle border"
                                               style={{
-                                                backgroundColor: item.selectedColor,
+                                                backgroundColor: item.selectedColor || (item.product?.colors && item.product.colors[0]),
                                                 width: '12px',
                                                 height: '12px'
                                               }}
                                             ></span>
-                                            <span>Color: {item.selectedColor}</span>
+                                            <span>Color: {item.selectedColor || (item.product?.colors && item.product.colors[0]) || 'N/A'}</span>
                                           </span>
                                         </div>
                                       )}
 
-                                      {/* Updated size section - check both possible field names */}
-                                      {item.selectedSize && (
+                                      {/* Size information with fallback to product sizes */}
+                                      {(item.selectedSize || (item.product?.sizes && item.product.sizes.length > 0)) && (
                                         <div className="me-3 mb-1">
-                                          <span>Size: {item.selectedSize}</span>
+                                          <span>Size: {item.selectedSize || (item.product?.sizes && item.product.sizes[0]) || 'N/A'}</span>
                                         </div>
                                       )}
 
@@ -556,7 +559,6 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                                         <span>Qty: {item.quantity || 0} × ${safeToFixed(item.price || 0)}</span>
                                       </div>
                                     </div>
-
                                     {/* Product total */}
                                     <div className="small fw-bold text-end">
                                       Total: ${safeToFixed((item.price || 0) * (item.quantity || 0))}

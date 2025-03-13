@@ -158,27 +158,55 @@ function ProductDetail() {
     }
   };
 
-  // Handle add to cart
-// Handle add to cart
-const handleAddToCart = () => {
-  if (!product) return;
-
-  // Check if product has color options but none selected
-  if (product.colors && product.colors.length > 0 && !selectedColor) {
-    showNotification('Please select a color', 'error');
-    return;
-  }
-
-  // Check if product has size options but none selected
-  if (product.sizes && product.sizes.length > 0 && !selectedSize) {
-    showNotification('Please select a size', 'error');
-    return;
-  }
-
-  addToCart(product, quantity, selectedColor, selectedSize);
-  showNotification(`Added to cart: ${product.name}`, 'success');
-};
-
+  const handleAddToCart = () => {
+    if (!product) {
+      showNotification('Product not available', 'error');
+      return;
+    }
+  
+    // Check if product has color options but none selected
+    if (product.colors && product.colors.length > 0) {
+      if (!selectedColor) {
+        showNotification('Please select a color before adding to cart', 'error');
+        return;
+      }
+    }
+  
+    // Check if product has size options but none selected
+    if (product.sizes && product.sizes.length > 0) {
+      if (!selectedSize) {
+        showNotification('Please select a size before adding to cart', 'error');
+        return;
+      }
+    }
+  
+    // Get validated values to pass to addToCart
+    const colorToAdd = selectedColor || '';
+    const sizeToAdd = selectedSize || '';
+  
+    // Log what we're adding to the cart (useful for debugging)
+    console.log('Adding to cart:', {
+      product: product.name,
+      quantity,
+      color: colorToAdd,
+      size: sizeToAdd
+    });
+  
+    // Add to cart with explicit color and size parameters
+    addToCart(product, quantity, colorToAdd, sizeToAdd);
+    
+    // Show success notification
+    let successMessage = `Added to cart: ${product.name}`;
+    if (colorToAdd && sizeToAdd) {
+      successMessage += ` (${colorToAdd}, ${sizeToAdd})`;
+    } else if (colorToAdd) {
+      successMessage += ` (${colorToAdd})`;
+    } else if (sizeToAdd) {
+      successMessage += ` (${sizeToAdd})`;
+    }
+    
+    showNotification(successMessage, 'success');
+  };
   // Handle wishlist toggle
   const handleWishlistToggle = () => {
     if (!product) return;

@@ -116,11 +116,14 @@ function CheckoutPage() {
     try {
       setLoading(true);
       
+      // Updated mapping to include selectedColor and selectedSize
       const orderData = {
         products: cartItems.map(item => ({
-          product: item._id,
+          product: item.product?._id || item._id, // Handle both possible structures
           quantity: item.quantity,
-          price: item.price
+          price: item.price,
+          selectedColor: item.selectedColor || '', // Add color selection
+          selectedSize: item.selectedSize || ''    // Add size selection
         })),
         subtotal: cartData.subtotal,
         shippingFee: cartData.shipping,
@@ -137,6 +140,7 @@ function CheckoutPage() {
         } : null
       };
 
+      console.log('Sending order with products:', orderData.products);
       const response = await api.createGuestOrder(orderData);
 
       clearCart();
@@ -196,20 +200,29 @@ function CheckoutPage() {
               
               <div className="mt-4 space-y-3">
                 {cartItems.map((item) => (
-                  <div key={item._id} className="flex items-center">
+                  <div key={item._id || item.product?._id} className="flex items-center">
                     <div className="h-16 w-16 flex-shrink-0 rounded-md border border-gray-200 overflow-hidden">
                       <img
                         src={item.images && item.images.length > 0 
                           ? getImageUrl(item.images[0]) 
-                          : 'https://placehold.co/60x60'}
-                        alt={item.name}
+                          : (item.product?.images && item.product.images.length > 0
+                              ? getImageUrl(item.product.images[0])
+                              : 'https://placehold.co/60x60')}
+                        alt={item.name || item.product?.name}
                         className="h-full w-full object-cover"
                         onError={(e) => { e.target.src = 'https://placehold.co/60x60'; }}
                       />
                     </div>
                     <div className="ml-3 flex-1">
-                      <p className="text-sm font-medium text-gray-900 line-clamp-1">{item.name}</p>
+                      <p className="text-sm font-medium text-gray-900 line-clamp-1">{item.name || item.product?.name}</p>
                       <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+                      {/* Display selected color and size if available */}
+                      {item.selectedColor && (
+                        <p className="text-xs text-gray-500">Color: {item.selectedColor}</p>
+                      )}
+                      {item.selectedSize && (
+                        <p className="text-xs text-gray-500">Size: {item.selectedSize}</p>
+                      )}
                     </div>
                     <div className="text-sm font-medium text-gray-900">
                       ${(item.price * item.quantity).toFixed(2)}

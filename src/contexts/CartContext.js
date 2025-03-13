@@ -17,7 +17,7 @@ export const CartProvider = ({ children }) => {
         const savedCart = localStorage.getItem('cartItems');
         return savedCart ? JSON.parse(savedCart) : [];
     });
-    
+
     const { showNotification } = useNotification();
 
     // Persist cart to localStorage
@@ -36,46 +36,52 @@ export const CartProvider = ({ children }) => {
         }
     }, [cartItems, showNotification]);
 
+    // Fixed and unified addToCart function
     const addToCart = (product, quantity = 1, selectedColor = '', selectedSize = '') => {
-        if (product.soldOut) {
-            showNotification('This product is sold out', 'error');
-            return;
-        }
-
+        // Create a unique identifier for this product + options combination
+        const itemId = `${product._id}${selectedColor ? `-${selectedColor}` : ''}${selectedSize ? `-${selectedSize}` : ''}`;
+        
         setCartItems(prevItems => {
-            // Create a unique identifier for this product + options combination
-            const itemId = `${product._id}${selectedColor ? `-${selectedColor}` : ''}${selectedSize ? `-${selectedSize}` : ''}`;
-            
             // Find if this exact combination already exists in cart
-            const existingItemIndex = prevItems.findIndex(item => 
-                item._id === product._id && 
-                item.selectedColor === selectedColor && 
-                item.selectedSize === selectedSize
-            );
-            
+            const existingItemIndex = prevItems.findIndex(item => {
+                // Handle different possible cart item structures
+                const itemProductId = item.product?._id || item._id;
+                
+                return (
+                    itemProductId === product._id &&
+                    item.selectedColor === selectedColor &&
+                    item.selectedSize === selectedSize
+                );
+            });
+
             if (existingItemIndex !== -1) {
                 // Item exists, update quantity
                 const newQuantity = prevItems[existingItemIndex].quantity + quantity;
-                
+
                 // Check if exceeds limit
                 if (newQuantity > 10) {
                     showNotification('Maximum quantity limit reached for this item', 'warning');
                     return prevItems;
                 }
-                
-                return prevItems.map((item, index) => 
-                    index === existingItemIndex 
-                        ? { ...item, quantity: newQuantity } 
+
+                return prevItems.map((item, index) =>
+                    index === existingItemIndex
+                        ? { ...item, quantity: newQuantity }
                         : item
                 );
             } else {
                 // Item doesn't exist, add new
-                return [...prevItems, { 
-                    ...product, 
-                    quantity,
-                    selectedColor,
-                    selectedSize,
-                    itemId // Store unique identifier
+                // Using standardized structure with product as reference + separate selected options
+                return [...prevItems, {
+                    _id: product._id,            // Store product ID directly for easy access
+                    product: product,            // Reference to full product
+                    name: product.name,          // Store name directly for easy display
+                    price: product.price,        // Store price directly for calculations
+                    images: product.images,      // Store images directly for display
+                    quantity: quantity,
+                    selectedColor: selectedColor,
+                    selectedSize: selectedSize,
+                    itemId: itemId               // Store unique identifier for variants
                 }];
             }
         });
@@ -92,27 +98,30 @@ export const CartProvider = ({ children }) => {
                 if (item.itemId) {
                     return item.itemId !== itemIdentifier;
                 } else {
-                    return item._id !== itemIdentifier;
+                    const itemId = item.product?._id || item._id;
+                    return itemId !== itemIdentifier;
                 }
             });
-            
+
             // If we found and removed an item, show notification
             if (filteredItems.length < prevItems.length) {
                 const removedItem = prevItems.find(item => {
                     if (item.itemId) {
                         return item.itemId === itemIdentifier;
                     } else {
-                        return item._id === itemIdentifier;
+                        const itemId = item.product?._id || item._id;
+                        return itemId === itemIdentifier;
                     }
                 });
-                
+
                 if (removedItem) {
                     const colorInfo = removedItem.selectedColor ? ` (${removedItem.selectedColor})` : '';
                     const sizeInfo = removedItem.selectedSize ? ` (Size: ${removedItem.selectedSize})` : '';
-                    showNotification(`${removedItem.name}${colorInfo}${sizeInfo} removed from cart`, 'success');
+                    const itemName = removedItem.name || removedItem.product?.name || 'Item';
+                    showNotification(`${itemName}${colorInfo}${sizeInfo} removed from cart`, 'success');
                 }
             }
-            
+
             return filteredItems;
         });
     };
@@ -131,8 +140,8 @@ export const CartProvider = ({ children }) => {
         setCartItems(prevItems =>
             prevItems.map(item => {
                 // Check if we're using the composite itemId or just the product._id
-                if ((item.itemId && item.itemId === itemIdentifier) || 
-                    (!item.itemId && item._id === itemIdentifier)) {
+                const itemId = item.itemId || item.product?._id || item._id;
+                if (itemId === itemIdentifier) {
                     return { ...item, quantity };
                 }
                 return item;
@@ -146,49 +155,52 @@ export const CartProvider = ({ children }) => {
         showNotification('Cart cleared', 'success');
     };
 
-// src/contexts/CartContext.js (continued)
-const getCartTotal = () => {
-    return cartItems.reduce((total, item) => {
-        const price = item.discountPrice || item.price;
-        return total + (price * item.quantity);
-    }, 0);
-};
+    // src/contexts/CartContext.js (continued)
+    const getCartTotal = () => {
+        return cartItems.reduce((total, item) => {
+            const price = item.discountPrice || item.price;
+            return total + (price * item.quantity);
+        }, 0);
+    };
 
-const getCartItemsCount = () => {
-    return cartItems.reduce((total, item) => total + item.quantity, 0);
-};
+    const getCartItemsCount = () => {
+        return cartItems.reduce((total, item) => total + item.quantity, 0);
+    };
 
-const isInCart = (productId) => {
-    return cartItems.some(item => item._id === productId);
-};
+    const isInCart = (productId) => {
+        return cartItems.some(item => {
+            const itemProductId = item.product?._id || item._id;
+            return itemProductId === productId;
+        });
+    };
 
-const updateProductInCart = (itemId, updates) => {
-    setCartItems(prevItems =>
-        prevItems.map(item => {
-            if ((item.itemId && item.itemId === itemId) || 
-                (!item.itemId && item._id === itemId)) {
-                return { ...item, ...updates };
-            }
-            return item;
-        })
+    const updateProductInCart = (itemId, updates) => {
+        setCartItems(prevItems =>
+            prevItems.map(item => {
+                const currentItemId = item.itemId || item.product?._id || item._id;
+                if (currentItemId === itemId) {
+                    return { ...item, ...updates };
+                }
+                return item;
+            })
+        );
+    };
+
+    return (
+        <CartContext.Provider value={{
+            cartItems,
+            addToCart,
+            removeFromCart,
+            updateQuantity,
+            clearCart,
+            getCartTotal,
+            getCartItemsCount,
+            isInCart,
+            updateProductInCart
+        }}>
+            {children}
+        </CartContext.Provider>
     );
-};
-
-return (
-    <CartContext.Provider value={{
-        cartItems,
-        addToCart,
-        removeFromCart,
-        updateQuantity,
-        clearCart,
-        getCartTotal,
-        getCartItemsCount,
-        isInCart,
-        updateProductInCart
-    }}>
-        {children}
-    </CartContext.Provider>
-);
 };
 
 export default CartContext;
