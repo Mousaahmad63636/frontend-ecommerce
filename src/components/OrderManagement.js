@@ -250,27 +250,25 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
   };
 
   const handleWhatsAppMessage = (order, type = 'pending') => {
-    // Get templates from settings or use defaults
     const templates = settings.whatsappMessageTemplate || {};
-  
-    // Calculate the subtotal properly
-    const subtotal = order.products.reduce((sum, item) =>
-      sum + (item.product?.price || 0) * item.quantity, 0
-    );
-  
-    // Format order details
-    const orderDetailsArabic = order.products.map(item =>
-      `📦 ${item.product?.name || ''}
-        القيمة: ${safeToFixed(item.product?.price)}$ × ${item.quantity}
-        المجموع: ${safeToFixed((item.product?.price || 0) * item.quantity)}$`
-    ).join('\n');
-  
-    // Calculate final values
+    const subtotal = order.subtotal;
+    const orderDetailsArabic = order.products.map(item => {
+      const details = [`📦 ${item.product?.name || 'Unknown Product'}`];
+      if (item.selectedColor) {
+        details.push(`اللون: ${item.selectedColor}`);
+      }
+      if (item.selectedSize) {
+        details.push(`الحجم: ${item.selectedSize}`);
+      }
+      details.push(`القيمة: ${safeToFixed(item.price || 0)}$ × ${item.quantity}`);
+      details.push(`المجموع: ${safeToFixed((item.price || 0) * item.quantity)}$`);
+      return details.join('\n');
+    }).join('\n\n');
+
     const deliveryFee = order.shippingFee || 0;
     const discount = order.promoDiscount ? (subtotal * order.promoDiscount) / 100 : 0;
-    const finalTotal = subtotal + deliveryFee - discount;
-  
-    // If no template is set in settings, use default message
+    const finalTotal = order.totalAmount;
+
     if (!templates.arabic) {
       const message = getDefaultMessage(
         order,
@@ -280,22 +278,15 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
         finalTotal,
         discount
       );
-  
-      // Send message using WhatsApp app URI scheme
-      // FIX: Use formatPhoneForWhatsApp to properly format Lebanese phone numbers
       const phoneNumber = formatPhoneForWhatsApp(order.phoneNumber);
       const whatsappURI = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
-      
-      // Try to open WhatsApp app, fall back to web if it fails
       if (!window.open(whatsappURI)) {
-        // If app opening fails, fall back to web version
         const whatsappURL = `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
         window.open(whatsappURL, '_blank', 'noopener,noreferrer');
       }
       return;
     }
-  
-    // Use template if available
+
     let messageArabic = templates.arabic
       .replace('{{customerName}}', order.customerName)
       .replace('{{orderId}}', order.orderId)
@@ -305,15 +296,10 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
       .replace('{{total}}', safeToFixed(finalTotal))
       .replace('{{address}}', order.address || '')
       .replace('{{discount}}', discount ? `💎 الخصم: -${safeToFixed(discount)}$\n` : '');
-  
-    // Send message using WhatsApp app URI scheme
-    // FIX: Use formatPhoneForWhatsApp to properly format Lebanese phone numbers
+
     const phoneNumber = formatPhoneForWhatsApp(order.phoneNumber);
     const whatsappURI = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(messageArabic)}`;
-    
-    // Try to open WhatsApp app, fall back to web if it fails
     if (!window.open(whatsappURI)) {
-      // If app opening fails, fall back to web version
       const whatsappURL = `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(messageArabic)}`;
       window.open(whatsappURL, '_blank', 'noopener,noreferrer');
     }
@@ -342,24 +328,21 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
   }
 
   return (
-    <div className="order-management">
-      <div className="card mb-4">
-        <div className="card-header bg-white">
+    <div className="order-management container-fluid py-4">
+      <div className="card shadow-sm mb-4">
+        <div className="card-header bg-white border-bottom py-3">
           <div className="d-flex justify-content-between align-items-center">
-            <h4 className="mb-0">Order Management</h4>
-            <div className="d-flex gap-2">
-              <button
-                className="btn btn-outline-primary"
-                onClick={fetchOrders}
-              >
-                <i className="fas fa-sync-alt me-1"></i> Refresh
-              </button>
-            </div>
+            <h4 className="mb-0 fw-bold">Order Management</h4>
+            <button
+              className="btn btn-outline-primary btn-sm"
+              onClick={fetchOrders}
+            >
+              <i className="fas fa-sync-alt me-1"></i> Refresh
+            </button>
           </div>
         </div>
-        <div className="card-body">
+        <div className="card-body p-4">
           <div className="row g-3">
-            {/* Search Controls */}
             <div className="col-md-4">
               <div className="input-group">
                 <select
@@ -389,8 +372,6 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                 )}
               </div>
             </div>
-
-            {/* Status Filter */}
             <div className="col-md-3">
               <select
                 className="form-select"
@@ -405,8 +386,6 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                 <option value="cancelled">Cancelled</option>
               </select>
             </div>
-
-            {/* Date Filter */}
             <div className="col-md-3">
               <div className="input-group">
                 <select
@@ -419,7 +398,6 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                   <option value="month">Monthly</option>
                   <option value="year">Yearly</option>
                 </select>
-
                 {dateFilter === 'day' && (
                   <input
                     type="date"
@@ -428,7 +406,6 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                     onChange={(e) => setSelectedDate(new Date(e.target.value))}
                   />
                 )}
-
                 {dateFilter === 'month' && (
                   <input
                     type="month"
@@ -437,7 +414,6 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                     onChange={(e) => setSelectedDate(new Date(e.target.value + '-01'))}
                   />
                 )}
-
                 {dateFilter === 'year' && (
                   <input
                     type="number"
@@ -450,8 +426,6 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                 )}
               </div>
             </div>
-
-            {/* Sort Controls */}
             <div className="col-md-2">
               <select
                 className="form-select"
@@ -470,8 +444,6 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                 <option value="status-desc">Status (Z-A)</option>
               </select>
             </div>
-
-            {/* Date Range Display */}
             <div className="col-12">
               <small className="text-muted">
                 {dateFilter === 'day' && `Showing orders for ${selectedDate.toLocaleDateString()}`}
@@ -484,9 +456,8 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
         </div>
       </div>
 
-      {/* Orders Table */}
-      <div className="card">
-        <div className="card-body">
+      <div className="card shadow-sm">
+        <div className="card-body p-0">
           {filteredOrders.length === 0 ? (
             <div className="text-center py-5">
               <i className="fas fa-inbox fa-3x text-muted mb-3"></i>
@@ -499,8 +470,8 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
             </div>
           ) : (
             <div className="table-responsive">
-              <table className="table table-hover">
-                <thead>
+              <table className="table table-hover table-striped align-middle">
+                <thead className="table-light">
                   <tr>
                     <th>Order ID</th>
                     <th>Customer</th>
@@ -529,7 +500,10 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                         <div className="products-list">
                           {order.products && order.products.length > 0 ? (
                             order.products.map((item, index) => (
-                              <div key={index} className="product-item mb-1">
+                              <div
+                                key={index}
+                                className="product-item mb-2 p-2 border-bottom"
+                              >
                                 <div className="d-flex align-items-center">
                                   <img
                                     src={item.product?.images?.length > 0
@@ -547,7 +521,9 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                                       {item.product?.name || 'Unknown Product'} {!item.product && '(Deleted)'}
                                     </div>
                                     <small className="text-muted">
-                                      Qty: {item.quantity || 0} × ${safeToFixed(item.product?.price)}
+                                      {item.selectedColor && `Color: ${item.selectedColor} | `}
+                                      {item.selectedSize && `Size: ${item.selectedSize} | `}
+                                      Qty: {item.quantity || 0} × ${safeToFixed(item.price || 0)}
                                     </small>
                                   </div>
                                 </div>
@@ -556,15 +532,15 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                           ) : (
                             <div className="text-muted">No products</div>
                           )}
+                          {order.specialInstructions && (
+                            <div className="mt-2 p-2 bg-light rounded">
+                              <small className="text-muted d-block">
+                                <i className="fas fa-info-circle me-1"></i>
+                                Note: {order.specialInstructions}
+                              </small>
+                            </div>
+                          )}
                         </div>
-                        {order.specialInstructions && (
-                          <div className="mt-2 p-2 bg-light rounded">
-                            <small className="text-muted d-block">
-                              <i className="fas fa-info-circle me-1"></i>
-                              Note: {order.specialInstructions}
-                            </small>
-                          </div>
-                        )}
                       </td>
                       <td>
                         <div className="fw-bold">${safeToFixed(order.totalAmount)}</div>
@@ -582,10 +558,9 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                       </td>
                       <td>
                         <select
-                          className={`form-select form-select-sm ${statusColors[order.status]}`}
+                          className={`form-select form-select-sm ${statusColors[order.status]} text-white fw-bold`}
                           value={order.status}
                           onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                          style={{ color: 'white', fontWeight: 'bold' }}
                         >
                           <option value="Pending">Pending</option>
                           <option value="Confirmed">Confirmed</option>
@@ -608,9 +583,7 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                           </button>
                           <button
                             className="btn btn-outline-primary"
-                            onClick={() => {
-                              window.print();
-                            }}
+                            onClick={() => window.print()}
                             title="Print order"
                           >
                             <i className="fas fa-print"></i>
