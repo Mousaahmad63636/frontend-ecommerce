@@ -1,3 +1,4 @@
+// src/components/OrderManagement.js
 import React, { useState, useEffect } from 'react';
 import { useNotification } from '../components/Notification/NotificationProvider';
 import api from '../api/api';
@@ -516,15 +517,45 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                                       e.target.src = 'https://placehold.co/60@3x.png';
                                     }}
                                   />
-                                  <div>
+                                  <div className="flex-grow-1">
                                     <div className="small fw-bold">
                                       {item.product?.name || 'Unknown Product'} {!item.product && '(Deleted)'}
                                     </div>
-                                    <small className="text-muted">
-                                      {item.selectedColor && `Color: ${item.selectedColor} | `}
-                                      {item.selectedSize && `Size: ${item.selectedSize} | `}
-                                      Qty: {item.quantity || 0} × ${safeToFixed(item.price || 0)}
-                                    </small>
+                                    <div className="d-flex flex-wrap small text-muted">
+                                      {/* Color information with color swatch if available */}
+                                      {(item.selectedColor || item.color) && (
+                                        <div className="me-3 mb-1">
+                                          <span className="d-inline-flex align-items-center">
+                                            <span 
+                                              className="d-inline-block me-1 rounded-circle border" 
+                                              style={{
+                                                backgroundColor: item.selectedColor || item.color,
+                                                width: '12px',
+                                                height: '12px'
+                                              }}
+                                            ></span>
+                                            <span>Color: {item.selectedColor || item.color}</span>
+                                          </span>
+                                        </div>
+                                      )}
+                                      
+                                      {/* Size information */}
+                                      {(item.selectedSize || item.size) && (
+                                        <div className="me-3 mb-1">
+                                          <span>Size: {item.selectedSize || item.size}</span>
+                                        </div>
+                                      )}
+                                      
+                                      {/* Quantity and price */}
+                                      <div className="mb-1">
+                                        <span>Qty: {item.quantity || 0} × ${safeToFixed(item.price || 0)}</span>
+                                      </div>
+                                    </div>
+                                    
+                                    {/* Product total */}
+                                    <div className="small fw-bold text-end">
+                                      Total: ${safeToFixed((item.price || 0) * (item.quantity || 0))}
+                                    </div>
                                   </div>
                                 </div>
                               </div>
