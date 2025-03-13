@@ -502,6 +502,7 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                           {order.products && order.products.length > 0 ? (
                             order.products.map((item, index) => (
                               <div
+                              
                                 key={index}
                                 className="product-item mb-2 p-2 border-bottom"
                               >
