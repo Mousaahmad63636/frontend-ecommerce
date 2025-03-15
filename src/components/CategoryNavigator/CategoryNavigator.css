@@ -2,14 +2,15 @@
 
 .category-navigator {
   background-color: #fff;
-  position: relative;
   display: flex;
   align-items: center;
-  padding: 0;
   height: 50px;
   width: 100%;
+  position: relative;
+  /* Important visibility fix */
   overflow: visible;
-  border-top: 1px solid #e5e7eb; /* Add top border for visual separation from header */
+  visibility: visible !important;
+  display: flex !important;
 }
 
 .category-navigator .container {
@@ -111,28 +112,9 @@
 
 .category-navigator-placeholder {
   height: 50px;
-}
-
-/* Mobile optimization */
-@media (max-width: 768px) {
-  .category-link {
-    padding: 0 0.75rem;
-    font-size: 0.85rem;
-  }
-
-  .scroll-button {
-    width: 28px;
-    height: 28px;
-  }
-}
-
-/* Responsive adjustments */
-@media (min-width: 768px) {
-  .category-navigator .container {
-    justify-content: center;
-  }
-  
-  .category-list {
-    justify-content: center;
-  }
+  background-color: white;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

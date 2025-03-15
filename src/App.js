@@ -1,4 +1,4 @@
-import React, { useEffect, Suspense } from 'react';
+import React, { useEffect, Suspense, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
@@ -53,6 +53,7 @@ function AppContent() {
   const { showNotification } = useNotification();
   const { isAuthenticated, isAdmin, initialized } = useAuth();
   const [currentCheckoutStep, setCurrentCheckoutStep] = React.useState(1);
+  const [categoryNavVisible, setCategoryNavVisible] = useState(true);
 
   useEffect(() => {
     const handleOnline = () => showNotification('Back online', 'success');
@@ -66,6 +67,11 @@ function AppContent() {
       window.removeEventListener('offline', handleOffline);
     };
   }, [showNotification]);
+
+  // Add a debug monitor
+  useEffect(() => {
+    console.log("App mounted, CategoryNavigator should be visible:", categoryNavVisible);
+  }, [categoryNavVisible]);
 
   const checkoutStepsValue = {
     currentStep: currentCheckoutStep,
@@ -84,18 +90,27 @@ function AppContent() {
   return (
     <CheckoutStepsContext.Provider value={checkoutStepsValue}>
       <div className="min-h-screen flex flex-col bg-gray-50">
-        {/* Fixed position header wrapper containing both Header and CategoryNavigator */}
-        <div className="navigation-wrapper" style={{ 
-          position: 'sticky', 
-          top: 0, 
-          zIndex: 30,
+        {/* Header */}
+        <Header />
+        
+        {/* CategoryNavigator - with direct inline styles for visibility */}
+        <div id="category-navigator-wrapper" style={{
+          display: 'block',
+          visibility: 'visible',
+          width: '100%',
           backgroundColor: 'white',
-          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
+          borderBottom: '1px solid #e5e7eb',
+          borderTop: '1px solid #e5e7eb',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+          marginTop: '0', /* No gap */
+          zIndex: 25,
+          position: 'relative',
+          height: '50px'
         }}>
-          <Header />
           <CategoryNavigator />
         </div>
         
+        {/* Main Content */}
         <main className="flex-grow">
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>
@@ -203,6 +218,22 @@ function AppContent() {
         </main>
         <Footer />
         <ConsultingFloat />
+        
+        {/* Debug indicator - Remove this in production */}
+        <div style={{
+          position: 'fixed',
+          bottom: '10px',
+          right: '10px', 
+          background: 'rgba(255, 0, 0, 0.8)', 
+          color: 'white',
+          padding: '5px 10px',
+          zIndex: 9999,
+          borderRadius: '4px',
+          fontSize: '12px',
+          fontWeight: 'bold'
+        }}>
+          CategoryNav Debug: {categoryNavVisible ? 'Visible' : 'Hidden'}
+        </div>
       </div>
     </CheckoutStepsContext.Provider>
   );

@@ -85,13 +85,13 @@ function CategoryNavigator() {
     }
   };
 
+  console.log("CategoryNavigator rendering with categories:", categories.length);
+
   // Always render a placeholder during loading
   if (loading) {
     return (
       <div className="category-navigator-placeholder">
-        <div className="container mx-auto px-4 flex items-center justify-center h-full">
-          <span className="text-gray-400">Loading categories...</span>
-        </div>
+        <span className="text-gray-400">Loading categories...</span>
       </div>
     );
   }
@@ -100,9 +100,7 @@ function CategoryNavigator() {
   if (error) {
     return (
       <div className="category-navigator-placeholder">
-        <div className="container mx-auto px-4 flex items-center justify-center h-full">
-          <span className="text-red-500">{error}</span>
-        </div>
+        <span className="text-red-500">{error}</span>
       </div>
     );
   }
