@@ -37,7 +37,7 @@ function ProductDetail() {
       console.log("Has sizes:", product.sizes && product.sizes.length > 0);
     }
   }, [product]);
-  
+
   const handleGoBack = () => {
     navigate(-1); // Go back to previous page
   };
@@ -134,9 +134,23 @@ function ProductDetail() {
     }
   };
 
+  // In the ProductDetail.js file, update the containsArabic function
   const containsArabic = (text) => {
+    if (!text) return false;
     const arabicPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
     return arabicPattern.test(text);
+  };
+
+  // Add a helper function to determine primary text direction
+  const getPrimaryDirection = (text) => {
+    if (!text) return 'ltr';
+
+    // Count Arabic vs Latin characters
+    const arabicChars = (text.match(/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/g) || []).length;
+    const latinChars = (text.match(/[A-Za-z]/g) || []).length;
+
+    // If Arabic characters dominate, use RTL
+    return arabicChars > latinChars ? 'rtl' : 'ltr';
   };
 
   // Handle quantity changes
@@ -160,7 +174,7 @@ function ProductDetail() {
       showNotification('Product not available', 'error');
       return;
     }
-  
+
     // Check if product has color options but none selected
     if (product.colors && product.colors.length > 0) {
       if (!selectedColor) {
@@ -168,7 +182,7 @@ function ProductDetail() {
         return;
       }
     }
-  
+
     // Check if product has size options but none selected
     if (product.sizes && product.sizes.length > 0) {
       if (!selectedSize) {
@@ -176,11 +190,11 @@ function ProductDetail() {
         return;
       }
     }
-  
+
     // Get validated values to pass to addToCart
     const colorToAdd = selectedColor || '';
     const sizeToAdd = selectedSize || '';
-  
+
     // Log what we're adding to the cart (useful for debugging)
     console.log('Adding to cart:', {
       product: product.name,
@@ -188,10 +202,10 @@ function ProductDetail() {
       color: colorToAdd,
       size: sizeToAdd
     });
-  
+
     // Add to cart with explicit color and size parameters
     addToCart(product, quantity, colorToAdd, sizeToAdd);
-    
+
     // Show success notification
     let successMessage = `Added to cart: ${product.name}`;
     if (colorToAdd && sizeToAdd) {
@@ -201,10 +215,10 @@ function ProductDetail() {
     } else if (sizeToAdd) {
       successMessage += ` (${sizeToAdd})`;
     }
-    
+
     showNotification(successMessage, 'success');
   };
-  
+
   // Handle wishlist toggle
   const handleWishlistToggle = () => {
     if (!product) return;
@@ -522,20 +536,30 @@ function ProductDetail() {
                 </div>
               )}
 
-              {/* Product Description - MOVED HERE FROM BOTTOM */}
               <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                 <h5 className="font-medium text-gray-900 mb-3">Product Description</h5>
                 <div className="prose max-w-none text-gray-700">
-                  <p
-                    className={`whitespace-pre-line ${containsArabic(product.description) ? 'text-right' : ''}`}
-                    dir={containsArabic(product.description) ? "rtl" : "ltr"}
-                    style={containsArabic(product.description) ? {
-                      fontFamily: "'Tajawal', 'Noto Sans Arabic', sans-serif",
-                      lineHeight: 1.8
-                    } : {}}
-                  >
-                    {product.description}
-                  </p>
+                  {product.description.split('\n').map((paragraph, index) => {
+                    const hasMixedContent = containsArabic(paragraph) && /[A-Za-z0-9]/.test(paragraph);
+                    const primaryDirection = getPrimaryDirection(paragraph);
+
+                    return (
+                      <p
+                        key={index}
+                        className="whitespace-pre-line mb-2"
+                        dir="auto"
+                        lang={primaryDirection === 'rtl' ? 'ar' : 'en'}
+                        style={{
+                          fontFamily: containsArabic(paragraph) ? "'Tajawal', 'Noto Sans Arabic', sans-serif" : 'inherit',
+                          lineHeight: 1.8,
+                          textAlign: hasMixedContent ? 'start' : (primaryDirection === 'rtl' ? 'right' : 'left'),
+                          unicodeBidi: hasMixedContent ? 'embed' : 'normal',
+                        }}
+                      >
+                        {paragraph}
+                      </p>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -578,8 +602,8 @@ function ProductDetail() {
                         type="button"
                         onClick={() => setSelectedSize(size)}
                         className={`h-10 min-w-[40px] px-3 rounded-md border transition-all ${selectedSize === size
-                            ? 'border-purple-500 bg-purple-50 text-purple-700 font-medium'
-                            : 'border-gray-300 bg-white text-gray-700'
+                          ? 'border-purple-500 bg-purple-50 text-purple-700 font-medium'
+                          : 'border-gray-300 bg-white text-gray-700'
                           }`}
                       >
                         {size}
