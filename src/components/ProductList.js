@@ -4,13 +4,13 @@ import PropTypes from 'prop-types';
 import ProductItem from './ProductItem';
 import { Link } from 'react-router-dom';
 
-function ProductList({ 
-  title, 
-  products, 
-  loading, 
-  error, 
-  scrollable = true, 
-  mobileColumns = 2, 
+function ProductList({
+  title,
+  products,
+  loading,
+  error,
+  scrollable = true,
+  mobileColumns = 2,
   filterCategory = null,
   viewAllUrl = null,
   viewAllText = "View All Products"
@@ -26,20 +26,20 @@ function ProductList({
       });
     }
   };
-  
+
   // Filter products by category if provided
-  const filteredProducts = filterCategory && filterCategory !== 'all' 
+  const filteredProducts = filterCategory && filterCategory !== 'all'
     ? products.filter(product => {
-        // Check primary category
-        if (product.category === filterCategory) return true;
-        
-        // Check secondary categories
-        if (Array.isArray(product.categories) && product.categories.includes(filterCategory)) {
-          return true;
-        }
-        
-        return false;
-      })
+      // Check primary category
+      if (product.category === filterCategory) return true;
+
+      // Check secondary categories
+      if (Array.isArray(product.categories) && product.categories.includes(filterCategory)) {
+        return true;
+      }
+
+      return false;
+    })
     : products;
 
   if (loading) {
@@ -67,10 +67,10 @@ function ProductList({
   }
 
   // Determine appropriate View All URL
-  const defaultViewAllUrl = filterCategory && filterCategory !== 'all' 
-    ? `/?category=${encodeURIComponent(filterCategory)}` 
+  const defaultViewAllUrl = filterCategory && filterCategory !== 'all'
+    ? `/?category=${encodeURIComponent(filterCategory)}`
     : '/?scrollToProducts=true';
-  
+
   const finalViewAllUrl = viewAllUrl || defaultViewAllUrl;
 
   return (
@@ -92,7 +92,7 @@ function ProductList({
       )}
 
       {scrollable ? (
-        <div 
+        <div
           ref={scrollContainerRef}
           className="flex overflow-x-auto gap-3 pb-4 scrollbar-hide scroll-smooth pl-2 pr-2"
           style={{ scrollbarWidth: 'none' }}
@@ -104,8 +104,8 @@ function ProductList({
           ))}
         </div>
       ) : (
-        <div className={mobileColumns === 1 
-          ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3" 
+        <div className={mobileColumns === 1
+          ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3"
           : "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3"
         }>
           {filteredProducts.map(product => (
@@ -113,7 +113,7 @@ function ProductList({
           ))}
         </div>
       )}
-      
+
       {/* Show count if filtering is active */}
       {filterCategory && filterCategory !== 'all' && (
         <div className="text-sm text-gray-500 mt-2">
@@ -121,12 +121,12 @@ function ProductList({
         </div>
       )}
 
-      {/* New "View All" button styled like the reference image - Only show when in scrollable mode and has products */}
+      {/* "View All" button */}
       {scrollable && filteredProducts.length > 0 && (
         <div className="flex justify-center mt-8 mb-4">
-          <Link 
+          <Link
             to={finalViewAllUrl}
-            className="bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center min-w-[240px]"
+            className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center min-w-[240px]"
           >
             {viewAllText}
           </Link>

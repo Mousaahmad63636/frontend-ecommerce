@@ -616,7 +616,7 @@ function Home() {
             <div className="flex justify-center mt-8 mb-4">
               <button
                 onClick={goToHome}
-                className="bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center min-w-[240px]"
+                className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center min-w-[240px]"
               >
                 Return to Home
               </button>
@@ -699,7 +699,7 @@ function Home() {
             <div className="flex justify-center mt-8 mb-4">
               <button
                 onClick={goToHome}
-                className="bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center min-w-[240px]"
+                className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center min-w-[240px]"
               >
                 Return to Home
               </button>
@@ -782,7 +782,7 @@ function Home() {
             <div className="flex justify-center mt-8 mb-4">
               <button
                 onClick={goToHome}
-                className="bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center min-w-[240px]"
+                className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center min-w-[240px]"
               >
                 Return to Home
               </button>
@@ -847,7 +847,7 @@ function Home() {
             <div className="flex justify-center mt-8 mb-4">
               <button
                 onClick={goToHome}
-                className="bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center min-w-[240px]"
+                className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center min-w-[240px]"
               >
                 Return to Home
               </button>
