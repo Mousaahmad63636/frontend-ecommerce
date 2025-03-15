@@ -332,6 +332,28 @@ function Home() {
     navigate({ search: params.toString() });
   };
 
+  // Function to get products by category
+  const getProductsByCategory = (categoryName) => {
+    return products.filter(product => {
+      // Check primary category
+      if (product.category === categoryName) {
+        return true;
+      }
+
+      // Check categories array for secondary categories
+      if (Array.isArray(product.categories) && product.categories.includes(categoryName)) {
+        return true;
+      }
+
+      return false;
+    });
+  };
+
+  // Function to check if category has products
+  const categoryHasProducts = (categoryName) => {
+    return getProductsByCategory(categoryName).length > 0;
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -453,6 +475,32 @@ function Home() {
               </div>
             </div>
           </section>
+
+          {/* Category Sections - Added new scrollable sections for each category */}
+          {categories.map(category => {
+            // Get products for this category
+            const categoryProducts = getProductsByCategory(category);
+            
+            // Skip rendering if the category has no products
+            if (categoryProducts.length === 0) return null;
+            
+            return (
+              <section key={category} className="py-6">
+                <div className="container mx-auto px-0">
+                  <div className="mb-2 text-center">
+                    <h2 className="text-2xl font-bold">{category}</h2>
+                  </div>
+                  <ProductList
+                    title=" "
+                    products={categoryProducts}
+                    scrollable={true}
+                    viewAllUrl={`/?category=${encodeURIComponent(category)}`}
+                    viewAllText={`View All ${category}`}
+                  />
+                </div>
+              </section>
+            );
+          })}
 
           {/* Explore Our Products Section - Now also Horizontal Scrollable */}
           <section ref={productsRef} className="py-10">
@@ -762,7 +810,7 @@ function Home() {
                 className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
               >
                 <i className="fas fa-arrow-left text-sm mr-1"></i>
-               Home
+                Home
               </button>
 
               <h2 className="text-2xl font-bold text-center">Search Results: "{searchQuery}"</h2>

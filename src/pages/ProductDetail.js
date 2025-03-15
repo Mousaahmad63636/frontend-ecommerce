@@ -709,9 +709,6 @@ function ProductDetail() {
                 onRatingChange={handleRatingChange}
                 labelText="Your rating helps other shoppers!"
               />
-              <p className="mt-4 text-gray-600">
-                Thanks for sharing your opinion with our community!
-              </p>
             </div>
           </div>
         </div>
