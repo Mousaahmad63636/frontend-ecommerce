@@ -12,6 +12,7 @@ import DiscountTimer from '../components/DiscountTimer/DiscountTimer';
 import Loading from '../components/Loading/Loading';
 import RatingStars from '../components/RatingStars';
 import WhatsAppMetaTags from '../components/WhatsAppMetaTags';
+import OptimizedImage from '../components/OptimizedImage/OptimizedImage';
 import ProductList from '../components/ProductList';
 
 function ProductDetail() {
