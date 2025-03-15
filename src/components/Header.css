@@ -25,6 +25,14 @@
   width: 100%;
 }
 
+/* Navigation wrapper - holds both header and category navigator */
+.navigation-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  width: 100%;
+}
+
 /* Badge animation */
 .badge-animation {
   animation: pulse 2s infinite;
@@ -123,21 +131,18 @@
 
 /* Header positioning and z-index adjustments */
 header {
-  position: sticky;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 30; /* Higher than category navigator */
+  z-index: 31; /* Higher than category navigator */
+  box-shadow: none; /* Remove shadow as the wrapper now has shadow */
+  border-bottom: none; /* Remove border as we want a seamless transition to category navigator */
 }
 
-/* Fixed header adjustments */
-.fixed {
-  position: fixed;
+/* Adjust any fixed positioning */
+header.fixed {
+  position: relative; /* Changed from fixed since the wrapper is sticky */
   top: 0;
   left: 0;
   right: 0;
-  z-index: 30;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 31;
 }
 
 /* Ensure dropdown menus appear above other elements */

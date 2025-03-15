@@ -396,12 +396,18 @@ function Home() {
         <meta name="description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices." />
       </Helmet>
 
-      {/* Hero Section - Fixed positioning based on initial header height */}
+
+
+      {/* Hero Section - Adjust top margin to accommodate the fixed header and navigator */}
       {!showDiscountedOnly && !showAllProducts && !showSimilarProducts && !searchQuery && (
         <section
           ref={heroRef}
           className="w-full"
-          style={{ marginTop: `${headerHeight}px` }}
+          style={{
+            marginTop: '0', // Remove any top margin
+            position: 'relative',
+            zIndex: 10 // Lower z-index than navigation
+          }}
         >
           <div className="w-full overflow-hidden">
             <div className="relative">

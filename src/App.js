@@ -84,10 +84,18 @@ function AppContent() {
   return (
     <CheckoutStepsContext.Provider value={checkoutStepsValue}>
       <div className="min-h-screen flex flex-col bg-gray-50">
-        <Header />
-        <div id="category-navigator-container">
-        <CategoryNavigator />
-      </div>
+        {/* Fixed position header wrapper containing both Header and CategoryNavigator */}
+        <div className="navigation-wrapper" style={{ 
+          position: 'sticky', 
+          top: 0, 
+          zIndex: 30,
+          backgroundColor: 'white',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
+        }}>
+          <Header />
+          <CategoryNavigator />
+        </div>
+        
         <main className="flex-grow">
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>

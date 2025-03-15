@@ -1,4 +1,3 @@
-// src/components/CategoryNavigator/CategoryNavigator.js
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import api from '../../api/api';
 import './CategoryNavigator.css';
@@ -89,7 +88,7 @@ function CategoryNavigator() {
   // Always render a placeholder during loading
   if (loading) {
     return (
-      <div className="category-navigator-placeholder" style={{height: '50px', backgroundColor: '#fff', borderBottom: '1px solid #e5e7eb'}}>
+      <div className="category-navigator-placeholder">
         <div className="container mx-auto px-4 flex items-center justify-center h-full">
           <span className="text-gray-400">Loading categories...</span>
         </div>
@@ -100,17 +99,12 @@ function CategoryNavigator() {
   // Show a message if there's an error
   if (error) {
     return (
-      <div className="category-navigator-placeholder" style={{height: '50px', backgroundColor: '#fff', borderBottom: '1px solid #e5e7eb'}}>
+      <div className="category-navigator-placeholder">
         <div className="container mx-auto px-4 flex items-center justify-center h-full">
           <span className="text-red-500">{error}</span>
         </div>
       </div>
     );
-  }
-
-  // Ensure we have at least one category
-  if (categories.length === 0) {
-    console.warn("CategoryNavigator: No categories available");
   }
 
   return (
