@@ -1,3 +1,4 @@
+// src/components/CategoryNavigator/CategoryNavigator.js
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import api from '../../api/api';
 import './CategoryNavigator.css';
@@ -6,6 +7,7 @@ import React, { useState, useEffect, useRef } from 'react';
 function CategoryNavigator() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
   const containerRef = useRef(null);
@@ -17,36 +19,46 @@ function CategoryNavigator() {
     const fetchCategories = async () => {
       try {
         setLoading(true);
-        // Use the dedicated categories endpoint
-        const response = await api.getCategories();
-        if (response && response.categories) {
-          setCategories(response.categories);
-        }
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-        // Fallback to extracting categories from products
+        console.log("CategoryNavigator: Fetching categories...");
+        
+        // Try the dedicated categories endpoint first
         try {
-          const products = await api.getProducts();
-          const allCategories = new Set();
-          
-          products.forEach(product => {
-            // Add primary category
-            if (product.category) {
-              allCategories.add(product.category);
-            }
-            
-            // Add categories from the categories array
-            if (Array.isArray(product.categories)) {
-              product.categories.forEach(cat => {
-                if (cat) allCategories.add(cat);
-              });
-            }
-          });
-          
-          setCategories([...allCategories].sort());
-        } catch (fallbackError) {
-          console.error('Error fetching categories via fallback:', fallbackError);
+          const response = await api.getCategories();
+          if (response && response.categories) {
+            console.log("CategoryNavigator: Categories loaded:", response.categories);
+            setCategories(response.categories);
+            return; // Exit if successful
+          }
+        } catch (err) {
+          console.warn("CategoryNavigator: Failed to load from categories endpoint, trying fallback...");
         }
+        
+        // Fallback: extract categories from products
+        const products = await api.getProducts();
+        console.log("CategoryNavigator: Products loaded:", products.length);
+        
+        const allCategories = new Set();
+        
+        products.forEach(product => {
+          // Add primary category
+          if (product.category) {
+            allCategories.add(product.category);
+          }
+          
+          // Add categories from the categories array
+          if (Array.isArray(product.categories)) {
+            product.categories.forEach(cat => {
+              if (cat) allCategories.add(cat);
+            });
+          }
+        });
+        
+        const categoriesList = [...allCategories].sort();
+        console.log("CategoryNavigator: Extracted categories:", categoriesList);
+        setCategories(categoriesList);
+      } catch (error) {
+        console.error('CategoryNavigator: Error fetching categories:', error);
+        setError("Failed to load categories");
       } finally {
         setLoading(false);
       }
@@ -74,8 +86,31 @@ function CategoryNavigator() {
     }
   };
 
+  // Always render a placeholder during loading
   if (loading) {
-    return <div className="category-navigator-placeholder"></div>;
+    return (
+      <div className="category-navigator-placeholder" style={{height: '50px', backgroundColor: '#fff', borderBottom: '1px solid #e5e7eb'}}>
+        <div className="container mx-auto px-4 flex items-center justify-center h-full">
+          <span className="text-gray-400">Loading categories...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Show a message if there's an error
+  if (error) {
+    return (
+      <div className="category-navigator-placeholder" style={{height: '50px', backgroundColor: '#fff', borderBottom: '1px solid #e5e7eb'}}>
+        <div className="container mx-auto px-4 flex items-center justify-center h-full">
+          <span className="text-red-500">{error}</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Ensure we have at least one category
+  if (categories.length === 0) {
+    console.warn("CategoryNavigator: No categories available");
   }
 
   return (

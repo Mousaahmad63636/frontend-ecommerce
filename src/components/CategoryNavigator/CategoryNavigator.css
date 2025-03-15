@@ -1,4 +1,24 @@
-/* src/components/CategoryNavigator/CategoryNavigator.css */
+#category-navigator-container {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 20; /* Ensure it's below the header but above content */
+  margin-top: 0;
+}
+
+.category-navigator {
+  background-color: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  height: 50px;
+  width: 100%; /* Ensure full width */
+  visibility: visible !important; /* Force visibility */
+}
 .category-navigator {
     background-color: #fff;
     border-bottom: 1px solid #e5e7eb;

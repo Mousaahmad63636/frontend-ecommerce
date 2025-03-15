@@ -172,3 +172,12 @@
       left: 100%;
     }
   }
+  .header-container {
+    position: relative;
+    z-index: 40; /* Higher than CategoryNavigator */
+  }
+  
+  /* Adjust any fixed positioning */
+  header.fixed-header {
+    z-index: 40;
+  }

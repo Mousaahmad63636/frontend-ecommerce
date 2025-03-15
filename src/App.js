@@ -85,7 +85,9 @@ function AppContent() {
     <CheckoutStepsContext.Provider value={checkoutStepsValue}>
       <div className="min-h-screen flex flex-col bg-gray-50">
         <Header />
+        <div id="category-navigator-container">
         <CategoryNavigator />
+      </div>
         <main className="flex-grow">
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>
