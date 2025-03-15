@@ -463,7 +463,7 @@ function Home() {
                     products={discountedProducts}
                     scrollable={true}
                     viewAllUrl={viewAllDiscountedUrl}
-                    viewAllText="View All Offers"
+                    viewAllText="View All"
                   />
                 ) : (
                   <div className="text-center py-5">
@@ -495,7 +495,7 @@ function Home() {
                     products={categoryProducts}
                     scrollable={true}
                     viewAllUrl={`/?category=${encodeURIComponent(category)}`}
-                    viewAllText={`View All ${category}`}
+                    viewAllText="View All"
                   />
                 </div>
               </section>
@@ -533,7 +533,7 @@ function Home() {
                   filterCategory={selectedCategory !== 'all' ? selectedCategory : null}
                   scrollable={true}
                   viewAllUrl={viewAllProductsUrl}
-                  viewAllText="View All Products"
+                  viewAllText="View All"
                 />
               ) : (
                 <div className="text-center py-5 px-4">
