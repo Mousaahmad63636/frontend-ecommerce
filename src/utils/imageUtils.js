@@ -1,6 +1,6 @@
 // src/utils/imageUtils.js
 export const getImageUrl = (imagePath, forWhatsApp = false) => {
-    if (!imagePath) return 'https://spotlylb.com/placeholder.jpg';
+    if (!imagePath) return '/placeholder.jpg';
     
     // If already absolute URL, return as is
     if (imagePath.startsWith('http')) return imagePath;
@@ -10,8 +10,7 @@ export const getImageUrl = (imagePath, forWhatsApp = false) => {
         .replace(/^\//, '')         // Remove leading slash
         .replace(/^uploads\//, ''); // Remove 'uploads/' if present
     
-    // Always use absolute URLs for OpenGraph compatibility
-    // Keep using your existing image source location
+    // Base URL for images
     const baseUrl = process.env.REACT_APP_UPLOAD_URL || 'https://spotlylb.com/uploads';
     
     // Construct the full URL using the base URL
@@ -19,18 +18,31 @@ export const getImageUrl = (imagePath, forWhatsApp = false) => {
     
     // Only add cache buster for normal image loading, NOT for WhatsApp sharing
     if (!forWhatsApp) {
-        // Add cache buster to prevent caching issues for normal browsing
-        const urlWithCacheBuster = `${url}?v=${Date.now()}`;
-        console.log('Constructed image URL with cache buster:', urlWithCacheBuster);
-        return urlWithCacheBuster;
-    }
-    
-    // For WhatsApp sharing, return URL without cache buster
-    if (forWhatsApp) {
-        console.log('WhatsApp sharing image URL (no cache buster):', url);
-    } else {
-        console.log('Constructed image URL:', url);
+        // Use a more efficient cache busting approach with a version parameter
+        // that doesn't change with every page load
+        const cacheBuster = process.env.REACT_APP_VERSION || '1.0';
+        return `${url}?v=${cacheBuster}`;
     }
     
     return url;
+};
+
+// Get responsive image URL based on screen size
+export const getResponsiveImageUrl = (imagePath, size = 'medium') => {
+    if (!imagePath) return '/placeholder.jpg';
+    
+    // If already absolute URL, return as is
+    if (imagePath.startsWith('http')) return imagePath;
+    
+    const baseUrl = process.env.REACT_APP_UPLOAD_URL || 'https://spotlylb.com/uploads';
+    const cleanPath = imagePath
+        .replace(/^\//, '')
+        .replace(/^uploads\//, '');
+    
+    // For now, we'll just return the regular URL since the backend resize API
+    // is not yet implemented, but this function will make it easy to switch later
+    const url = `${baseUrl}/${cleanPath}`;
+    const cacheBuster = process.env.REACT_APP_VERSION || '1.0';
+    
+    return `${url}?v=${cacheBuster}`;
 };

@@ -67,13 +67,13 @@ function Home() {
       setShowSimilarProducts(true);
       setShowDiscountedOnly(false);
       setShowAllProducts(false);
-      
+
       // If there's also a category parameter, set it
       const categoryParam = params.get('category');
       if (categoryParam) {
         setSelectedCategory(categoryParam);
       }
-      
+
       // Scroll to products section
       setTimeout(() => {
         if (productsRef.current) {
@@ -138,7 +138,21 @@ function Home() {
       setSelectedCategory(params.get('category'));
     }
   }, [location.search]);
+  // Add this inside your Home component, at the top level
+  useEffect(() => {
+    // Preload hero image
+    if (heroSettings?.mediaUrl) {
+      const preloadLink = document.createElement('link');
+      preloadLink.rel = 'preload';
+      preloadLink.as = 'image';
+      preloadLink.href = getImageUrl(heroSettings.mediaUrl);
+      document.head.appendChild(preloadLink);
 
+      return () => {
+        document.head.removeChild(preloadLink);
+      };
+    }
+  }, [heroSettings]);
   // Calculate header height on mount and when window resizes
   useEffect(() => {
     const updateHeaderHeight = () => {
@@ -243,15 +257,15 @@ function Home() {
     // Special case for related products filtering
     else if (showSimilarProducts && relatedProductId) {
       const relatedProduct = products.find(p => p._id === relatedProductId);
-      
+
       if (relatedProduct) {
         // Get all categories from the reference product
         const relatedCategories = [];
-        
+
         if (relatedProduct.category) {
           relatedCategories.push(relatedProduct.category);
         }
-        
+
         if (Array.isArray(relatedProduct.categories) && relatedProduct.categories.length > 0) {
           relatedProduct.categories.forEach(cat => {
             if (cat && !relatedCategories.includes(cat)) {
@@ -259,22 +273,22 @@ function Home() {
             }
           });
         }
-        
+
         // Filter products by matching any category with the reference product
         filtered = products.filter(product => {
           // Skip the reference product itself
           if (product._id === relatedProductId) return false;
-          
+
           // Check if primary category matches any reference category
           if (product.category && relatedCategories.includes(product.category)) {
             return true;
           }
-          
+
           // Check if any product category matches any reference category
           if (Array.isArray(product.categories) && product.categories.length > 0) {
             return product.categories.some(cat => relatedCategories.includes(cat));
           }
-          
+
           return false;
         });
       }
@@ -480,10 +494,10 @@ function Home() {
           {categories.map(category => {
             // Get products for this category
             const categoryProducts = getProductsByCategory(category);
-            
+
             // Skip rendering if the category has no products
             if (categoryProducts.length === 0) return null;
-            
+
             return (
               <section key={category} className="py-6">
                 <div className="container mx-auto px-0">

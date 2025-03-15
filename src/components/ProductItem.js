@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useNotification } from './Notification/NotificationProvider';
-import { getImageUrl } from '../utils/imageUtils';
+import OptimizedImage from './OptimizedImage/OptimizedImage'; // Import the new component
 
 function ProductItem({ product }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -40,15 +40,16 @@ function ProductItem({ product }) {
       {/* Product Image Container */}
       <div className="relative w-full pt-[100%] bg-gray-50 overflow-hidden">
         <Link to={`/product/${product._id}`} className="absolute inset-0 flex items-center justify-center p-3">
-          <img
+          <OptimizedImage
             src={product.images && product.images.length > 0 
-              ? getImageUrl(product.images[currentImageIndex]) 
-              : '/placeholder.jpg'}
+              ? product.images[currentImageIndex] 
+              : null}
             alt={product.name}
             className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
-            onError={(e) => {
-              e.target.src = '/placeholder.jpg';
-            }}
+            objectFit="contain"
+            width="100%"
+            height="100%"
+            lazyLoad={true}
           />
         </Link>
         
@@ -84,13 +85,13 @@ function ProductItem({ product }) {
         )}
       </div>
       
-      {/* Product Info */}
+      {/* Rest of the component remains the same */}
       <div className="p-3 flex flex-col min-h-[120px]">
         <Link to={`/product/${product._id}`} className="block mb-1">
           <h3 className="text-sm font-medium text-gray-900 line-clamp-1 hover:text-gray-700 transition-colors duration-200">{product.name}</h3>
         </Link>
         
-        {/* Categories - Single row with overflow handling */}
+        {/* Categories */}
         <div className="flex items-center mb-1.5 h-5 overflow-hidden">
           <div className="flex items-center gap-1 overflow-hidden whitespace-nowrap">
             {getProductCategories().slice(0, 2).map((category, index) => (
@@ -133,7 +134,7 @@ function ProductItem({ product }) {
           </span>
         </div>
         
-        {/* Add to Cart Button - Always visible */}
+        {/* Add to Cart Button */}
         <div className="mt-auto">
           <button
             onClick={() => {

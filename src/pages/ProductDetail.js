@@ -397,20 +397,20 @@ function ProductDetail() {
 
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="md:flex">
+          // In src/pages/ProductDetail.js, find the image section and replace it with:
+
             {/* Product Images */}
             <div className="md:w-1/2 p-4">
               <div className="relative rounded-lg overflow-hidden bg-gray-100">
-
                 <div className="relative aspect-square">
-                  <img
+                  <OptimizedImage
                     src={product.images && product.images.length > 0
-                      ? getImageUrl(product.images[currentImageIndex])
-                      : '/placeholder.jpg'}
+                      ? product.images[currentImageIndex]
+                      : null}
                     alt={product.name}
-                    className="w-full h-full object-contain"
-                    onError={(e) => {
-                      e.target.src = '/placeholder.jpg';
-                    }}
+                    className="w-full h-full"
+                    objectFit="contain"
+                    lazyLoad={false} // Main product image should load immediately
                   />
                 </div>
 
@@ -449,13 +449,12 @@ function ProductDetail() {
                       onClick={() => selectImage(index)}
                     >
                       <div className="aspect-square">
-                        <img
-                          src={getImageUrl(image)}
+                        <OptimizedImage
+                          src={image}
                           alt={`${product.name} thumbnail ${index + 1}`}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.target.src = '/placeholder.jpg';
-                          }}
+                          className="w-full h-full"
+                          objectFit="cover"
+                          lazyLoad={true}
                         />
                       </div>
                     </button>
@@ -463,7 +462,6 @@ function ProductDetail() {
                 </div>
               )}
             </div>
-
             {/* Product Info */}
             <div className="md:w-1/2 p-6 md:border-l border-gray-100">
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
