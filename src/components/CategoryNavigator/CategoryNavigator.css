@@ -1,0 +1,124 @@
+/* src/components/CategoryNavigator/CategoryNavigator.css */
+.category-navigator {
+    background-color: #fff;
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: relative;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    height: 50px;
+  }
+  
+  .category-navigator .container {
+    flex: 1;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    scroll-behavior: smooth;
+    position: relative;
+    padding: 0 10px;
+  }
+  
+  /* Hide scrollbar but allow scrolling */
+  .category-navigator .container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+  
+  .category-list {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    white-space: nowrap;
+    height: 100%;
+  }
+  
+  .category-item {
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
+  }
+  
+  .category-link {
+    display: block;
+    padding: 0 1rem;
+    text-decoration: none;
+    color: #374151;
+    font-weight: 500;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    position: relative;
+    transition: all 0.2s ease;
+  }
+  
+  .category-link:hover {
+    color: #6200ea;
+  }
+  
+  .category-item.active .category-link {
+    color: #6200ea;
+    font-weight: 600;
+  }
+  
+  .category-item.active .category-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    width: 80%;
+    height: 3px;
+    background-color: #6200ea;
+    border-radius: 3px 3px 0 0;
+  }
+  
+  .scroll-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    cursor: pointer;
+    color: #6200ea;
+    transition: all 0.2s ease;
+  }
+  
+  .scroll-button:hover {
+    background-color: #f3f4f6;
+  }
+  
+  .scroll-button.left {
+    left: 5px;
+  }
+  
+  .scroll-button.right {
+    right: 5px;
+  }
+  
+  .category-navigator-placeholder {
+    height: 50px;
+  }
+  
+  /* Responsive adjustments */
+  @media (min-width: 768px) {
+    .category-navigator .container {
+      justify-content: center;
+    }
+    
+    .category-list {
+      justify-content: center;
+    }
+  }

@@ -19,6 +19,7 @@ import ProtectedRoute from './components/Auth/ProtectedRoute';
 import AdminRoute from './components/Auth/AdminRoute';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import CategoryNavigator from './components/CategoryNavigator/CategoryNavigator';
 import ConsultingFloat from './components/ConsultingFloat/ConsultingFloat';
 
 // Loading Spinner Component
@@ -84,6 +85,7 @@ function AppContent() {
     <CheckoutStepsContext.Provider value={checkoutStepsValue}>
       <div className="min-h-screen flex flex-col bg-gray-50">
         <Header />
+        <CategoryNavigator />
         <main className="flex-grow">
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>
