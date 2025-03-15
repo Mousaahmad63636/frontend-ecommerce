@@ -1,4 +1,5 @@
-import React, { useEffect, Suspense } from 'react';
+// src/App.js
+import React, { useEffect, Suspense, useState, useRef } from 'react'; // Added useState and useRef imports
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
@@ -55,6 +56,8 @@ function AppContent() {
   const [currentCheckoutStep, setCurrentCheckoutStep] = React.useState(1);
   const [headerHeight, setHeaderHeight] = useState(0);
   const headerRef = useRef(null);
+
+  // First useEffect for header height measurement
   useEffect(() => {
     const updateHeaderHeight = () => {
       if (headerRef.current) {
@@ -62,6 +65,19 @@ function AppContent() {
         setHeaderHeight(height);
       }
     };
+    
+    // Initial calculation
+    updateHeaderHeight();
+    
+    // Update on resize
+    window.addEventListener('resize', updateHeaderHeight);
+    
+    return () => {
+      window.removeEventListener('resize', updateHeaderHeight);
+    };
+  }, []);
+
+  // Second useEffect for online/offline notifications
   useEffect(() => {
     const handleOnline = () => showNotification('Back online', 'success');
     const handleOffline = () => showNotification('No internet connection', 'error');
@@ -74,11 +90,7 @@ function AppContent() {
       window.removeEventListener('offline', handleOffline);
     };
   }, [showNotification]);
-  window.addEventListener('resize', updateHeaderHeight);
-  return () => {
-    window.removeEventListener('resize', updateHeaderHeight);
-  };
-}, []);
+
   const checkoutStepsValue = {
     currentStep: currentCheckoutStep,
     setCurrentStep: setCurrentCheckoutStep,
@@ -92,11 +104,11 @@ function AppContent() {
   if (!initialized) {
     return <LoadingSpinner />;
   }
-  updateHeaderHeight();
+
   return (
     <CheckoutStepsContext.Provider value={checkoutStepsValue}>
       <div className="min-h-screen flex flex-col bg-gray-50">
-      <div ref={headerRef}>
+        <div ref={headerRef}>
           <Header />
         </div>
         <div 
@@ -108,6 +120,7 @@ function AppContent() {
         <main className="flex-grow">
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>
+              {/* Rest of the code remains the same */}
               {/* Public Routes */}
               <Route path="/" element={<Home />} />
               <Route path="/product/:id" element={<ProductDetail />} />
