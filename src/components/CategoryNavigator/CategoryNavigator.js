@@ -85,176 +85,63 @@ function CategoryNavigator() {
     }
   };
 
-  console.log("CategoryNavigator rendering with categories:", categories.length);
-
-  // Instead of conditional rendering, always render the component
-  // but with different content based on loading/error state
-  return (
-    <nav className="category-navigator" 
-         style={{
-           display: 'flex',
-           height: '50px',
-           background: 'white',
-           borderBottom: '1px solid #e5e7eb',
-           position: 'relative',
-           width: '100%',
-           zIndex: 25
-         }}>
-      {loading ? (
-        <div className="flex items-center justify-center w-full">
+  // Always render a placeholder during loading
+  if (loading) {
+    return (
+      <div className="category-navigator-placeholder" style={{height: '50px', backgroundColor: '#fff', borderBottom: '1px solid #e5e7eb'}}>
+        <div className="container mx-auto px-4 flex items-center justify-center h-full">
           <span className="text-gray-400">Loading categories...</span>
         </div>
-      ) : error ? (
-        <div className="flex items-center justify-center w-full">
+      </div>
+    );
+  }
+
+  // Show a message if there's an error
+  if (error) {
+    return (
+      <div className="category-navigator-placeholder" style={{height: '50px', backgroundColor: '#fff', borderBottom: '1px solid #e5e7eb'}}>
+        <div className="container mx-auto px-4 flex items-center justify-center h-full">
           <span className="text-red-500">{error}</span>
         </div>
-      ) : (
-        <>
-          <div className="scroll-button left" 
-               style={{
-                 position: 'absolute',
-                 left: '5px',
-                 top: '50%',
-                 transform: 'translateY(-50%)',
-                 zIndex: 26,
-                 width: '32px',
-                 height: '32px',
-                 display: 'flex',
-                 alignItems: 'center',
-                 justifyContent: 'center',
-                 background: 'white',
-                 boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
-                 borderRadius: '50%',
-                 cursor: 'pointer'
-               }}
-               onClick={() => scroll('left')}>
-            <i className="fas fa-chevron-left"></i>
-          </div>
-          
-          <div className="container" 
-               ref={containerRef}
-               style={{
-                 flex: 1,
-                 overflowX: 'auto',
-                 scrollbarWidth: 'none',
-                 msOverflowStyle: 'none',
-                 position: 'relative',
-                 padding: '0 10px'
-               }}>
-            <ul className="category-list"
-                style={{
-                  display: 'flex',
-                  listStyle: 'none',
-                  padding: 0,
-                  margin: 0,
-                  whiteSpace: 'nowrap',
-                  height: '100%'
-                }}>
-              <li className={`category-item ${currentCategory === 'All Products' ? 'active' : ''}`}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    height: '100%'
-                  }}>
-                <button 
-                  onClick={() => handleCategoryClick('All Products')}
-                  className="category-link"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    padding: '0 1rem',
-                    height: '100%',
-                    fontWeight: 500,
-                    color: currentCategory === 'All Products' ? '#6200ea' : '#374151',
-                    border: 'none',
-                    background: 'none',
-                    cursor: 'pointer',
-                    fontSize: '0.95rem',
-                    position: 'relative'
-                  }}
-                >
-                  All Products
-                  {currentCategory === 'All Products' && (
-                    <span style={{
-                      position: 'absolute',
-                      bottom: 0,
-                      left: '10%',
-                      width: '80%',
-                      height: '3px',
-                      backgroundColor: '#6200ea',
-                      borderRadius: '3px 3px 0 0'
-                    }}></span>
-                  )}
-                </button>
-              </li>
-              
-              {categories.map(category => (
-                <li 
-                  key={category} 
-                  className={`category-item ${currentCategory === category ? 'active' : ''}`}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    height: '100%'
-                  }}
-                >
-                  <button
-                    onClick={() => handleCategoryClick(category)}
-                    className="category-link"
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      padding: '0 1rem',
-                      height: '100%',
-                      fontWeight: currentCategory === category ? 600 : 500,
-                      color: currentCategory === category ? '#6200ea' : '#374151',
-                      border: 'none',
-                      background: 'none',
-                      cursor: 'pointer',
-                      fontSize: '0.95rem',
-                      position: 'relative'
-                    }}
-                  >
-                    {category}
-                    {currentCategory === category && (
-                      <span style={{
-                        position: 'absolute',
-                        bottom: 0,
-                        left: '10%',
-                        width: '80%',
-                        height: '3px',
-                        backgroundColor: '#6200ea',
-                        borderRadius: '3px 3px 0 0'
-                      }}></span>
-                    )}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          <div className="scroll-button right"
-               style={{
-                 position: 'absolute',
-                 right: '5px',
-                 top: '50%',
-                 transform: 'translateY(-50%)',
-                 zIndex: 26,
-                 width: '32px',
-                 height: '32px',
-                 display: 'flex',
-                 alignItems: 'center',
-                 justifyContent: 'center',
-                 background: 'white',
-                 boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
-                 borderRadius: '50%',
-                 cursor: 'pointer'
-               }}
-               onClick={() => scroll('right')}>
-            <i className="fas fa-chevron-right"></i>
-          </div>
-        </>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <nav className="category-navigator">
+      <div className="scroll-button left" onClick={() => scroll('left')}>
+        <i className="fas fa-chevron-left"></i>
+      </div>
+      
+      <div className="container" ref={containerRef}>
+        <ul className="category-list">
+          <li className={`category-item ${currentCategory === 'All Products' ? 'active' : ''}`}>
+            <button 
+              onClick={() => handleCategoryClick('All Products')}
+              className="category-link"
+            >
+              All Products
+            </button>
+          </li>
+          {categories.map(category => (
+            <li 
+              key={category} 
+              className={`category-item ${currentCategory === category ? 'active' : ''}`}
+            >
+              <button
+                onClick={() => handleCategoryClick(category)}
+                className="category-link"
+              >
+                {category}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+      
+      <div className="scroll-button right" onClick={() => scroll('right')}>
+        <i className="fas fa-chevron-right"></i>
+      </div>
     </nav>
   );
 }
