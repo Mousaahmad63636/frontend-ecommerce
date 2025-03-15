@@ -398,8 +398,6 @@ function ProductDetail() {
 
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="md:flex">
-          // In src/pages/ProductDetail.js, find the image section and replace it with:
-
             {/* Product Images */}
             <div className="md:w-1/2 p-4">
               <div className="relative rounded-lg overflow-hidden bg-gray-100">
