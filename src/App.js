@@ -92,7 +92,7 @@ function AppContent() {
       <div className="min-h-screen flex flex-col bg-gray-50">
         {/* Header */}
         <Header />
-        
+
         {/* CategoryNavigator - with direct inline styles for visibility */}
         <div id="category-navigator-wrapper" style={{
           display: 'block',
@@ -109,7 +109,7 @@ function AppContent() {
         }}>
           <CategoryNavigator />
         </div>
-        
+
         {/* Main Content */}
         <main className="flex-grow">
           <Suspense fallback={<LoadingSpinner />}>
@@ -172,7 +172,7 @@ function AppContent() {
                   </ProtectedRoute>
                 }
               />
-              
+
               <Route
                 path="/orders"
                 element={
@@ -218,21 +218,14 @@ function AppContent() {
         </main>
         <Footer />
         <ConsultingFloat />
-        
-        {/* Debug indicator - Remove this in production */}
+
+        {/* CategoryNavigator with simplified wrapper */}
         <div style={{
-          position: 'fixed',
-          bottom: '10px',
-          right: '10px', 
-          background: 'rgba(255, 0, 0, 0.8)', 
-          color: 'white',
-          padding: '5px 10px',
-          zIndex: 9999,
-          borderRadius: '4px',
-          fontSize: '12px',
-          fontWeight: 'bold'
+          width: '100%',
+          height: '50px',
+          display: 'block'
         }}>
-          CategoryNav Debug: {categoryNavVisible ? 'Visible' : 'Hidden'}
+          <CategoryNavigator />
         </div>
       </div>
     </CheckoutStepsContext.Provider>
