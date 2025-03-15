@@ -53,7 +53,15 @@ function AppContent() {
   const { showNotification } = useNotification();
   const { isAuthenticated, isAdmin, initialized } = useAuth();
   const [currentCheckoutStep, setCurrentCheckoutStep] = React.useState(1);
-
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const headerRef = useRef(null);
+  useEffect(() => {
+    const updateHeaderHeight = () => {
+      if (headerRef.current) {
+        const height = headerRef.current.offsetHeight;
+        setHeaderHeight(height);
+      }
+    };
   useEffect(() => {
     const handleOnline = () => showNotification('Back online', 'success');
     const handleOffline = () => showNotification('No internet connection', 'error');
@@ -66,7 +74,11 @@ function AppContent() {
       window.removeEventListener('offline', handleOffline);
     };
   }, [showNotification]);
-
+  window.addEventListener('resize', updateHeaderHeight);
+  return () => {
+    window.removeEventListener('resize', updateHeaderHeight);
+  };
+}, []);
   const checkoutStepsValue = {
     currentStep: currentCheckoutStep,
     setCurrentStep: setCurrentCheckoutStep,
@@ -80,12 +92,17 @@ function AppContent() {
   if (!initialized) {
     return <LoadingSpinner />;
   }
-
+  updateHeaderHeight();
   return (
     <CheckoutStepsContext.Provider value={checkoutStepsValue}>
       <div className="min-h-screen flex flex-col bg-gray-50">
-        <Header />
-        <div id="category-navigator-container">
+      <div ref={headerRef}>
+          <Header />
+        </div>
+        <div 
+          id="category-navigator-container" 
+          style={{ top: `${headerHeight}px` }} // Apply dynamic header height
+        >
           <CategoryNavigator />
         </div>
         <main className="flex-grow">
