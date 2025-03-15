@@ -30,9 +30,6 @@ function ProductDetail() {
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
 
-  // Handle back button click
-
-
   useEffect(() => {
     if (product) {
       console.log("Product data:", product);
@@ -40,11 +37,11 @@ function ProductDetail() {
       console.log("Has sizes:", product.sizes && product.sizes.length > 0);
     }
   }, [product]);
+  
   const handleGoBack = () => {
     navigate(-1); // Go back to previous page
   };
 
-  // Handle home button click
   const goToHome = () => {
     navigate('/'); // Go directly to homepage
   };
@@ -207,6 +204,7 @@ function ProductDetail() {
     
     showNotification(successMessage, 'success');
   };
+  
   // Handle wishlist toggle
   const handleWishlistToggle = () => {
     if (!product) return;
@@ -524,6 +522,23 @@ function ProductDetail() {
                 </div>
               )}
 
+              {/* Product Description - MOVED HERE FROM BOTTOM */}
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                <h5 className="font-medium text-gray-900 mb-3">Product Description</h5>
+                <div className="prose max-w-none text-gray-700">
+                  <p
+                    className={`whitespace-pre-line ${containsArabic(product.description) ? 'text-right' : ''}`}
+                    dir={containsArabic(product.description) ? "rtl" : "ltr"}
+                    style={containsArabic(product.description) ? {
+                      fontFamily: "'Tajawal', 'Noto Sans Arabic', sans-serif",
+                      lineHeight: 1.8
+                    } : {}}
+                  >
+                    {product.description}
+                  </p>
+                </div>
+              </div>
+
               {/* Color Selection */}
               {product.colors && product.colors.length > 0 && (
                 <div className="mb-6">
@@ -573,16 +588,6 @@ function ProductDetail() {
                   </div>
                 </div>
               )}
-              {/* User Rating Section */}
-              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                <h5 className="font-medium text-gray-900 mb-3">Your Rating</h5>
-                <RatingStars
-                  initialRating={userRating}
-                  size="large"
-                  onRatingChange={handleRatingChange}
-                  labelText="Rate this product:"
-                />
-              </div>
 
               {/* Quantity Selector */}
               <div className="mb-6">
@@ -693,20 +698,19 @@ function ProductDetail() {
           </div>
         </div>
 
-        {/* Centered Product Description */}
-        <div className="mt-10 text-center mx-auto max-w-4xl">
-          <div className="bg-white p-8 rounded-xl shadow-sm">
-            <h2 className="text-2xl font-bold text-purple-600 mb-6">Product Description</h2>
-            <div className="prose prose-lg mx-auto text-gray-700">
-              <p
-                className={`whitespace-pre-line ${containsArabic(product.description) ? 'text-right' : ''}`}
-                dir={containsArabic(product.description) ? "rtl" : "ltr"}
-                style={containsArabic(product.description) ? {
-                  fontFamily: "'Tajawal', 'Noto Sans Arabic', sans-serif",
-                  lineHeight: 1.8
-                } : {}}
-              >
-                {product.description}
+        {/* User Rating Section - MOVED HERE FROM PRODUCT INFO */}
+        <div className="mt-10 mx-auto max-w-4xl">
+          <div className="bg-white p-8 rounded-xl shadow-sm text-center">
+            <h2 className="text-2xl font-bold text-purple-600 mb-6">Rate This Product</h2>
+            <div className="flex flex-col items-center justify-center">
+              <RatingStars
+                initialRating={userRating}
+                size="large"
+                onRatingChange={handleRatingChange}
+                labelText="Your rating helps other shoppers!"
+              />
+              <p className="mt-4 text-gray-600">
+                Thanks for sharing your opinion with our community!
               </p>
             </div>
           </div>
