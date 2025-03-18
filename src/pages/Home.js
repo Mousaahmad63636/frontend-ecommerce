@@ -28,6 +28,8 @@ function Home() {
   const [showDiscountedOnly, setShowDiscountedOnly] = useState(false);
   const [showAllProducts, setShowAllProducts] = useState(false);
   const [showSimilarProducts, setShowSimilarProducts] = useState(false);
+  const [showCategoryView, setShowCategoryView] = useState(false); // New state for category view
+  const [categoryViewName, setCategoryViewName] = useState(''); // Store the category name for the view
   const [relatedProductId, setRelatedProductId] = useState(null);
   const heroRef = useRef(null);
   const location = useLocation();
@@ -47,6 +49,7 @@ function Home() {
     setShowDiscountedOnly(false);
     setShowAllProducts(false);
     setShowSimilarProducts(false);
+    setShowCategoryView(false); // Reset category view when going home
     setSelectedCategory('all');
     window.scrollTo(0, 0);
   };
@@ -67,6 +70,7 @@ function Home() {
       setShowSimilarProducts(true);
       setShowDiscountedOnly(false);
       setShowAllProducts(false);
+      setShowCategoryView(false); // Reset category view when showing similar products
 
       // If there's also a category parameter, set it
       const categoryParam = params.get('category');
@@ -90,7 +94,8 @@ function Home() {
     if (showDiscounted === 'true') {
       setShowDiscountedOnly(true);
       setShowAllProducts(false);
-      setShowSimilarProducts(false); // Ensure only one view mode is active
+      setShowSimilarProducts(false);
+      setShowCategoryView(false); // Reset category view when showing discounted products
 
       // If there's also a category parameter, set it
       const categoryParam = params.get('category');
@@ -114,7 +119,8 @@ function Home() {
     if (showAll === 'true') {
       setShowAllProducts(true);
       setShowDiscountedOnly(false);
-      setShowSimilarProducts(false); // Ensure only one view mode is active
+      setShowSimilarProducts(false);
+      setShowCategoryView(false); // Reset category view when showing all products
 
       // If there's also a category parameter, set it
       const categoryParam = params.get('category');
@@ -133,11 +139,29 @@ function Home() {
       setShowAllProducts(false);
     }
 
-    // Handle category param when no special view is active
-    if (!showDiscounted && !showAll && !relatedToParam && params.get('category')) {
-      setSelectedCategory(params.get('category'));
+    // Handle standalone category parameter for category view
+    const categoryParam = params.get('category');
+    if (categoryParam && !showDiscounted && !showAll && !relatedToParam) {
+      setSelectedCategory(categoryParam);
+      setShowCategoryView(true);
+      setShowDiscountedOnly(false);
+      setShowAllProducts(false);
+      setShowSimilarProducts(false);
+      setCategoryViewName(categoryParam);
+      
+      // Scroll to products section
+      setTimeout(() => {
+        if (productsRef.current) {
+          productsRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 300);
+    } else if (!showDiscounted && !showAll && !relatedToParam && !categoryParam) {
+      // Reset showCategoryView when no category parameter is present and no other special view is active
+      setShowCategoryView(false);
     }
+
   }, [location.search]);
+  
   // Add this inside your Home component, at the top level
   useEffect(() => {
     // Preload hero image
@@ -396,10 +420,8 @@ function Home() {
         <meta name="description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices." />
       </Helmet>
 
-
-
       {/* Hero Section - Adjust top margin to accommodate the fixed header and navigator */}
-      {!showDiscountedOnly && !showAllProducts && !showSimilarProducts && !searchQuery && (
+      {!showDiscountedOnly && !showAllProducts && !showSimilarProducts && !showCategoryView && !searchQuery && (
         <section
           ref={heroRef}
           className="w-full"
@@ -465,7 +487,7 @@ function Home() {
       )}
 
       {/* Main content - either normal homepage or special views */}
-      {!searchQuery && !showDiscountedOnly && !showAllProducts && !showSimilarProducts && (
+      {!searchQuery && !showDiscountedOnly && !showAllProducts && !showSimilarProducts && !showCategoryView && (
         <>
           {/* Special Offers Section - Horizontal Scrollable Row */}
           <section className="py-10">
@@ -565,6 +587,71 @@ function Home() {
             </div>
           </section>
         </>
+      )}
+
+      {/* Category View Section - New section for displaying all products of a specific category */}
+      {!searchQuery && !showDiscountedOnly && !showAllProducts && !showSimilarProducts && showCategoryView && (
+        <section
+          ref={productsRef}
+          className="py-10"
+          style={{ paddingTop: `${headerHeight + 40}px` }} // Add headerHeight
+        >
+          <div className="container mx-auto px-4">
+            {/* Back to Home Button with Title */}
+            <div className="flex justify-between items-center mb-4">
+              <button
+                onClick={goToHome}
+                className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
+              >
+                <i className="fas fa-arrow-left text-sm mr-1"></i>
+                Home
+              </button>
+
+              <h2 className="text-2xl font-bold text-center">{categoryViewName}</h2>
+
+              {/* Empty div to maintain flex spacing */}
+              <div className="w-[100px]"></div>
+            </div>
+
+            {/* Products Grid */}
+            {filteredProducts.length > 0 ? (
+              <ProductList
+                products={filteredProducts}
+                scrollable={false}
+                mobileColumns={2}
+              />
+            ) : (
+              <div className="text-center py-8">
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <h3 className="text-xl mb-2">No Products Found</h3>
+                  <p className="text-gray-600 mb-4">
+                    No products available in the "{categoryViewName}" category.
+                  </p>
+                  <button
+                    onClick={goToHome}
+                    className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors"
+                  >
+                    Return to Home
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Return to Home Button */}
+            <div className="flex justify-center mt-8 mb-4">
+              <button
+                onClick={goToHome}
+                className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center min-w-[240px]"
+              >
+                Return to Home
+              </button>
+            </div>
+
+            <div className="text-center mt-4 text-sm text-gray-500">
+              Showing {filteredProducts.length} products in {categoryViewName}
+            </div>
+          </div>
+        </section>
       )}
 
       {/* Similar Products Section */}
