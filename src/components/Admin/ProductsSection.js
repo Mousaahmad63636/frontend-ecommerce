@@ -1017,65 +1017,71 @@ function ProductsSection() {
                 </div>
             </div>
 
-            {/* Category Modal - Fixed positioning with proper z-index */}
-            {showCategoryModal && (
-                <div className="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-                    {/* Background overlay */}
-                    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+            // Replace the Category Modal section in ProductsSection.js with this code:
 
-                    {/* Modal panel */}
-                    <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-                        <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                            <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                                <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                                    <div className="sm:flex sm:items-start">
-                                        <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
-                                            <svg className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                            </svg>
-                                        </div>
-                                        <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
-                                            <h3 className="text-base font-semibold leading-6 text-gray-900" id="modal-title">Add New Category</h3>
-                                            <div className="mt-4">
-                                                <form onSubmit={handleAddCategory}>
-                                                    <div className="mb-4">
-                                                        <label htmlFor="newCategory" className="block text-sm font-medium text-gray-700">Category Name</label>
-                                                        <input
-                                                            type="text"
-                                                            id="newCategory"
-                                                            value={newCategory}
-                                                            onChange={(e) => setNewCategory(e.target.value)}
-                                                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                                            placeholder="Enter category name"
-                                                            required
-                                                        />
-                                                    </div>
+{/* Category Modal - Fixed positioning with proper z-index */}
+{showCategoryModal && (
+    <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        {/* Background overlay */}
+        <div 
+            className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+            onClick={() => setShowCategoryModal(false)}
+        ></div>
 
-                                                    <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                                                        <button
-                                                            type="submit"
-                                                            className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto"
-                                                        >
-                                                            Add Category
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                                                            onClick={() => setShowCategoryModal(false)}
-                                                        >
-                                                            Cancel
-                                                        </button>
-                                                    </div>
-                                                </form>
-                                            </div>
+        {/* Modal panel */}
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                    <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                        <div className="sm:flex sm:items-start">
+                            <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
+                                <svg className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                            </div>
+                            <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+                                <h3 className="text-base font-semibold leading-6 text-gray-900" id="modal-title">Add New Category</h3>
+                                <div className="mt-4">
+                                    <form onSubmit={handleAddCategory}>
+                                        <div className="mb-4">
+                                            <label htmlFor="newCategory" className="block text-sm font-medium text-gray-700">Category Name</label>
+                                            <input
+                                                type="text"
+                                                id="newCategory"
+                                                value={newCategory}
+                                                onChange={(e) => setNewCategory(e.target.value)}
+                                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                                placeholder="Enter category name"
+                                                required
+                                                autoFocus
+                                            />
                                         </div>
-                                    </div>
+
+                                        <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                                            <button
+                                                type="submit"
+                                                className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto"
+                                            >
+                                                Add Category
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                                                onClick={() => setShowCategoryModal(false)}
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            )}
+            </div>
+        </div>
+    </div>
+)}
         </div>
     );
 }
