@@ -147,7 +147,7 @@ function Header() {
 
   return (
     <div className={`fixed top-0 left-0 right-0 z-50 ${isScrolled ? 'shadow-md' : ''}`}>
-      {/* Top Banner with purple style - REDUCED HEIGHT */}
+            {/* Integrated banner - PART OF MAIN HEADER but with dynamic content */}
       <div style={{ backgroundColor: '#8c52ff' }} className="text-white py-1 px-4 top-banner">
         <div className="container mx-auto flex justify-between items-center">
           {/* Social Media Links - Hidden on mobile */}
@@ -164,7 +164,7 @@ function Header() {
             <span className="text-xs ml-1">Follow us!</span>
           </div>
 
-          {/* Banner Text - Centered on mobile */}
+          {/* Dynamic Banner Text from API */}
           <div className="flex-1 md:flex-none text-center">
             {renderBannerText()}
           </div>
