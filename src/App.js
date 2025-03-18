@@ -1,5 +1,5 @@
 // src/App.js
-import React, { useEffect, Suspense, useState, useRef } from 'react'; // Added useState and useRef imports
+import React, { useEffect, Suspense, useState, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
@@ -20,7 +20,6 @@ import ProtectedRoute from './components/Auth/ProtectedRoute';
 import AdminRoute from './components/Auth/AdminRoute';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import CategoryNavigator from './components/CategoryNavigator/CategoryNavigator';
 import ConsultingFloat from './components/ConsultingFloat/ConsultingFloat';
 
 // Loading Spinner Component
@@ -54,28 +53,6 @@ function AppContent() {
   const { showNotification } = useNotification();
   const { isAuthenticated, isAdmin, initialized } = useAuth();
   const [currentCheckoutStep, setCurrentCheckoutStep] = React.useState(1);
-  const [headerHeight, setHeaderHeight] = useState(0);
-  const headerRef = useRef(null);
-
-  // First useEffect for header height measurement
-  useEffect(() => {
-    const updateHeaderHeight = () => {
-      if (headerRef.current) {
-        const height = headerRef.current.offsetHeight;
-        setHeaderHeight(height);
-      }
-    };
-    
-    // Initial calculation
-    updateHeaderHeight();
-    
-    // Update on resize
-    window.addEventListener('resize', updateHeaderHeight);
-    
-    return () => {
-      window.removeEventListener('resize', updateHeaderHeight);
-    };
-  }, []);
 
   // Second useEffect for online/offline notifications
   useEffect(() => {
@@ -108,19 +85,10 @@ function AppContent() {
   return (
     <CheckoutStepsContext.Provider value={checkoutStepsValue}>
       <div className="min-h-screen flex flex-col bg-gray-50">
-        <div ref={headerRef}>
-          <Header />
-        </div>
-        <div 
-          id="category-navigator-container" 
-          style={{ top: `${headerHeight}px` }} // Apply dynamic header height
-        >
-          <CategoryNavigator />
-        </div>
+        <Header />
         <main className="flex-grow">
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>
-              {/* Rest of the code remains the same */}
               {/* Public Routes */}
               <Route path="/" element={<Home />} />
               <Route path="/product/:id" element={<ProductDetail />} />

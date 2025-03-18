@@ -1,5 +1,5 @@
 // src/components/Header.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
@@ -9,6 +9,7 @@ import LoginModal from './Auth/LoginModal';
 import SideCart from './SideCart/SideCart';
 import api from '../api/api';
 import './Header.css';
+import CategoryNavigator from './CategoryNavigator/CategoryNavigator';
 
 function Header() {
   const { getCartItemsCount } = useCart();
@@ -26,6 +27,8 @@ function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [bannerText, setBannerText] = useState(' ');
+  const [showCategoryNav, setShowCategoryNav] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   // Add effect to fetch settings and get banner text
   useEffect(() => {
@@ -48,14 +51,27 @@ function Header() {
     console.log('Authentication state:', { isAuthenticated, user });
   }, [isAuthenticated, user]);
 
-  // Handle scroll effect
+  // Handle scroll effect with category navigator visibility
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      const currentScrollY = window.scrollY;
+      
+      // Set isScrolled for header styling
+      setIsScrolled(currentScrollY > 20);
+      
+      // Hide category navigator on scroll down, show on scroll up
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setShowCategoryNav(false);
+      } else {
+        setShowCategoryNav(true);
+      }
+      
+      setLastScrollY(currentScrollY);
     };
+    
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [lastScrollY]);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -393,6 +409,20 @@ function Header() {
           </div>
         )}
       </header>
+
+      {/* Category Navigator Section */}
+      <div 
+        className={`category-navigator-wrapper transition-transform duration-300 ${showCategoryNav ? 'translate-y-0' : '-translate-y-full'}`}
+        style={{ 
+          position: 'relative',
+          zIndex: 25,
+          background: '#fff',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+          borderBottom: '1px solid #e5e7eb'
+        }}
+      >
+        <CategoryNavigator />
+      </div>
 
       {/* Modals */}
       {showLoginModal && (
