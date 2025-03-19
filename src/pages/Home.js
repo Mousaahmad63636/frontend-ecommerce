@@ -163,20 +163,20 @@ function Home() {
   }, [location.search]);
   
   // Add this inside your Home component, at the top level
-  useEffect(() => {
-    // Preload hero image
-    if (heroSettings?.mediaUrl) {
-      const preloadLink = document.createElement('link');
-      preloadLink.rel = 'preload';
-      preloadLink.as = 'image';
-      preloadLink.href = getImageUrl(heroSettings.mediaUrl);
-      document.head.appendChild(preloadLink);
+useEffect(() => {
+  // Preload hero image
+  if (heroSettings?.mediaUrl) {
+    const preloadLink = document.createElement('link');
+    preloadLink.rel = 'preload';
+    preloadLink.as = 'image';
+    preloadLink.href = getImageUrl(heroSettings.mediaUrl, 'large');
+    document.head.appendChild(preloadLink);
 
-      return () => {
-        document.head.removeChild(preloadLink);
-      };
-    }
-  }, [heroSettings]);
+    return () => {
+      document.head.removeChild(preloadLink);
+    };
+  }
+}, [heroSettings]);
   // Calculate header height on mount and when window resizes
   useEffect(() => {
     const updateHeaderHeight = () => {
@@ -420,39 +420,59 @@ function Home() {
         <meta name="description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices." />
       </Helmet>
 
-      {/* Hero Section - Adjust top margin to accommodate the fixed header and navigator */}
-      {!showDiscountedOnly && !showAllProducts && !showSimilarProducts && !showCategoryView && !searchQuery && (
-        <section
-          ref={heroRef}
-          className="w-full"
-          style={{
-            marginTop: '0', // Remove any top margin
-            position: 'relative',
-            zIndex: 10 // Lower z-index than navigation
-          }}
-        >
-          <div className="w-full overflow-hidden">
-            <div className="relative">
-              {heroSettings.type === 'image' ? (
-                <img
-                  src={getImageUrl(heroSettings.mediaUrl)}
-                  alt="Hero banner"
-                  className="w-full h-auto"
-                />
-              ) : (
-                <video
-                  src={getImageUrl(heroSettings.mediaUrl)}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="w-full h-auto"
-                />
-              )}
-            </div>
+{/* Hero Section - Adjust top margin to accommodate the fixed header and navigator */}
+{!showDiscountedOnly && !showAllProducts && !showSimilarProducts && !showCategoryView && !searchQuery && (
+  <section
+    ref={heroRef}
+    className="w-full"
+    style={{
+      marginTop: '0', // Remove any top margin
+      position: 'relative',
+      zIndex: 10 // Lower z-index than navigation
+    }}
+  >
+    <div className="w-full overflow-hidden">
+      <div className="relative">
+        {heroSettings.type === 'image' ? (
+          <OptimizedImage
+            src={heroSettings.mediaUrl}
+            alt="Hero banner"
+            className="w-full h-auto"
+            lazyLoad={false} // Don't lazy load the hero image
+            objectFit="cover"
+            width="100%"
+            height="auto"
+          />
+        ) : (
+          <video
+            src={getImageUrl(heroSettings.mediaUrl)}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-auto"
+          />
+        )}
+        
+        {/* Hero text overlay if needed */}
+        {(heroSettings.title || heroSettings.subtitle) && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-black bg-opacity-40 p-6">
+            {heroSettings.title && (
+              <h1 className="text-3xl md:text-5xl font-bold mb-4 text-center max-w-4xl">
+                {heroSettings.title}
+              </h1>
+            )}
+            {heroSettings.subtitle && (
+              <p className="text-lg md:text-xl text-center max-w-2xl">
+                {heroSettings.subtitle}
+              </p>
+            )}
           </div>
-        </section>
-      )}
+        )}
+      </div>
+    </div>
+  </section>
+)}
 
       {/* Admin Panel Section */}
       {user && user.role === 'admin' && (

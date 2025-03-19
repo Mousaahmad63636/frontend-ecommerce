@@ -1,22 +1,41 @@
 // src/components/ProductItem.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useNotification } from './Notification/NotificationProvider';
-import OptimizedImage from './OptimizedImage/OptimizedImage'; // Import the new component
+import OptimizedImage from './OptimizedImage/OptimizedImage';
+import { getResponsiveSizeForImage } from '../utils/imageUtils';
 
 function ProductItem({ product }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [imageSize, setImageSize] = useState('medium');
   const { addToCart } = useCart();
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const { showNotification } = useNotification();
+  const [containerRef, setContainerRef] = useState(null);
 
   const isWishlisted = isInWishlist(product._id);
   const hasDiscount = product.discountPercentage > 0;
   
   // Calculate the dollar amount saved if there's a discount
   const savedAmount = hasDiscount ? (product.originalPrice - product.price).toFixed(2) : 0;
+
+  // Update image size based on container width
+  useEffect(() => {
+    if (containerRef) {
+      const updateSize = () => {
+        const containerWidth = containerRef.offsetWidth;
+        setImageSize(getResponsiveSizeForImage(containerWidth));
+      };
+      
+      updateSize(); // Initial size calculation
+      
+      // Update size on window resize
+      window.addEventListener('resize', updateSize);
+      return () => window.removeEventListener('resize', updateSize);
+    }
+  }, [containerRef]);
 
   // Helper function to get categories (handles both legacy and new format)
   const getProductCategories = () => {
@@ -29,7 +48,10 @@ function ProductItem({ product }) {
   };
 
   return (
-    <div className="group w-full bg-white rounded-lg overflow-hidden transition-all duration-300 border border-gray-100 hover:border-gray-200 hover:shadow-md relative">
+    <div 
+      className="group w-full bg-white rounded-lg overflow-hidden transition-all duration-300 border border-gray-100 hover:border-gray-200 hover:shadow-md relative"
+      ref={setContainerRef}
+    >
       {/* Discount Badge */}
       {hasDiscount && (
         <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-0.5 text-xs font-medium z-10 rounded-full shadow-sm">
@@ -45,7 +67,7 @@ function ProductItem({ product }) {
               ? product.images[currentImageIndex] 
               : null}
             alt={product.name}
-            className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
+            className="max-w-full max-h-full transition-transform duration-300 group-hover:scale-105"
             objectFit="contain"
             width="100%"
             height="100%"

@@ -62,7 +62,11 @@
 
 <link href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css' rel='stylesheet'/>
 
-
+<style type='text/css'>
+.copyright, .copyright p, .copyright a {
+    color:rgb(255, 255, 255)
+}
+</style>
 <b:skin><![CDATA[
 /*
 -----------------------------------------------
@@ -71,10 +75,10 @@ Name:	Time News
 ----------------------------------------------- */
 /* Normalize
 ------------------------------ */
-html{line-height:1.15;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0}article,aside,footer,header,nav,section{display:block}h1{font-size:2em;margin:.67em 0}figcaption,figure,main{display:block}figure{margin:1em 40px}hr{box-sizing:content-box;height:0;overflow:visible}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent;-webkit-text-decoration-skip:objects}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:inherit;font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}dfn{font-style:italic}mark{background-color:black;color:darkblue}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}audio,video{display:inline-block}audio:not([controls]){display:none;height:0}img{border-style:none}svg:not(:root){overflow:hidden}button,input,optgroup,select,textarea{font-family:sans-serif;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}button,html [type="button"],/* 1 */
+html{line-height:1.15;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0}article,aside,footer,header,nav,section{display:block}h1{font-size:2em;margin:.67em 0}figcaption,figure,main{display:block}figure{margin:1em 40px}hr{box-sizing:content-box;height:0;overflow:visible}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent;-webkit-text-decoration-skip:objects}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:inherit;font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}dfn{font-style:italic}mark{background-color:;color:darkblue}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}audio,video{display:inline-block}audio:not([controls]){display:none;height:0}img{border-style:none}svg:not(:root){overflow:hidden}button,input,optgroup,select,textarea{font-family:sans-serif;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}button,html [type="button"],/* 1 */
 [type="reset"],[type="submit"]{-webkit-appearance:button}button::-moz-focus-inner,[type="button"]::-moz-focus-inner,[type="reset"]::-moz-focus-inner,[type="submit"]::-moz-focus-inner{border-style:none;padding:0}button:-moz-focusring,[type="button"]:-moz-focusring,[type="reset"]:-moz-focusring,[type="submit"]:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:darkblue;display:table;max-width:100%;padding:0;white-space:normal}progress{display:inline-block;vertical-align:baseline}textarea{overflow:auto}[type="checkbox"],[type="radio"]{box-sizing:border-box;padding:0}[type="number"]::-webkit-inner-spin-button,[type="number"]::-webkit-outer-spin-button{height:auto}[type="search"]{-webkit-appearance:textfield;outline-offset:-2px}[type="search"]::-webkit-search-cancel-button,[type="search"]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details,/* 1 */
 menu{display:block}summary{display:list-item}canvas{display:inline-block}template{display:none}[hidden]{display:none}
-.clear{clear:both}.widget{margin:0}.widget-item-control,.blog-feeds,.status-msg-body,.date-header,.post-feeds{display:none}.widget .widget-item-control a img{display:none}.widget li,.BlogArchive #ArchiveList ul.flat li{padding:0}.post-footer-line>*{margin-left:0}.content-outer,.header-outer,.tabs-outer,.main-outer,.main-inner,.footer-outer,.post,.comments,.widget,.date-header,.inline-ad{position:relative;min-height:0;_position:static;_height:1%;position:relative;min-height:0;_position:static;_height:1%}html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,acronym,address,big,cite,code,del,dfn,em,font,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{border:0;font:inherit;font-size:100%;font-style:inherit;color:WHITE;font-weight:inherit;margin:0;outline:0;padding:0;vertical-align:baseline}
+.clear{clear:both}.widget{margin:0}.widget-item-control,.blog-feeds,.status-msg-body,.date-header,.post-feeds{display:none}.widget .widget-item-control a img{display:none}.widget li,.BlogArchive #ArchiveList ul.flat li{padding:0}.post-footer-line>*{margin-left:0}.content-outer,.header-outer,.tabs-outer,.main-outer,.main-inner,.footer-outer,.post,.comments,.widget,.date-header,.inline-ad{position:relative;min-height:0;_position:static;_height:1%;position:relative;min-height:0;_position:static;_height:1%}html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,acronym,address,big,cite,code,del,dfn,em,font,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{border:0;font:inherit;font-size:100%;font-style:inherit;b;font-weight:inherit;margin:0;outline:0;padding:0;vertical-align:baseline}
 .status-msg-wrap {
 display: none;
 }
@@ -84,7 +88,7 @@ body {
 background-color:white;
 position: relative;
 font: normal 15px 'fontawesome', 'treexil', arial;
-color:black;
+color:;
 margin: 10;
 padding: 10;
 direction: rtl;
@@ -117,35 +121,35 @@ src: url(data:font/truetype;charset=utf-8;base64,AAEAAAASAQAABAAgRkZUTWuvaekAAdr
 .container,.container-fluid{margin-right:auto;margin-left:auto;padding-left:0;padding-right:0}@-ms-viewport{width:device-width}.visible-lg,.visible-lg-block,.visible-lg-inline,.visible-lg-inline-block,.visible-md,.visible-md-block,.visible-md-inline,.visible-md-inline-block,.visible-sm,.visible-sm-block,.visible-sm-inline,.visible-sm-inline-block,.visible-xs,.visible-xs-block,.visible-xs-inline,.visible-xs-inline-block{display:none!important}@media (max-width:767px){.visible-xs{display:block!important}table.visible-xs{display:table}tr.visible-xs{display:table-row!important}td.visible-xs,th.visible-xs{display:table-cell!important}.visible-xs-block{display:block!important}.visible-xs-inline{display:inline!important}.visible-xs-inline-block{display:inline-block!important}}@media (min-width:768px) and (max-width:991px){.visible-sm{display:block!important}table.visible-sm{display:table}tr.visible-sm{display:table-row!important}td.visible-sm,th.visible-sm{display:table-cell!important}.visible-sm-block{display:block!important}.visible-sm-inline{display:inline!important}.visible-sm-inline-block{display:inline-block!important}}@media (min-width:992px) and (max-width:1199px){.visible-md{display:block!important}table.visible-md{display:table}tr.visible-md{display:table-row!important}td.visible-md,th.visible-md{display:table-cell!important}.visible-md-block{display:block!important}.visible-md-inline{display:inline!important}.visible-md-inline-block{display:inline-block!important}}@media (min-width:1200px){.visible-lg{display:block!important}table.visible-lg{display:table}tr.visible-lg{display:table-row!important}td.visible-lg,th.visible-lg{display:table-cell!important}.visible-lg-block{display:block!important}.visible-lg-inline{display:inline!important}.visible-lg-inline-block{display:inline-block!important}.hidden-lg{display:none!important}}@media (max-width:767px){.hidden-xs{display:none!important}}@media (min-width:768px) and (max-width:991px){.hidden-sm{display:none!important}}@media (min-width:992px) and (max-width:1199px){.hidden-md{display:none!important}}.visible-print{display:none!important}@media print{.visible-print{display:block!important}table.visible-print{display:table}tr.visible-print{display:table-row!important}td.visible-print,th.visible-print{display:table-cell!important}}.visible-print-block{display:none!important}@media print{.visible-print-block{display:block!important}}.visible-print-inline{display:none!important}@media print{.visible-print-inline{display:inline!important}}.visible-print-inline-block{display:none!important}@media print{.visible-print-inline-block{display:inline-block!important}.hidden-print{display:none!important}}@media (min-width:768px){.container{width:750px}}@media (min-width:992px){.container{width:970px}}@media (min-width:1200px){.container{width:1140px}}.row{margin-left:-15px;margin-right:-15px}.col,.col-lg-1,.col-lg-10,.col-lg-11,.col-lg-12,.col-lg-2,.col-lg-3,.col-lg-4,.col-lg-5,.col-lg-6,.col-lg-7,.col-lg-8,.col-lg-9,.col-md-1,.col-md-10,.col-md-11,.col-md-12,.col-md-1_5,.col-md-2,.col-md-3,.col-md-4,.col-md-5,.col-md-6,.col-md-7,.col-md-8,.col-md-9,.col-sm-1,.col-sm-10,.col-sm-11,.col-sm-12,.col-sm-2,.col-sm-3,.col-sm-4,.col-sm-5,.col-sm-6,.col-sm-7,.col-sm-8,.col-sm-9,.col-xs-1,.col-xs-10,.col-xs-11,.col-xs-12,.col-xs-2,.col-xs-3,.col-xs-4,.col-xs-5,.col-xs-6,.col-xs-7,.col-xs-8,.col-xs-9{position:relative;min-height:1px;padding-left:15px;padding-right:15px}.col,.col-xs-1,.col-xs-10,.col-xs-11,.col-xs-12,.col-xs-2,.col-xs-3,.col-xs-4,.col-xs-5,.col-xs-6,.col-xs-7,.col-xs-8,.col-xs-9{float:left}.col-xs-12{width:100%}.col-xs-11{width:91.66666667%}.col-xs-10{width:83.33333333%}.col-xs-9{width:75%}.col-xs-8{width:66.66666667%}.col-xs-7{width:58.33333333%}.col-xs-6{width:50%}.col-xs-5{width:41.66666667%}.col-xs-4{width:33.33333333%}.col-xs-3{width:25%}.col-xs-2{width:16.66666667%}.col-xs-1{width:8.33333333%}.col-xs-pull-12{right:100%}.col-xs-pull-11{right:91.66666667%}.col-xs-pull-10{right:83.33333333%}.col-xs-pull-9{right:75%}.col-xs-pull-8{right:66.66666667%}.col-xs-pull-7{right:58.33333333%}.col-xs-pull-6{right:50%}.col-xs-pull-5{right:41.66666667%}.col-xs-pull-4{right:33.33333333%}.col-xs-pull-3{right:25%}.col-xs-pull-2{right:16.66666667%}.col-xs-pull-1{right:8.33333333%}.col-xs-pull-0{right:auto}.col-xs-push-12{left:100%}.col-xs-push-11{left:91.66666667%}.col-xs-push-10{left:83.33333333%}.col-xs-push-9{left:75%}.col-xs-push-8{left:66.66666667%}.col-xs-push-7{left:58.33333333%}.col-xs-push-6{left:50%}.col-xs-push-5{left:41.66666667%}.col-xs-push-4{left:33.33333333%}.col-xs-push-3{left:25%}.col-xs-push-2{left:16.66666667%}.col-xs-push-1{left:8.33333333%}.col-xs-push-0{left:auto}.col-xs-offset-12{margin-left:100%}.col-xs-offset-11{margin-left:91.66666667%}.col-xs-offset-10{margin-left:83.33333333%}.col-xs-offset-9{margin-left:75%}.col-xs-offset-8{margin-left:66.66666667%}.col-xs-offset-7{margin-left:58.33333333%}.col-xs-offset-6{margin-left:50%}.col-xs-offset-5{margin-left:41.66666667%}.col-xs-offset-4{margin-left:33.33333333%}.col-xs-offset-3{margin-left:25%}.col-xs-offset-2{margin-left:16.66666667%}.col-xs-offset-1{margin-left:8.33333333%}.col-xs-offset-0{margin-left:0}@media (min-width:768px){.col,.col-sm-1,.col-sm-10,.col-sm-11,.col-sm-12,.col-sm-2,.col-sm-3,.col-sm-4,.col-sm-5,.col-sm-6,.col-sm-7,.col-sm-8,.col-sm-9{float:left}.col-sm-12{width:100%}.col-sm-11{width:91.66666667%}.col-sm-10{width:83.33333333%}.col-sm-9{width:75%}.col-sm-8{width:66.66666667%}.col-sm-7{width:58.33333333%}.col-sm-6{width:50%}.col-sm-5{width:41.66666667%}.col-sm-4{width:33.33333333%}.col-sm-3{width:25%}.col-sm-2{width:16.66666667%}.col-sm-1{width:8.33333333%}.col-sm-pull-12{right:100%}.col-sm-pull-11{right:91.66666667%}.col-sm-pull-10{right:83.33333333%}.col-sm-pull-9{right:75%}.col-sm-pull-8{right:66.66666667%}.col-sm-pull-7{right:58.33333333%}.col-sm-pull-6{right:50%}.col-sm-pull-5{right:41.66666667%}.col-sm-pull-4{right:33.33333333%}.col-sm-pull-3{right:25%}.col-sm-pull-2{right:16.66666667%}.col-sm-pull-1{right:8.33333333%}.col-sm-pull-0{right:auto}.col-sm-push-12{left:100%}.col-sm-push-11{left:91.66666667%}.col-sm-push-10{left:83.33333333%}.col-sm-push-9{left:75%}.col-sm-push-8{left:66.66666667%}.col-sm-push-7{left:58.33333333%}.col-sm-push-6{left:50%}.col-sm-push-5{left:41.66666667%}.col-sm-push-4{left:33.33333333%}.col-sm-push-3{left:25%}.col-sm-push-2{left:16.66666667%}.col-sm-push-1{left:8.33333333%}.col-sm-push-0{left:auto}.col-sm-offset-12{margin-left:100%}.col-sm-offset-11{margin-left:91.66666667%}.col-sm-offset-10{margin-left:83.33333333%}.col-sm-offset-9{margin-left:75%}.col-sm-offset-8{margin-left:66.66666667%}.col-sm-offset-7{margin-left:58.33333333%}.col-sm-offset-6{margin-left:50%}.col-sm-offset-5{margin-left:41.66666667%}.col-sm-offset-4{margin-left:33.33333333%}.col-sm-offset-3{margin-left:25%}.col-sm-offset-2{margin-left:16.66666667%}.col-sm-offset-1{margin-left:8.33333333%}.col-sm-offset-0{margin-left:0}}@media (min-width:992px){.col,.col-md-1,.col-md-10,.col-md-11,.col-md-12,.col-md-1_5,.col-md-2,.col-md-3,.col-md-4,.col-md-5,.col-md-6,.col-md-7,.col-md-8,.col-md-9{float:left}.col-md-12{width:100%}.col-md-11{width:91.66666667%}.col-md-10{width:83.33333333%}.col-md-9{width:75%}.col-md-8{width:66.66666667%}.col-md-7{width:58.33333333%}.col-md-6{width:50%}.col-md-5{width:41.66666667%}.col-md-4{width:33.33333333%}.col-md-3{width:25%}.col-md-2{width:16.66666667%}.col-md-1_5{width:14.28%}.col-md-1{width:8.33333333%}.col-md-pull-12{right:100%}.col-md-pull-11{right:91.66666667%}.col-md-pull-10{right:83.33333333%}.col-md-pull-9{right:75%}.col-md-pull-8{right:66.66666667%}.col-md-pull-7{right:58.33333333%}.col-md-pull-6{right:50%}.col-md-pull-5{right:41.66666667%}.col-md-pull-4{right:33.33333333%}.col-md-pull-3{right:25%}.col-md-pull-2{right:16.66666667%}.col-md-pull-1{right:8.33333333%}.col-md-pull-0{right:auto}.col-md-push-12{left:100%}.col-md-push-11{left:91.66666667%}.col-md-push-10{left:83.33333333%}.col-md-push-9{left:75%}.col-md-push-8{left:66.66666667%}.col-md-push-7{left:58.33333333%}.col-md-push-6{left:50%}.col-md-push-5{left:41.66666667%}.col-md-push-4{left:33.33333333%}.col-md-push-3{left:25%}.col-md-push-2{left:16.66666667%}.col-md-push-1{left:8.33333333%}.col-md-push-0{left:auto}.col-md-offset-12{margin-left:100%}.col-md-offset-11{margin-left:91.66666667%}.col-md-offset-10{margin-left:83.33333333%}.col-md-offset-9{margin-left:75%}.col-md-offset-8{margin-left:66.66666667%}.col-md-offset-7{margin-left:58.33333333%}.col-md-offset-6{margin-left:50%}.col-md-offset-5{margin-left:41.66666667%}.col-md-offset-4{margin-left:33.33333333%}.col-md-offset-3{margin-left:25%}.col-md-offset-2{margin-left:16.66666667%}.col-md-offset-1{margin-left:8.33333333%}.col-md-offset-0{margin-left:0}}@media (min-width:1200px){.col,.col-lg-1,.col-lg-10,.col-lg-11,.col-lg-12,.col-lg-2,.col-lg-3,.col-lg-4,.col-lg-5,.col-lg-6,.col-lg-7,.col-lg-8,.col-lg-9{float:left}.col-lg-12{width:100%}.col-lg-11{width:91.66666667%}.col-lg-10{width:83.33333333%}.col-lg-9{width:75%}.col-lg-8{width:66.66666667%}.col-lg-7{width:58.33333333%}.col-lg-6{width:50%}.col-lg-5{width:41.66666667%}.col-lg-4{width:33.33333333%}.col-lg-3{width:25%}.col-lg-2{width:16.66666667%}.col-lg-1{width:8.33333333%}.col-lg-pull-12{right:100%}.col-lg-pull-11{right:91.66666667%}.col-lg-pull-10{right:83.33333333%}.col-lg-pull-9{right:75%}.col-lg-pull-8{right:66.66666667%}.col-lg-pull-7{right:58.33333333%}.col-lg-pull-6{right:50%}.col-lg-pull-5{right:41.66666667%}.col-lg-pull-4{right:33.33333333%}.col-lg-pull-3{right:25%}.col-lg-pull-2{right:16.66666667%}.col-lg-pull-1{right:8.33333333%}.col-lg-pull-0{right:auto}.col-lg-push-12{left:100%}.col-lg-push-11{left:91.66666667%}.col-lg-push-10{left:83.33333333%}.col-lg-push-9{left:75%}.col-lg-push-8{left:66.66666667%}.col-lg-push-7{left:58.33333333%}.col-lg-push-6{left:50%}.col-lg-push-5{left:41.66666667%}.col-lg-push-4{left:33.33333333%}.col-lg-push-3{left:25%}.col-lg-push-2{left:16.66666667%}.col-lg-push-1{left:8.33333333%}.col-lg-push-0{left:auto}.col-lg-offset-12{margin-left:100%}.col-lg-offset-11{margin-left:91.66666667%}.col-lg-offset-10{margin-left:83.33333333%}.col-lg-offset-9{margin-left:75%}.col-lg-offset-8{margin-left:66.66666667%}.col-lg-offset-7{margin-left:58.33333333%}.col-lg-offset-6{margin-left:50%}.col-lg-offset-5{margin-left:41.66666667%}.col-lg-offset-4{margin-left:33.33333333%}.col-lg-offset-3{margin-left:25%}.col-lg-offset-2{margin-left:16.66666667%}.col-lg-offset-1{margin-left:8.33333333%}.col-lg-offset-0{margin-left:0}}.clearfix,.clearfix:after,.clearfix:before,.container-fluid:after,.container-fluid:before,.container:after,.container:before,.row:after,.row:before{content:" ";display:table}.clearfix:after,.container-fluid:after,.container:after,.row:after{clear:both}.center-block{display:block;margin-left:auto;margin-right:auto}.pull-right{float:right!important}.pull-left{float:left!important}*,:after,:before{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}.container,.container-fluid{margin-left:auto;margin-right:auto;padding-right:0;padding-left:0}.row{margin-right:-15px;margin-left:-15px}.col,.col-lg-1,.col-lg-10,.col-lg-11,.col-lg-12,.col-lg-2,.col-lg-3,.col-lg-4,.col-lg-5,.col-lg-6,.col-lg-7,.col-lg-8,.col-lg-9,.col-md-1,.col-md-10,.col-md-11,.col-md-12,.col-md-1_5,.col-md-2,.col-md-3,.col-md-4,.col-md-5,.col-md-6,.col-md-7,.col-md-8,.col-md-9,.col-sm-1,.col-sm-10,.col-sm-11,.col-sm-12,.col-sm-2,.col-sm-3,.col-sm-4,.col-sm-5,.col-sm-6,.col-sm-7,.col-sm-8,.col-sm-9,.col-xs-1,.col-xs-10,.col-xs-11,.col-xs-12,.col-xs-2,.col-xs-3,.col-xs-4,.col-xs-5,.col-xs-6,.col-xs-7,.col-xs-8,.col-xs-9{padding-right:15px;padding-left:15px}.col,.col-xs-1,.col-xs-10,.col-xs-11,.col-xs-12,.col-xs-2,.col-xs-3,.col-xs-4,.col-xs-5,.col-xs-6,.col-xs-7,.col-xs-8,.col-xs-9{float:right}.col-xs-pull-12{left:100%}.col-xs-pull-11{left:91.66666667%}.col-xs-pull-10{left:83.33333333%}.col-xs-pull-9{left:75%}.col-xs-pull-8{left:66.66666667%}.col-xs-pull-7{left:58.33333333%}.col-xs-pull-6{left:50%}.col-xs-pull-5{left:41.66666667%}.col-xs-pull-4{left:33.33333333%}.col-xs-pull-3{left:25%}.col-xs-pull-2{left:16.66666667%}.col-xs-pull-1{left:8.33333333%}.col-xs-pull-0{left:auto}.col-xs-push-12{right:100%}.col-xs-push-11{right:91.66666667%}.col-xs-push-10{right:83.33333333%}.col-xs-push-9{right:75%}.col-xs-push-8{right:66.66666667%}.col-xs-push-7{right:58.33333333%}.col-xs-push-6{right:50%}.col-xs-push-5{right:41.66666667%}.col-xs-push-4{right:33.33333333%}.col-xs-push-3{right:25%}.col-xs-push-2{right:16.66666667%}.col-xs-push-1{right:8.33333333%}.col-xs-push-0{right:auto}.col-xs-offset-12{margin-right:100%}.col-xs-offset-11{margin-right:91.66666667%}.col-xs-offset-10{margin-right:83.33333333%}.col-xs-offset-9{margin-right:75%}.col-xs-offset-8{margin-right:66.66666667%}.col-xs-offset-7{margin-right:58.33333333%}.col-xs-offset-6{margin-right:50%}.col-xs-offset-5{margin-right:41.66666667%}.col-xs-offset-4{margin-right:33.33333333%}.col-xs-offset-3{margin-right:25%}.col-xs-offset-2{margin-right:16.66666667%}.col-xs-offset-1{margin-right:8.33333333%}.col-xs-offset-0{margin-right:0}.center-block{margin-right:auto;margin-left:auto}.pull-right{float:left!important}.pull-left{float:right!important}@media (min-width:1200px){.col,.col-lg-1,.col-lg-10,.col-lg-11,.col-lg-12,.col-lg-2,.col-lg-3,.col-lg-4,.col-lg-5,.col-lg-6,.col-lg-7,.col-lg-8,.col-lg-9{float:right}.col-lg-pull-12{left:100%}.col-lg-pull-11{left:91.66666667%}.col-lg-pull-10{left:83.33333333%}.col-lg-pull-9{left:75%}.col-lg-pull-8{left:66.66666667%}.col-lg-pull-7{left:58.33333333%}.col-lg-pull-6{left:50%}.col-lg-pull-5{left:41.66666667%}.col-lg-pull-4{left:33.33333333%}.col-lg-pull-3{left:25%}.col-lg-pull-2{left:16.66666667%}.col-lg-pull-1{left:8.33333333%}.col-lg-pull-0{left:auto}.col-lg-push-12{right:100%}.col-lg-push-11{right:91.66666667%}.col-lg-push-10{right:83.33333333%}.col-lg-push-9{right:75%}.col-lg-push-8{right:66.66666667%}.col-lg-push-7{right:58.33333333%}.col-lg-push-6{right:50%}.col-lg-push-5{right:41.66666667%}.col-lg-push-4{right:33.33333333%}.col-lg-push-3{right:25%}.col-lg-push-2{right:16.66666667%}.col-lg-push-1{right:8.33333333%}.col-lg-push-0{right:auto}.col-lg-offset-12{margin-right:100%}.col-lg-offset-11{margin-right:91.66666667%}.col-lg-offset-10{margin-right:83.33333333%}.col-lg-offset-9{margin-right:75%}.col-lg-offset-8{margin-right:66.66666667%}.col-lg-offset-7{margin-right:58.33333333%}.col-lg-offset-6{margin-right:50%}.col-lg-offset-5{margin-right:41.66666667%}.col-lg-offset-4{margin-right:33.33333333%}.col-lg-offset-3{margin-right:25%}.col-lg-offset-2{margin-right:16.66666667%}.col-lg-offset-1{margin-right:8.33333333%}.col-lg-offset-0{margin-right:0}}@media (min-width:768px){.col,.col-sm-1,.col-sm-10,.col-sm-11,.col-sm-12,.col-sm-2,.col-sm-3,.col-sm-4,.col-sm-5,.col-sm-6,.col-sm-7,.col-sm-8,.col-sm-9{float:right}.col-sm-pull-12{left:100%}.col-sm-pull-11{left:91.66666667%}.col-sm-pull-10{left:83.33333333%}.col-sm-pull-9{left:75%}.col-sm-pull-8{left:66.66666667%}.col-sm-pull-7{left:58.33333333%}.col-sm-pull-6{left:50%}.col-sm-pull-5{left:41.66666667%}.col-sm-pull-4{left:33.33333333%}.col-sm-pull-3{left:25%}.col-sm-pull-2{left:16.66666667%}.col-sm-pull-1{left:8.33333333%}.col-sm-pull-0{left:auto}.col-sm-push-12{right:100%}.col-sm-push-11{right:91.66666667%}.col-sm-push-10{right:83.33333333%}.col-sm-push-9{right:75%}.col-sm-push-8{right:66.66666667%}.col-sm-push-7{right:58.33333333%}.col-sm-push-6{right:50%}.col-sm-push-5{right:41.66666667%}.col-sm-push-4{right:33.33333333%}.col-sm-push-3{right:25%}.col-sm-push-2{right:16.66666667%}.col-sm-push-1{right:8.33333333%}.col-sm-push-0{right:auto}.col-sm-offset-12{margin-right:100%}.col-sm-offset-11{margin-right:91.66666667%}.col-sm-offset-10{margin-right:83.33333333%}.col-sm-offset-9{margin-right:75%}.col-sm-offset-8{margin-right:66.66666667%}.col-sm-offset-7{margin-right:58.33333333%}.col-sm-offset-6{margin-right:50%}.col-sm-offset-5{margin-right:41.66666667%}.col-sm-offset-4{margin-right:33.33333333%}.col-sm-offset-3{margin-right:25%}.col-sm-offset-2{margin-right:16.66666667%}.col-sm-offset-1{margin-right:8.33333333%}.col-sm-offset-0{margin-right:0}}@media (min-width:992px){.col,.col-md-1,.col-md-10,.col-md-11,.col-md-12,.col-md-1_5,.col-md-2,.col-md-3,.col-md-4,.col-md-5,.col-md-6,.col-md-7,.col-md-8,.col-md-9{float:right}.col-md-pull-12{left:100%}.col-md-pull-11{left:91.66666667%}.col-md-pull-10{left:83.33333333%}.col-md-pull-9{left:75%}.col-md-pull-8{left:66.66666667%}.col-md-pull-7{left:58.33333333%}.col-md-pull-6{left:50%}.col-md-pull-5{left:41.66666667%}.col-md-pull-4{left:33.33333333%}.col-md-pull-3{left:25%}.col-md-pull-2{left:16.66666667%}.col-md-pull-1{left:8.33333333%}.col-md-pull-0{left:auto}.col-md-push-12{right:100%}.col-md-push-11{right:91.66666667%}.col-md-push-10{right:83.33333333%}.col-md-push-9{right:75%}.col-md-push-8{right:66.66666667%}.col-md-push-7{right:58.33333333%}.col-md-push-6{right:50%}.col-md-push-5{right:41.66666667%}.col-md-push-4{right:33.33333333%}.col-md-push-3{right:25%}.col-md-push-2{right:16.66666667%}.col-md-push-1{right:8.33333333%}.col-md-push-0{right:auto}.col-md-offset-12{margin-right:100%}.col-md-offset-11{margin-right:91.66666667%}.col-md-offset-10{margin-right:83.33333333%}.col-md-offset-9{margin-right:75%}.col-md-offset-8{margin-right:66.66666667%}.col-md-offset-7{margin-right:58.33333333%}.col-md-offset-6{margin-right:50%}.col-md-offset-5{margin-right:41.66666667%}.col-md-offset-4{margin-right:33.33333333%}.col-md-offset-3{margin-right:25%}.col-md-offset-2{margin-right:16.66666667%}.col-md-offset-1{margin-right:8.33333333%}.col-md-offset-0{margin-right:0}}
 /* Header
 ------------------------------ */
-#navbar ul,.header-treexil,.topbar{position:relative}.topbar{background:white;box-shadow:0 0 28px 0 rgba(0,0,0,.08);height:55px}.selectnav{display:none}.header-treexil .nav{float:right;line-height:55px}.header-treexil .socialbar{float:left;line-height:55px}.header-treexil .searchbar{float:left;margin-right:15px}#navbar ul{float:right}#navbar ul li{float:right;display:block}#navbar ul li a{display:block;padding-left:30px;font-size:14px;color:darkblue}#navbar ul li a:hover{color:darkblue}.header-treexil .searchbtn{background:darkblue;color:white;padding:0 12px;text-align:center;display:block;float:left;line-height:55px}#socialmedia ul{float:right}.search-wrap{display:inline-block;position:fixed;width:98%;height:96%;background:rgba(98,18,77,.85);z-index:9999999;right:0;top:50%;transform:translateY(-50%);left:0;text-align:center;margin:0 auto;opacity:0;visibility:hidden}.close-serchwrap{position:absolute;top:3%;left:2%;font-size:20px;color:darkblue}.search-form{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}#search-form-text{background:darkblue;border-radius:10px;color:darkblue;font-family:treexil;font-size:12px;display:inline-block;padding-right:10px;border:0;line-height:20px;padding-top:5px;padding-bottom:8px;width:300px}.search-wrap.active{opacity:1;visibility:visible}#socialmedia ul li{display:block;float:right}#socialmedia ul li a{display:block;padding:0 7px;color:darkblue;font-size:13px}#socialmedia ul li a:hover{color:darkblue}#socialmedia ul li a.instagram:before{content:'\f16d'}#socialmedia ul li a.facebook:before{content:'\f09a'}#socialmedia ul li a.twitter:before{content:'\f099'}#socialmedia ul li a.youtube:before{content:'\f16a'}#socialmedia ul li a.gplus:before{content:'\f0d5'}#socialmedia ul li a.pinterest:before{content:'\f0d2'}.headerwrap{padding:5px 0}.headerwrap .logosite{padding:0}.headerwrap .logosite img{height:auto!important;display:inline-block!important}.headerwrap .bannersite{padding-left:0}.menunav a.homenav,.menunav ul li a{color:white;display:block;line-height:55px;padding:0 15px}.menunav{background:darkblue;height:55px;position:relative}.menunav a.homenav,.menunav ul li a:hover{background:darkblue}.menunav a.homenav{font-size:18px}.menunav ul li{display:block;position: relative;}.menunav ul li a{font-size:15px;position: relative}.menunav ul {float:right;}.menunav a.homenav,.menunav ul li{float:right;}
-#sub-menu{position:absolute;z-index:99999;width:200px;background:darkblue;box-shadow:0 0 5px 0 rgba(0,0,0,.043);padding:0 7px;top:50%;right:0;visibility:hidden;opacity:0}#sub-menu li{display:block;float:none}#sub-menu li a{text-align:right}#sub-menu li:hover a{margin-left:5px}.menunav ul li:hover #sub-menu{visibility:visible;opacity:1;top:100%}
+#navbar ul,.header-treexil,.topbar{position:relative}.topbar{background:white;box-shadow:0 0 28px 0 rgb(255, 255, 255);height:55px}.selectnav{display:none}.header-treexil .nav{float:right;line-height:55px}.header-treexil .socialbar{float:left;line-height:55px}.header-treexil .searchbar{float:left;margin-right:15px}#navbar ul{float:right}#navbar ul li{float:right;display:block}#navbar ul li a{display:block;padding-left:30px;font-size:14px;color:darkblue}#navbar ul li a:hover{color:darkblue}.header-treexil .searchbtn{background:darkblue;color:white;padding:0 12px;text-align:center;display:block;float:left;line-height:55px}#socialmedia ul{float:right}.search-wrap{display:inline-block;position:fixed;width:98%;height:96%;background:rgb(255, 255, 255);z-index:9999999;right:0;top:50%;transform:translateY(-50%);left:0;text-align:center;margin:0 auto;opacity:0;visibility:hidden}.close-serchwrap{position:absolute;top:3%;left:2%;font-size:20px;color:darkblue}.search-form{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}#search-form-text{background:darkblue;border-radius:10px;color:darkblue;font-family:treexil;font-size:12px;display:inline-block;padding-right:10px;border:0;line-height:20px;padding-top:5px;padding-bottom:8px;width:300px}.search-wrap.active{opacity:1;visibility:visible}#socialmedia ul li{display:block;float:right}#socialmedia ul li a{display:block;padding:0 7px;color:darkblue;font-size:13px}#socialmedia ul li a:hover{color:darkblue}#socialmedia ul li a.instagram:before{content:'\f16d'}#socialmedia ul li a.facebook:before{content:'\f09a'}#socialmedia ul li a.twitter:before{content:'\f099'}#socialmedia ul li a.youtube:before{content:'\f16a'}#socialmedia ul li a.gplus:before{content:'\f0d5'}#socialmedia ul li a.pinterest:before{content:'\f0d2'}.headerwrap{padding:5px 0}.headerwrap .logosite{padding:0}.headerwrap .logosite img{height:auto!important;display:inline-block!important}.headerwrap .bannersite{padding-left:0}.menunav a.homenav,.menunav ul li a{color:white;display:block;line-height:55px;padding:0 15px}.menunav{background:darkblue;height:55px;position:relative}.menunav a.homenav,.menunav ul li a:hover{background:darkblue}.menunav a.homenav{font-size:18px}.menunav ul li{display:block;position: relative;}.menunav ul li a{font-size:15px;position: relative}.menunav ul {float:right;}.menunav a.homenav,.menunav ul li{float:right;}
+#sub-menu{position:absolute;z-index:99999;width:200px;background:darkblue;box-shadow:0 0 5px 0 rgb(255, 255, 255);padding:0 7px;top:50%;right:0;visibility:hidden;opacity:0}#sub-menu li{display:block;float:none}#sub-menu li a{text-align:right}#sub-menu li:hover a{margin-left:5px}.menunav ul li:hover #sub-menu{visibility:visible;opacity:1;top:100%}
 /* Ticker News
 ------------------------------ */
-.magposts,.magposts li,.slidertreexil,.tickernews{position:relative}.tickernews{background:#fff;height:50px;box-shadow:0 0 28px 0 rgba(0,0,0,.08)}#lastnews .widget-title{background:white;float:right;line-height:50px;height:35px;padding:0 11px;margin-top:7px;display:flex;flex-direction:column;text-align:center;justify-content:center;margin-left:15px}#lastnews .widget-title h2{color:black;font-size:14px}#lastnews .widget-title h2:before{content:'\f0c1';padding-left:5px;font-size:12px;color:black}#treexilnews{float:right}#treexilnews li{float:right;display:block;padding:0 15px!important}#treexilnews li a{color:black;font-size:13px;font-family:treexil}.slidertreexil{margin-top:20px}.magposts{overflow:hidden;float:right;width:100%}.magposts li{float:right;width:28%;margin-bottom:15px}.magposts li:first-child{width:70.6%;margin-left:15px;margin-bottom:0}.magposts li .magp-thumb img{width:100%;display:block;background:darkblue;height:190px}.magposts li .mag-content{position:absolute;bottom:0;padding:10px 20px;z-index:999}.magposts li .magp-thumb a:before{content:'';width:100%;height:100%;position:absolute;background:darkblue;background:-webkit-linear-gradient(to top,rgba(0,0,0,.4),rgba(0,0,0,.18));background:linear-gradient(to top,rgba(0,0,0,.4),rgba(0,0,0,.18));z-index:99}.magposts li:first-child .magp-thumb img{height:600px}.magposts li:first-child .post-title a{color:black;font-size:20px;font-weight:700;line-height:35px}.magposts li:first-child .psummary{line-height:27px;color:black;font-size:14px;display:block;margin:5px 0}.magposts li .post-date,.magposts li .writer-p{display:none;color:black}.magposts li:first-child .post-date,.magposts li:first-child .writer-p{display:inline-block}.magposts li .post-date{margin-left:15px}.magposts li .post-date:before{content:'\f073';display:inline-block;margin-left:5px}.magposts li .writer-p:before{content:'\f2be';display:inline-block;margin-left:5px}.magposts li .post-title a{color:black;font-weight:700;font-size:17px;line-height:28px}.magposts li .psummary{line-height:24px;font-size:14px;margin:5px 0}.magposts .owl-controls{position:absolute;top:0;padding:15px 20px}.magposts .owl-next,.magposts .owl-prev{display:inline-block!important;width:30px;height:30px;background:darkblue;text-align:center;line-height:30px;margin-left:5px}
+.magposts,.magposts li,.slidertreexil,.tickernews{position:relative}.tickernews{background:#fff;height:50px;box-shadow:0 0 28px 0 rgb(255, 255, 255)}#lastnews .widget-title{background:red;float:right;line-height:50px;height:35px;padding:0 11px;margin-top:7px;display:flex;flex-direction:column;text-align:center;justify-content:center;margin-left:15px}#lastnews .widget-title h2{color:white;font-size:14px}#lastnews .widget-title h2:before{content:'\f0c1';padding-left:5px;font-size:12px;color:white}#treexilnews{float:right}#treexilnews li{float:right;display:block;padding:0 15px!important}#treexilnews li a{color:black;font-size:13px;font-family:treexil}.slidertreexil{margin-top:20px}.magposts{overflow:hidden;float:right;width:100%}.magposts li{float:right;width:28%;margin-bottom:15px}.magposts li:first-child{width:70.6%;margin-left:15px;margin-bottom:0}.magposts li .magp-thumb img{width:100%;display:block;background:darkblue;height:190px}.magposts li .mag-content{position:absolute;bottom:0;padding:10px 20px;z-index:999}.magposts li .magp-thumb a:before{content:'';width:100%;height:100%;position:absolute;background:darkblue;background:-webkit-linear-gradient(to top,rgb(255, 255, 255),rgb(255, 255, 255));background:linear-gradient(to top,rgb(255, 255, 255),rgb(255, 255, 255));z-index:99}.magposts li:first-child .magp-thumb img{height:600px}.magposts li:first-child .post-title a{color:;font-size:20px;font-weight:700;line-height:35px}.magposts li:first-child .psummary{line-height:27px;color:;font-size:14px;display:block;margin:5px 0}.magposts li .post-date,.magposts li .writer-p{display:none;color:}.magposts li:first-child .post-date,.magposts li:first-child .writer-p{display:inline-block}.magposts li .post-date{margin-left:15px}.magposts li .post-date:before{content:'\f073';display:inline-block;margin-left:5px}.magposts li .writer-p:before{content:'\f2be';display:inline-block;margin-left:5px}.magposts li .post-title a{color:;font-weight:700;font-size:17px;line-height:28px}.magposts li .psummary{line-height:24px;font-size:14px;margin:5px 0}.magposts .owl-controls{position:absolute;top:0;padding:15px 20px}.magposts .owl-next,.magposts .owl-prev{display:inline-block!important;width:30px;height:30px;background:darkblue;text-align:center;line-height:30px;margin-left:5px}
 /* SIDEBAR
 ------------------------------ */
-#sidebar .PopularPosts li:first-child,#sidebar .widget{margin-bottom:20px}#sidebar .widget,.socialside{border-top:2px solid darkblue}.sidebarwrapper{padding-left:0}#sidebar .widget{background:white;box-shadow:0 0 18px 0 rgba(53,53,53,.08)}.contentwrapper{padding-right:0}#sidebar .widget-title{height:38px;margin-bottom:20px;background:darkblue;text-align:center}#sidebar .widget-title h2{color:white;font-weight:700;line-height:35px;background:darkblue;display:inline-block;radius:50px;padding:3px 16px;margin-top:12px;box-shadow:0 0 10px rgba(0,0,0,.2)}#sidebar .widget-content,.socialside{padding:10px}#sidebar .PopularPosts li{position:relative;margin-bottom:15px}#sidebar .PopularPosts li:last-child{margin-bottom:5px}#sidebar .PopularPosts li:first-child .item-thumbnail{float:none;margin:0}#sidebar .PopularPosts li:first-child .item-thumbnail img{width:100%;display:block;background-size:cover;height:230px}#sidebar .PopularPosts li:first-child .item-title{margin:10px 0 5px}#sidebar .PopularPosts li .item-thumbnail,.socialside li{float:right;margin-left:10px}#sidebar .PopularPosts li:first-child .item-title a{color:black;font-weight:700;line-height:30px;font-size:16px}#sidebar .PopularPosts li:first-child .item-snippet{color:black;font-size:12px;display:block;line-height:26px}#sidebar .PopularPosts li .item-snippet{display:none}#sidebar .PopularPosts li .item-title a{color:black;font-size:14px;line-height:27px;display:block;font-weight:700}#sidebar .PopularPosts li .item-title a:hover{color:darkblue}#sidebar .PopularPosts li .item-thumbnail img{width:95px;height:85px;display:block;background-size:cover}.socialside{margin-bottom:20px;background:darkblue;box-shadow:0 0 49px 0 rgba(0,0,0,.05);overflow:hidden}.socialside li{width:31%;margin-bottom:10px;background:#62124d;border-radius:5%;text-align:center;padding:20px 0}.socialside li a,.socialside li i,.socialside li span{display:block;color:black}.socialside li a{font-size:14px}.socialside li i{font-size:17px;margin-bottom:6px}.socialside li span{line-height:17px;font-size:14px}.socialside li:nth-child(3n+3){margin-left:0}.socialside li:hover{opacity:.95}#sidebar .list-label-widget-content ul li{display:block;float:none;line-height:36px;border-bottom:1px solid black}#sidebar .list-label-widget-content ul li a{color:black;position:relative;padding-right:12px;font-weight:700;font-size:13px;display:inline-block}#sidebar .list-label-widget-content ul li:hover a{color:black}#sidebar .list-label-widget-content ul li span{color:rgba(0,0,0,.21);float:left;font-size:13px;font-weight:700;display:inline-block}#sidebar .list-label-widget-content ul li a:before{content:'';position:absolute;right:0;width:2px;height:50%;background:black;top:50%;transform:translateY(-50%)}#sidebar .list-label-widget-content ul li:last-child{border:0}#sidebar .list-label-widget-content ul li:hover span{color:black}
-.follow-by-email-address,.follow-by-email-submit{font-family:treexil;color:black;font-weight:700}#blog-pager-newer-link,#blog-pager-older-link,#sidebar #ContactForm1,.home-link{display:none}#sidebar .FollowByEmail{background:black}#sidebar .FollowByEmail .widget-content{padding:50px 0;text-align:center}#sidebar .FollowByEmail .widget-content .textfollow{margin-bottom:15px}#sidebar .FollowByEmail .widget-content .textfollow h2{font-weight:700;font-size:20px;line-height:35px}#sidebar .FollowByEmail .widget-content .textfollow p{font-size:13px}.follow-by-email-address{border:0;font-size:12px;line-height:31px}.follow-by-email-inner table{width:70%;margin:0 auto;backgrounddarkblue:;padding:0 5px;border-radius:2px;line-height:40px}.follow-by-email-address:focus,.follow-by-email-submit:focus{outline:0}.follow-by-email-submit{border:0;background:0 0;font-size:13px;line-height:24px;border-right:1px solid black;padding-right:15px;cursor:pointer}
+#sidebar .PopularPosts li:first-child,#sidebar .widget{margin-bottom:20px}#sidebar .widget,.socialside{border-top:2px solid darkblue}.sidebarwrapper{padding-left:0}#sidebar .widget{background:white;box-shadow:0 0 18px 0 rgb(255, 255, 255)}.contentwrapper{padding-right:0}#sidebar .widget-title{height:38px;margin-bottom:20px;background:darkblue;text-align:center}#sidebar .widget-title h2{color:white;font-weight:700;line-height:35px;background:darkblue;display:inline-block;radius:50px;padding:3px 16px;margin-top:12px;box-shadow:0 0 10px rgb(255, 255, 255)}#sidebar .widget-content,.socialside{padding:10px}#sidebar .PopularPosts li{position:relative;margin-bottom:15px}#sidebar .PopularPosts li:last-child{margin-bottom:5px}#sidebar .PopularPosts li:first-child .item-thumbnail{float:none;margin:0}#sidebar .PopularPosts li:first-child .item-thumbnail img{width:100%;display:block;background-size:cover;height:230px}#sidebar .PopularPosts li:first-child .item-title{margin:10px 0 5px}#sidebar .PopularPosts li .item-thumbnail,.socialside li{float:right;margin-left:10px}#sidebar .PopularPosts li:first-child .item-title a{color:;font-weight:700;line-height:30px;font-size:16px}#sidebar .PopularPosts li:first-child .item-snippet{color:;font-size:12px;display:block;line-height:26px}#sidebar .PopularPosts li .item-snippet{display:none}#sidebar .PopularPosts li .item-title a{color:;font-size:14px;line-height:27px;display:block;font-weight:700}#sidebar .PopularPosts li .item-title a:hover{color:darkblue}#sidebar .PopularPosts li .item-thumbnail img{width:95px;height:85px;display:block;background-size:cover}.socialside{margin-bottom:20px;background:darkblue;box-shadow:0 0 49px 0 rgb(255, 255, 255);overflow:hidden}.socialside li{width:31%;margin-bottom:10px;background:#62124d;border-radius:5%;text-align:center;padding:20px 0}.socialside li a,.socialside li i,.socialside li span{display:block;color:}.socialside li a{font-size:14px}.socialside li i{font-size:17px;margin-bottom:6px}.socialside li span{line-height:17px;font-size:14px}.socialside li:nth-child(3n+3){margin-left:0}.socialside li:hover{opacity:.95}#sidebar .list-label-widget-content ul li{display:block;float:none;line-height:36px;border-bottom:1px solid }#sidebar .list-label-widget-content ul li a{color:;position:relative;padding-right:12px;font-weight:700;font-size:13px;display:inline-block}#sidebar .list-label-widget-content ul li:hover a{color:}#sidebar .list-label-widget-content ul li span{color:rgb(255, 255, 255);float:left;font-size:13px;font-weight:700;display:inline-block}#sidebar .list-label-widget-content ul li a:before{content:'';position:absolute;right:0;width:2px;height:50%;background:;top:50%;transform:translateY(-50%)}#sidebar .list-label-widget-content ul li:last-child{border:0}#sidebar .list-label-widget-content ul li:hover span{color:}
+.follow-by-email-address,.follow-by-email-submit{font-family:treexil;color:;font-weight:700}#blog-pager-newer-link,#blog-pager-older-link,#sidebar #ContactForm1,.home-link{display:none}#sidebar .FollowByEmail{background:}#sidebar .FollowByEmail .widget-content{padding:50px 0;text-align:center}#sidebar .FollowByEmail .widget-content .textfollow{margin-bottom:15px}#sidebar .FollowByEmail .widget-content .textfollow h2{font-weight:700;font-size:20px;line-height:35px}#sidebar .FollowByEmail .widget-content .textfollow p{font-size:13px}.follow-by-email-address{border:0;font-size:12px;line-height:31px}.follow-by-email-inner table{width:70%;margin:0 auto;backgrounddarkblue:;padding:0 5px;border-radius:2px;line-height:40px}.follow-by-email-address:focus,.follow-by-email-submit:focus{outline:0}.follow-by-email-submit{border:0;background:0 0;font-size:13px;line-height:24px;border-right:1px solid ;padding-right:15px;cursor:pointer}
 /* Posts
 ------------------------------ */
-.mainwrapper{margin-top:5px}.item .mainwrapper,.static_page .mainwrapper{margin-top:20px}.contentwrapper .post{background-color:white;box-shadow:0 0 18px 0 rgba(53,53,53,.08);margin-bottom:20px}.post-thumb{float:right;padding:10px 10px 10px 25px}.post-thumb img{width:350px;height:255px;display:block;background:darkblue}.post-info{position:relative;padding:15px 5px 15px 15px;display:table}.post-info .post-title a{color:darkblue;font-weight:700;font-size:18px;line-height:28px;position:relative}.post-info .post-title a:before{content:'';width:2px;height:105%;background:darkblue;right:-10px;position:absolute;display:inline-block;top:52.5%;transform:translateY(-50%)}.post-info .post-snippet{color:black;font-size:14px;line-height:25px;margin:5px 0 10px}.post-meta{margin-top:5px}.post-info .post-comment-link,.post-info .post-timestamp{color:#6d6d6d;font-size:13px;margin-left:10px}.post-info .post-comment-link i,.post-info .post-timestamp i{color:#6d6d6d;margin-left:5px}.post-info .post-timestamp abbr{color:#6d6d6d;text-decoration:none!important}.post-info .post-comment-link a{color:#6d6d6d}.readmoreandshare{position:absolute;bottom:0;left:0;padding:15px}.readmoreandshare .post-share a,.readmoreandshare div{display:inline-block}.readmoreandshare .jump-link a,.readmoreandshare .sharepost{background:darkblue;color:white;width:38px;display:block;height:38px;text-align:center;line-height:38px}.readmoreandshare .jump-link a:hover,.readmoreandshare .sharepost{color:white;background:darkblue}.readmoreandshare .sharepost{display:inline-block}.readmoreandshare .post-share{background:darkblue;color:white;text-align:center;line-height:38px;float:right;opacity:0;padding:0 3px;visibility:hidden;transform:translateX(-20%);position:relative}.readmoreandshare .post-share a{color:white;padding:0 10px}.readmoreandshare .post-share.active{opacity:1;visibility:visible;position:relative;transform:translateX(0);left:12px}.readmoreandshare .post-share:after{content:'';border-top:7px solid transparent;border-bottom:7px solid transparent;border-right:7px solid white ;position:absolute;top:50%;left:-7px;transform:translateY(-50%)}.post-footer .authorpost-profile{display:none}
+.mainwrapper{margin-top:5px}.item .mainwrapper,.static_page .mainwrapper{margin-top:20px}.contentwrapper .post{background-color:white;box-shadow:0 0 18px 0 rgb(255, 255, 255);margin-bottom:20px}.post-thumb{float:right;padding:10px 10px 10px 25px}.post-thumb img{width:350px;height:255px;display:block;background:darkblue}.post-info{position:relative;padding:15px 5px 15px 15px;display:table}.post-info .post-title a{color:darkblue;font-weight:700;font-size:18px;line-height:28px;position:relative}.post-info .post-title a:before{content:'';width:2px;height:105%;background:darkblue;right:-10px;position:absolute;display:inline-block;top:52.5%;transform:translateY(-50%)}.post-info .post-snippet{color:;font-size:14px;line-height:25px;margin:5px 0 10px}.post-meta{margin-top:5px}.post-info .post-comment-link,.post-info .post-timestamp{color:#6d6d6d;font-size:13px;margin-left:10px}.post-info .post-comment-link i,.post-info .post-timestamp i{color:#6d6d6d;margin-left:5px}.post-info .post-timestamp abbr{color:#6d6d6d;text-decoration:none!important}.post-info .post-comment-link a{color:#6d6d6d}.readmoreandshare{position:absolute;bottom:0;left:0;padding:15px}.readmoreandshare .post-share a,.readmoreandshare div{display:inline-block}.readmoreandshare .jump-link a,.readmoreandshare .sharepost{background:darkblue;color:white;width:38px;display:block;height:38px;text-align:center;line-height:38px}.readmoreandshare .jump-link a:hover,.readmoreandshare .sharepost{color:white;background:darkblue}.readmoreandshare .sharepost{display:inline-block}.readmoreandshare .post-share{background:darkblue;color:white;text-align:center;line-height:38px;float:right;opacity:0;padding:0 3px;visibility:hidden;transform:translateX(-20%);position:relative}.readmoreandshare .post-share a{color:white;padding:0 10px}.readmoreandshare .post-share.active{opacity:1;visibility:visible;position:relative;transform:translateX(0);left:12px}.readmoreandshare .post-share:after{content:'';border-top:7px solid transparent;border-bottom:7px solid transparent;border-right:7px solid white ;position:absolute;top:50%;left:-7px;transform:translateY(-50%)}.post-footer .authorpost-profile{display:none}
 /* Widgets Content
 ------------------------------ */
-#widgetsc{position:relative}#widgetsc .widget{box-shadow:0 0 18px 0 rgba(53,53,53,.08);margin-bottom:20px;clear:both}#widgetsc .widget-title{height:38px;margin-bottom:30px;background:darkblue;text-align:center}#darkblue .widget-title h2{color:darkblue;font-weight:700;line-height:35px;background:darkblue;display:inline-block;border-radius:50px;padding:3px 25px;margin-top:12px;box-shadow:0 0 10px rgba(0,0,0,.2)}#widgetsc .widget-title h2 i{margin-left:5px;font-size:14px}#widgetsc .widget-content{padding:0 15px 15px;position:relative;overflow:hidden}
+#widgetsc{position:relative}#widgetsc .widget{box-shadow:0 0 18px 0 rgb(255, 255, 255);margin-bottom:20px;clear:both}#widgetsc .widget-title{height:38px;margin-bottom:30px;background:darkblue;text-align:center}#darkblue .widget-title h2{color:darkblue;font-weight:700;line-height:35px;background:darkblue;display:inline-block;border-radius:50px;padding:3px 25px;margin-top:12px;box-shadow:0 0 10px rgb(255, 255, 255)}#widgetsc .widget-title h2 i{margin-left:5px;font-size:14px}#widgetsc .widget-content{padding:0 15px 15px;position:relative;overflow:hidden}
 /* ----------- Widget 'Third' ----------- */
-.thirdpost,.thirdpost li{position:relative}.thirdpost li{float:right;width:43%;margin-bottom:14px}.thirdpost li:first-child{width:55%;margin-left:14px;margin-bottom:0}.thirdpost li:last-child{margin-bottom:0}.thirdpost li:first-child .thirdp-thumb img{display:block;background-size:cover;width:100%;height:405px}.thirdpost li .thirdp-thumb img{display:block;width:100%;height:195px;background:darkblue}.thirdpost li .thirdp-thumb a:before{content:'';width:100%;height:100%;position:absolute;background:darkblue;background:-webkit-linear-gradient(to top,rgba(0,0,0,.4),rgba(0,0,0,.18));background:linear-gradient(to top,rgba(0,0,0,.4),rgba(0,0,0,.18));z-index:99}.thirdpost li .third-content{position:absolute;bottom:4%;padding:0 15px;z-index:999}.thirdpost li .third-date{margin-top:3px}.thirdpost li .thirdp-title a{color:darkblue;font-weight:700;font-size:16px;line-height:28px}.thirdpost li .third-date a{color:darkblue;font-size:14px}.thirdpost li .third-date a:before{content:'\f073';display:inline-block;margin-left:5px;font-size:13px}.thirdpost li:first-child .thirdp-title a{font-size:18px}
+.thirdpost,.thirdpost li{position:relative}.thirdpost li{float:right;width:43%;margin-bottom:14px}.thirdpost li:first-child{width:55%;margin-left:14px;margin-bottom:0}.thirdpost li:last-child{margin-bottom:0}.thirdpost li:first-child .thirdp-thumb img{display:block;background-size:cover;width:100%;height:405px}.thirdpost li .thirdp-thumb img{display:block;width:100%;height:195px;background:darkblue}.thirdpost li .thirdp-thumb a:before{content:'';width:100%;height:100%;position:absolute;background:darkblue;background:-webkit-linear-gradient(to top,rgb(255, 255, 255),rgb(255, 255, 255));background:linear-gradient(to top,rgb(255, 255, 255),rgb(255, 255, 255));z-index:99}.thirdpost li .third-content{position:absolute;bottom:4%;padding:0 15px;z-index:999}.thirdpost li .third-date{margin-top:3px}.thirdpost li .thirdp-title a{color:darkblue;font-weight:700;font-size:16px;line-height:28px}.thirdpost li .third-date a{color:darkblue;font-size:14px}.thirdpost li .third-date a:before{content:'\f073';display:inline-block;margin-left:5px;font-size:13px}.thirdpost li:first-child .thirdp-title a{font-size:18px}
 /* ----------- Widget 'Sslider' ----------- */
-.sslidepost,.sslidepost li{position:relative}.smallpost,.sslidepost li{float:right;width:100%}.sslidepost li .sslidep-title a{color:darkblue;font-weight:700;font-size:15px;line-height:28px}.sslidepost li .sslide-date a{color:darkblue;font-size:14px}.sslidepost li .sslide-date a:before{content:'\f073';display:inline-block}.sslidepost li:last-child{margin-left:0}.sslidepost li .sslide-thumb{margin-bottom:8px}.sslidepost li .sslide-thumb img{height:215px;display:block;width:100%;background:darkblue}.sslidepost>li{width:100%;margin-bottom:15px}.sslidepost>li .sslide-thumb img{width:100%;display:block;background-size:cover;height:390px}.sslidepost>li .sslide-thumb a:before{content:'';width:100%;height:100%;position:absolute;background:#000;background:-webkit-linear-gradient(to top,rgba(0,0,0,.4),rgba(0,0,0,.18));background:linear-gradient(to top,rgba(0,0,0,.4),rgba(0,0,0,.18));z-index:99}.sslidepost>li .sslide-content{position:absolute;bottom:4%;padding:0 15px;z-index:999}.sslidepost>li .sslidep-title a{color:darkblue;font-weight:700;font-size:18px;line-height:28px}.sslidepost>li p.psummary{font-size:14px;line-height:27px;margin-top:8px}.sslidepost>li .sslide-thumb{margin-bottom:0}
+.sslidepost,.sslidepost li{position:relative}.smallpost,.sslidepost li{float:right;width:100%}.sslidepost li .sslidep-title a{color:darkblue;font-weight:700;font-size:15px;line-height:28px}.sslidepost li .sslide-date a{color:darkblue;font-size:14px}.sslidepost li .sslide-date a:before{content:'\f073';display:inline-block}.sslidepost li:last-child{margin-left:0}.sslidepost li .sslide-thumb{margin-bottom:8px}.sslidepost li .sslide-thumb img{height:215px;display:block;width:100%;background:darkblue}.sslidepost>li{width:100%;margin-bottom:15px}.sslidepost>li .sslide-thumb img{width:100%;display:block;background-size:cover;height:390px}.sslidepost>li .sslide-thumb a:before{content:'';width:100%;height:100%;position:absolute;background:#000;background:-webkit-linear-gradient(to top,rgb(255, 255, 255),rgb(255, 255, 255));background:linear-gradient(to top,rgb(255, 255, 255),rgb(255, 255, 255));z-index:99}.sslidepost>li .sslide-content{position:absolute;bottom:4%;padding:0 15px;z-index:999}.sslidepost>li .sslidep-title a{color:darkblue;font-weight:700;font-size:18px;line-height:28px}.sslidepost>li p.psummary{font-size:14px;line-height:27px;margin-top:8px}.sslidepost>li .sslide-thumb{margin-bottom:0}
 /* ----------- Widget 'ListPost' ----------- */
-.listpost,.listpost li{position:relative}#widgetsc .listwidget{width:48.9%;float:right;margin-left:15px}#widgetsc .listwidget2,#widgetsc .listwidget:nth-child(2n+0){margin-left:0;clear:none}.listpost li{display:block;margin-bottom:15px}.listpost li:first-child{padding-bottom:15px;border-bottom:1px solid rgba(214,214,214,.65);margin-bottom:20px}.listpost li:first-child .list-thumb{margin-bottom:10px}.listpost li:first-child .list-thumb img{display:block;background-size:cover;width:100%;height:220px}.listpost li:first-child .list-title{margin-bottom:3px}.listpost li:first-child .list-title a{color:darkblue;font-weight:700;font-size:16px;line-height:32px}.listpost li:first-child .list-date,.listpost li:first-child .list-writer{display:inline-block;margin-left:15px;font-size:14px;color:darkblue}.listpost li:first-child .list-date:before{content:'\f073';display:inline-block;margin-left:5px;color:darkblue}.listpost li:first-child .list-writer:before{content:'\f007';display:inline-block;margin-left:5px;color:darkblue}.listpost li:first-child p.psummary{color:darkblue;font-size:13px;line-height:27px;margin-top:5px}.listpost li .list-thumb img{width:85px;height:70px;display:block;background:darkblue}.listpost li .list-thumb{float:right;margin-left:10px}.listpost li .list-title a{color:darkblue;font-weight:700;line-height:28px;font-size:14px;display:block}.listpost li .list-date{font-size:13px;color:darkblue}.listpost li .list-date:before{content:'\f073';display:inline-block;margin-left:5px}.listpost li .list-title a:hover{color:darkblue}
+.listpost,.listpost li{position:relative}#widgetsc .listwidget{width:48.9%;float:right;margin-left:15px}#widgetsc .listwidget2,#widgetsc .listwidget:nth-child(2n+0){margin-left:0;clear:none}.listpost li{display:block;margin-bottom:15px}.listpost li:first-child{padding-bottom:15px;border-bottom:1px solid rgb(255, 255, 255);margin-bottom:20px}.listpost li:first-child .list-thumb{margin-bottom:10px}.listpost li:first-child .list-thumb img{display:block;background-size:cover;width:100%;height:220px}.listpost li:first-child .list-title{margin-bottom:3px}.listpost li:first-child .list-title a{color:darkblue;font-weight:700;font-size:16px;line-height:32px}.listpost li:first-child .list-date,.listpost li:first-child .list-writer{display:inline-block;margin-left:15px;font-size:14px;color:darkblue}.listpost li:first-child .list-date:before{content:'\f073';display:inline-block;margin-left:5px;color:darkblue}.listpost li:first-child .list-writer:before{content:'\f007';display:inline-block;margin-left:5px;color:darkblue}.listpost li:first-child p.psummary{color:darkblue;font-size:13px;line-height:27px;margin-top:5px}.listpost li .list-thumb img{width:85px;height:70px;display:block;background:darkblue}.listpost li .list-thumb{float:right;margin-left:10px}.listpost li .list-title a{color:darkblue;font-weight:700;line-height:28px;font-size:14px;display:block}.listpost li .list-date{font-size:13px;color:darkblue}.listpost li .list-date:before{content:'\f073';display:inline-block;margin-left:5px}.listpost li .list-title a:hover{color:darkblue}
 /* ----------- Widget 'FEATURED' ----------- */
-.featuredposts,.featuredposts li{position:relative}.featuredposts li{float:right;width:25%}.featuredposts li:first-child{width:100%}.featuredposts li .feature-thumb img{width:100%;display:block;height:130px;background:white}.featuredposts li .feature-content{position:absolute;text-align:center;top:50%;transform:translateY(-50%);bottom:auto;width:100%;padding:0 15px}.featuredposts li:first-child .feature-thumb img{height:445px}.featuredposts li .feature-thumb a:before{content:'';display:block;position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(0,0,0,.4)}.featuredposts li .feature-title a{color:white;font-size:13px;line-height:26px;display:block}.featuredposts li:first-child .feature-content{top:50%;transform:translateY(-50%);bottom:auto;width:100%;text-align:right;padding:0 40px}.featuredposts li:first-child .feature-title a{font-weight:700;font-size:19px;line-height:28px}.featuredposts li:first-child .feature-title{margin:7px 0}.featuredposts li .feature-date{display:inline-block;color:white;font-size:13px}.featuredposts li .feature-date:before{content:'\f073';display:inline-block;margin-left:5px}.featuredposts li .feature-writer{display:inline-block;margin-left:15px;font-size:13px;color:darkblue}.featuredposts li .feature-writer:before{content:'\f007';display:inline-block;margin-left:5px}.featuredposts li .feature-summary{font-size:14px;line-height:28px}
+.featuredposts,.featuredposts li{position:relative}.featuredposts li{float:right;width:25%}.featuredposts li:first-child{width:100%}.featuredposts li .feature-thumb img{width:100%;display:block;height:130px;background:white}.featuredposts li .feature-content{position:absolute;text-align:center;top:50%;transform:translateY(-50%);bottom:auto;width:100%;padding:0 15px}.featuredposts li:first-child .feature-thumb img{height:445px}.featuredposts li .feature-thumb a:before{content:'';display:block;position:absolute;top:0;right:0;bottom:0;left:0;background:rgb(255, 255, 255)}.featuredposts li .feature-title a{color:white;font-size:13px;line-height:26px;display:block}.featuredposts li:first-child .feature-content{top:50%;transform:translateY(-50%);bottom:auto;width:100%;text-align:right;padding:0 40px}.featuredposts li:first-child .feature-title a{font-weight:700;font-size:19px;line-height:28px}.featuredposts li:first-child .feature-title{margin:7px 0}.featuredposts li .feature-date{display:inline-block;color:white;font-size:13px}.featuredposts li .feature-date:before{content:'\f073';display:inline-block;margin-left:5px}.featuredposts li .feature-writer{display:inline-block;margin-left:15px;font-size:13px;color:darkblue}.featuredposts li .feature-writer:before{content:'\f007';display:inline-block;margin-left:5px}.featuredposts li .feature-summary{font-size:14px;line-height:28px}
 /* PAGENAVI
 ------------------------------ */
 #blog-pager .pagecurrent,#blog-pager .showpageOf{background:darkblue;display:inline-block;color:white;font-weight:700;height:35px;line-height:35px;padding:0 12px;font-size:14px;margin-left:5px}#blog-pager .lastpage{display:none}#blog-pager .displaypageNum a,#blog-pager .firstpage a{color:white;font-size:14px;font-weight:700;background:darkblue;display:inline-block;height:35px;line-height:35px;padding:0 12px;margin-left:5px}#blog-pager .pagecurrent:hover,#blog-pager .showpageOf:hover,#blog-pager span a:hover{background:darkblue;color:white}
 /* FOOTER
 ------------------------------ */
-.footerwrapper{position:relative;overflow:hidden;margin-top:20px}.widgetsfooter{background:darkblue;position:relative;padding:20px 0}.titlewidgets p,.widgetsfooter .section .widget-title{background-color:darkblue;box-shadow:0 0 16px 0 rgba(0,0,0,.206);display:inline-block}.copyright{position:relative;padding:15px 0;background:darkblue;box-shadow:0 0 16px 0 rgba(0,0,0,.206)}.copyrightsite{float:right}.copyrighttreexil{float:left}.titlewidgets{text-align:center;margin:10px 0 30px}.titlewidgets p{padding:0 25px;height:40px;line-height:40px}.titlewidgets p:before{content:'\f1fe';margin-left:8px;display:inline-block}.widgetsfooter .section{float:right;width:32.4%}.widgetsfooter .footerw2{margin:0 15px}.widgetsfooter .section .widget-title{padding:0 15px 0 20px;height:35px}.widgetsfooter .section .widget-title h2{line-height:35px;color:white;font-size:14px;font-weight:700}.widgetsfooter .section .widget-content{padding:20px 0;border-top:1px solid darkblue}.widgetsfooter .popular-posts ul li .item-title a{color:white;font-size:14px;line-height:28px}.widgetsfooter .popular-posts ul li .item-thumbnail img{display:block;background-size:cover;width:75px;height:65px;border:2px solid rgba(67,11,52,.3);border-radius:2px}.widgetsfooter .popular-posts ul li{position:relative;display:block;margin-bottom:20px}.widgetsfooter .popular-posts ul li .item-thumbnail{float:right;margin-left:15px}.copyrighttreexil a{margin-right:5px;color:darkblue}
+.footerwrapper{position:relative;overflow:hidden;margin-top:20px}.widgetsfooter{background:darkblue;position:relative;padding:20px 0}.titlewidgets p,.widgetsfooter .section .widget-title{background-color:darkblue;box-shadow:0 0 16px 0 rgb(255, 255, 255);display:inline-block}.copyright{position:relative;padding:15px 0;background:darkblue;box-shadow:0 0 16px 0 rgb(255, 255, 255)}.copyrightsite{float:right}.copyrighttreexil{float:left}.titlewidgets{text-align:center;margin:10px 0 30px}.titlewidgets p{padding:0 25px;height:40px;line-height:40px}.titlewidgets p:before{content:'\f1fe';margin-left:8px;display:inline-block}.widgetsfooter .section{float:right;width:32.4%}.widgetsfooter .footerw2{margin:0 15px}.widgetsfooter .section .widget-title{padding:0 15px 0 20px;height:35px}.widgetsfooter .section .widget-title h2{line-height:35px;color:white;font-size:14px;font-weight:700}.widgetsfooter .section .widget-content{padding:20px 0;border-top:1px solid darkblue}.widgetsfooter .popular-posts ul li .item-title a{color:white;font-size:14px;line-height:28px}.widgetsfooter .popular-posts ul li .item-thumbnail img{display:block;background-size:cover;width:75px;height:65px;border:2px solid rgb(255, 255, 255);border-radius:2px}.widgetsfooter .popular-posts ul li{position:relative;display:block;margin-bottom:20px}.widgetsfooter .popular-posts ul li .item-thumbnail{float:right;margin-left:15px}.copyrighttreexil a{margin-right:5px;color:darkblue}
 /* Tarnsition
 ------------------------------ */
 #navbar ul li a,#socialmedia ul li a, .menunav ul li a, .socialside li, .PopularPosts .item-title a, .readmoreandshare .jump-link a,.post-share, .list-title a,#blog-pager span a, #related-posts li .title, .search-wrap, .list-label-widget-content ul li a, .list-label-widget-content ul li span, #sub-menu {transition: all .3s;-webkit-transition: all .3s;-o-transition: all .3s;-moz-transition: all .3s;}
@@ -207,7 +211,7 @@ $('#related-posts img').attr('src', function(i, src) {return src.replace( '/defa
 }
 	</style>
 <style type='text/css'>
-.postt-author,.postt-author img,.postt-time{display:inline-block}.post{padding:10px 15px}.post .post-title{color:BLACK;font-weight:700;font-size:19px;line-height:28px;padding:5px 0 15px}.postt-author{margin-left:10px;padding:0 0 15px}.postt-author img{border-radius:50%;vertical-align:middle;width:30px;margin-left:2px}.postt-author a{color:BLACK;font-size:13px}.postt-time i{margin-left:5px;color:black}.postt-time abbr{text-decoration:none}.postt-time a{font-size:13px;color:black}.post-body{color:black;font-size:14px;display:block;line-height:32px}.insidepost{margin-top:20px}.related-posts{width:100%;position:relative;overflow:hiddden}.related-posts &gt; p{color:darkblue;font-weight:700;font-size:15px}#related-posts{margin-top:15px}#related-posts li{float:right;width:32.8%;margin-left:5px;margin-bottom:5px}#related-posts li img{width:100%!important;height:175px!important}#related-posts li:nth-child(3n+3){margin-left:0}#related-posts li .title{padding:10px 5px;display:block;overflow:hidden;height:70px;color:black;font-weight:700;font-size:13px;line-height:26px}#related-posts li .title:hover{color:darkblue}.commentfb{margin-top:10px}.commentfb &gt; p{color:black;font-weight:700;font-size:15px}.commentfb #container-commentfb{text-align:center;margin-top:15px}#blog-pager{display:none}.sharepostt{float:left;line-height:30px}.sharepostt a{margin:0 5px;display:inline-block;color:black}.sharetpost{text-align:left;margin-bottom:10px}.sharetpost p{text-align:right;display:inline-block;float:right;color:darkblue;font-weight:700;font-size:15px}.sharetpost .shareiconn,.sharetpost a{display:inline-block;background:#eee;border-radius:50%;text-align:center;color:black}.sharetpost .shareiconn{width:30px;height:30px;margin:0 4px 15px auto;font-size:12px;box-shadow:0 0 0 4px rgba(98,18,77,.36);line-height:30px;cursor:pointer}.sharetpost a{width:33px;height:33px;margin-left:5px;line-height:33px;font-size:13px}.author-content{float:right;text-align:center;position:relative;z-index:99999;margin-top:-20px;margin-left:23px}.authorpost{margin-bottom:25px;border-top:40px solid white;padding:0 15px}.author-bio{margin-top:15px;font-size:12px;line-height:25px}.author-content img{display:inline-block;border-radius:50%;width:60px}.author-content a{display:block;line-height:12px;font-weight:700;color:#eee}
+.postt-author,.postt-author img,.postt-time{display:inline-block}.post{padding:10px 15px}.post .post-title{color:;font-weight:700;font-size:19px;line-height:28px;padding:5px 0 15px}.postt-author{margin-left:10px;padding:0 0 15px}.postt-author img{border-radius:50%;vertical-align:middle;width:30px;margin-left:2px}.postt-author a{color:;font-size:13px}.postt-time i{margin-left:5px;color:}.postt-time abbr{text-decoration:none}.postt-time a{font-size:13px;color:}.post-body{color:;font-size:14px;display:block;line-height:32px}.insidepost{margin-top:20px}.related-posts{width:100%;position:relative;overflow:hiddden}.related-posts &gt; p{color:darkblue;font-weight:700;font-size:15px}#related-posts{margin-top:15px}#related-posts li{float:right;width:32.8%;margin-left:5px;margin-bottom:5px}#related-posts li img{width:100%!important;height:175px!important}#related-posts li:nth-child(3n+3){margin-left:0}#related-posts li .title{padding:10px 5px;display:block;overflow:hidden;height:70px;color:;font-weight:700;font-size:13px;line-height:26px}#related-posts li .title:hover{color:darkblue}.commentfb{margin-top:10px}.commentfb &gt; p{color:;font-weight:700;font-size:15px}.commentfb #container-commentfb{text-align:center;margin-top:15px}#blog-pager{display:none}.sharepostt{float:left;line-height:30px}.sharepostt a{margin:0 5px;display:inline-block;color:}.sharetpost{text-align:left;margin-bottom:10px}.sharetpost p{text-align:right;display:inline-block;float:right;color:darkblue;font-weight:700;font-size:15px}.sharetpost .shareiconn,.sharetpost a{display:inline-block;background:#eee;border-radius:50%;text-align:center;color:}.sharetpost .shareiconn{width:30px;height:30px;margin:0 4px 15px auto;font-size:12px;box-shadow:0 0 0 4px rgba(98,18,77,.36);line-height:30px;cursor:pointer}.sharetpost a{width:33px;height:33px;margin-left:5px;line-height:33px;font-size:13px}.author-content{float:right;text-align:center;position:relative;z-index:99999;margin-top:-20px;margin-left:23px}.authorpost{margin-bottom:25px;border-top:40px solid white;padding:0 15px}.author-bio{margin-top:15px;font-size:12px;line-height:25px}.author-content img{display:inline-block;border-radius:50%;width:60px}.author-content a{display:block;line-height:12px;font-weight:700;color:#eee}
 	</style>
 </b:if>
 &lt;/head&gt;&lt;!--<head/>--&gt;
@@ -221,22 +225,19 @@ $('#related-posts img').attr('src', function(i, src) {return src.replace( '/defa
 </div>
 <div class='topbar'>
 <div class='container'>
-<div class='nav'>
+<div>
  <b:section class='navbar' id='navbar' showaddelement='no'>
    <b:widget id='PageList1' locked='true' title='الصفحات' type='PageList' version='1'>
      <b:widget-settings>
-       <b:widget-setting name='pageListJson'><![CDATA[{"home":{"href":"https://time-news-1.blogspot.com/search/label/","position":0,"title":"الرئيسية"}}]]></b:widget-setting>
-       <b:widget-setting name='homeTitle'>الرئيسية</b:widget-setting>
+       <b:widget-setting name='pageListJson'><![CDATA[{"link0":{"href":"https://time-news-1.blogspot.com/search/label/","position":0,"title":"الرئيسية"}}]]></b:widget-setting>
+       <b:widget-setting name='homeTitle'>Home</b:widget-setting>
      </b:widget-settings>
      <b:includable id='main'>
-      <div class='widget-content'>
-        <div class='res-butt res-butt1'><span/><span/><span/></div>
+      <div>
         <ul>
           <b:loop values='data:links' var='link'>
             <b:if cond='data:link.isCurrentPage'>
-              <li class='selected'><a expr:href='data:link.href' expr:title='data:link.title'><data:link.title/></a></li>
               <b:else/>
-              <li><a expr:href='data:link.href' expr:title='data:link.title'><data:link.title/></a></li>
             </b:if>
           </b:loop>
         </ul>
@@ -274,104 +275,6 @@ $('#related-posts img').attr('src', function(i, src) {return src.replace( '/defa
    </ul>
    <b:include name='quickedit'/>
  </div>
-</b:includable>
-<!-- Add this includable to your Blog1 widget, right after one of the other includables -->
-<b:includable id='post' var='post'>
-  <div class='post'>
-    <!-- Post title -->
-    <b:if cond='data:post.title'>
-      <h1 class='post-title'>
-        <b:if cond='data:post.url'>
-          <a expr:href='data:post.url'><data:post.title/></a>
-        <b:else/>
-          <data:post.title/>
-        </b:if>
-      </h1>
-    </b:if>
-    
-    <!-- Post metadata -->
-    <div class='post-header'>
-      <div class='postt-author'>
-        <b:if cond='data:post.authorProfileUrl'>
-          <a expr:href='data:post.authorProfileUrl' target='_blank'>
-            <img expr:alt='data:post.author' expr:src='data:post.authorPhoto.url'/>
-            <data:post.author/>
-          </a>
-        <b:else/>
-          <span><data:post.author/></span>
-        </b:if>
-      </div>
-      
-      <div class='postt-time'>
-        <i class='fa fa-clock-o'></i>
-        <a expr:href='data:post.url'>
-          <abbr class='timeago' expr:title='data:post.timestampISO8601'>
-            <data:post.timestamp/>
-          </abbr>
-        </a>
-      </div>
-    </div>
-    
-    <!-- Post content -->
-    <div class='post-body'>
-      <data:post.body/>
-    </div>
-    
-    <!-- Post footer -->
-    <div class='post-footer'>
-      <b:if cond='data:post.labels'>
-        <div class='post-labels'>
-          <i class='fa fa-tags'></i> <data:postLabelsLabel/>:
-          <b:loop values='data:post.labels' var='label'>
-            <a expr:href='data:label.url' rel='tag'><data:label.name/></a><b:if cond='data:label.isLast != "true"'>,</b:if>
-          </b:loop>
-        </div>
-      </b:if>
-    </div>
-    
-    <!-- Share buttons -->
-    <div class='sharetpost'>
-      <p>مشاركة المقال عبر:</p>
-      <a expr:href='&quot;https://www.facebook.com/sharer.php?u=&quot; + data:post.url' rel='nofollow' target='_blank'><i class='fa fa-facebook'/></a>
-      <a expr:href='&quot;https://twitter.com/share?url=&quot; + data:post.url' rel='nofollow' target='_blank'><i class='fa fa-twitter'/></a>
-      <a expr:href='&quot;https://plus.google.com/share?url=&quot; + data:post.url' rel='nofollow' target='_blank'><i class='fa fa-google-plus'/></a>
-    </div>
-  </div>
-  
-  <!-- Related posts -->
-  <b:if cond='data:blog.pageType == &quot;item&quot;'>
-    <div class='insidepost'>
-      <div class='related-posts'>
-        <p>مقالات ذات صلة</p>
-        <script expr:src='&quot;/feeds/posts/default/-/&quot; + data:post.labels.first.name + &quot;?alt=json-in-script&amp;callback=related_results_labels_thumbs&amp;max-results=9&quot;' type='text/javascript'/>
-        <script type='text/javascript'>
-          var maxresults = 6;
-          var splittercolor = &quot;#fff&quot;;
-          printRelatedLabels_thumbs(&quot;<data:post.url/>&quot;);
-        </script>
-      </div>
-    </div>
-  </b:if>
-  
-  <!-- Author bio -->
-  <b:if cond='data:blog.pageType == &quot;item&quot;'>
-    <div class='authorpost'>
-      <div class='author-content'>
-        <a expr:href='data:post.authorProfileUrl' target='_blank'>
-          <img expr:alt='data:post.author' expr:src='data:post.authorPhoto.url'/>
-        </a>
-        <a expr:href='data:post.authorProfileUrl'><data:post.author/></a>
-      </div>
-      <div class='author-bio'>
-        <data:post.authorAboutMe/>
-      </div>
-    </div>
-  </b:if>
-  
-  <!-- Comments -->
-  <b:if cond='data:post.allowComments'>
-    <b:include data='post' name='comments'/>
-  </b:if>
 </b:includable>
    </b:widget>
  </b:section>
@@ -485,146 +388,19 @@ $('#related-posts img').attr('src', function(i, src) {return src.replace( '/defa
     </div>
     <b:include name='quickedit'/>
   </b:includable>
-
-  <!-- Add this includable to your Blog1 widget, right after one of the other includables -->
-<b:includable id='post' var='post'>
-  <div class='post'>
-    <!-- Post title -->
-    <b:if cond='data:post.title'>
-      <h1 class='post-title'>
-        <b:if cond='data:post.url'>
-          <a expr:href='data:post.url'><data:post.title/></a>
-        <b:else/>
-          <data:post.title/>
-        </b:if>
-      </h1>
-    </b:if>
-    
-    <!-- Post metadata -->
-    <div class='post-header'>
-      <div class='postt-author'>
-        <b:if cond='data:post.authorProfileUrl'>
-          <a expr:href='data:post.authorProfileUrl' target='_blank'>
-            <img expr:alt='data:post.author' expr:src='data:post.authorPhoto.url'/>
-            <data:post.author/>
-          </a>
-        <b:else/>
-          <span><data:post.author/></span>
-        </b:if>
-      </div>
-      
-      <div class='postt-time'>
-        <i class='fa fa-clock-o'></i>
-        <a expr:href='data:post.url'>
-          <abbr class='timeago' expr:title='data:post.timestampISO8601'>
-            <data:post.timestamp/>
-          </abbr>
-        </a>
-      </div>
-    </div>
-    
-    <!-- Post content -->
-    <div class='post-body'>
-      <data:post.body/>
-    </div>
-    
-    <!-- Post footer -->
-    <div class='post-footer'>
-      <b:if cond='data:post.labels'>
-        <div class='post-labels'>
-          <i class='fa fa-tags'></i> <data:postLabelsLabel/>:
-          <b:loop values='data:post.labels' var='label'>
-            <a expr:href='data:label.url' rel='tag'><data:label.name/></a><b:if cond='data:label.isLast != "true"'>,</b:if>
-          </b:loop>
-        </div>
-      </b:if>
-    </div>
-    
-    <!-- Share buttons -->
-    <div class='sharetpost'>
-      <p>مشاركة المقال عبر:</p>
-      <a expr:href='&quot;https://www.facebook.com/sharer.php?u=&quot; + data:post.url' rel='nofollow' target='_blank'><i class='fa fa-facebook'/></a>
-      <a expr:href='&quot;https://twitter.com/share?url=&quot; + data:post.url' rel='nofollow' target='_blank'><i class='fa fa-twitter'/></a>
-      <a expr:href='&quot;https://plus.google.com/share?url=&quot; + data:post.url' rel='nofollow' target='_blank'><i class='fa fa-google-plus'/></a>
-    </div>
-  </div>
-  
-  <!-- Related posts -->
-  <b:if cond='data:blog.pageType == &quot;item&quot;'>
-    <div class='insidepost'>
-      <div class='related-posts'>
-        <p>مقالات ذات صلة</p>
-        <script expr:src='&quot;/feeds/posts/default/-/&quot; + data:post.labels.first.name + &quot;?alt=json-in-script&amp;callback=related_results_labels_thumbs&amp;max-results=9&quot;' type='text/javascript'/>
-        <script type='text/javascript'>
-          var maxresults = 6;
-          var splittercolor = &quot;#fff&quot;;
-          printRelatedLabels_thumbs(&quot;<data:post.url/>&quot;);
-        </script>
-      </div>
-    </div>
-  </b:if>
-  
-  <!-- Author bio -->
-  <b:if cond='data:blog.pageType == &quot;item&quot;'>
-    <div class='authorpost'>
-      <div class='author-content'>
-        <a expr:href='data:post.authorProfileUrl' target='_blank'>
-          <img expr:alt='data:post.author' expr:src='data:post.authorPhoto.url'/>
-        </a>
-        <a expr:href='data:post.authorProfileUrl'><data:post.author/></a>
-      </div>
-      <div class='author-bio'>
-        <data:post.authorAboutMe/>
-      </div>
-    </div>
-  </b:if>
-  
-  <!-- Comments -->
-  <b:if cond='data:post.allowComments'>
-    <b:include data='post' name='comments'/>
-  </b:if>
-</b:includable>
    </b:widget>
  </b:section>
 </div>
 <div class='bannersite col-md-9 col-xs-12'>
  <b:section class='bannerheader' id='bannerheader' showaddelement='no'>
-   <b:widget id='HTML1' locked='true' title='أدسنس' type='HTML' version='1'>
-     <b:widget-settings>
-       <b:widget-setting name='content'><![CDATA[<span>
-<span>
-<div class="lalulintas"><span class="rambuhijau">
-مساحة إعلانية</span>
-</div>
-<style type="text/css">
-.lalulintas{width:100%;height:100px;background:#f11809;margin:0 auto;position:relative;}
-.rambuhijau{background:#f8695f;position:absolute;display:block;color:rgba(0,0,0,0.2);text-align:center;text-transform:uppercase;letter-spacing:2px;font-size:180%;padding:10px;margin:5px;right:0;left:0;top:0;bottom:0;font-weight:700;line-height:4.4rem}
-@media only screen and (max-width: 768px) {
-.rambuhijau {font-size:100%;}
-}
-</style></span></span>]]></b:widget-setting>
-     </b:widget-settings>
-     <b:includable id='main' var='top'>
-  <!-- posts -->
-  <div class='blog-posts'>
-    <b:include data='top' name='status-message'/>
-    <b:if cond='data:blog.pageType == &quot;index&quot;'>
-      <b:loop values='data:posts' var='post'>
-        <b:include data='post' name='post'/>
-      </b:loop>
-    <b:else/>
-      <b:include data='top' name='posts'/>
-    </b:if>
+   <b:widget id='HTML1' locked='true' title='' type='HTML' version='1'>
+     <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <div class='widget-content'>
+    <data:content/>
   </div>
 
-  <b:include name='nextprev'/>
-</b:includable>
-     <b:includable id='posts' var='posts'>
-  <div class='blog-posts hfeed'>
-    <b:loop values='data:posts' var='post'>
-      <b:include data='post' name='post'/>
-    </b:loop>
-  </div>
+  <b:include name='quickedit'/>
 </b:includable>
    </b:widget>
  </b:section>
@@ -633,11 +409,15 @@ $('#related-posts img').attr('src', function(i, src) {return src.replace( '/defa
 </div>
 <div class='menunav'>
 <div class='container'>
-       <a class='homenav' href='/'><i class='fa fa-home'/></a>
+<a class='homenav' href='/'><i class='fa fa-home'/></a>
  <b:section class='menu' id='menu' showaddelement='no'>
    <b:widget id='LinkList3' locked='true' title='القائمة الرئيسية' type='LinkList' version='1'>
      <b:widget-settings>
+       <b:widget-setting name='text-9'/>
+       <b:widget-setting name='link-9'>#</b:widget-setting>
+       <b:widget-setting name='text-8'/>
        <b:widget-setting name='link-7'>https://time-news-1.blogspot.com/search/label/مقابلات</b:widget-setting>
+       <b:widget-setting name='link-8'>#</b:widget-setting>
        <b:widget-setting name='link-5'>https://time-news-1.blogspot.com/search/label/مقالات</b:widget-setting>
        <b:widget-setting name='link-6'>https://time-news-1.blogspot.com/search/label/رياضة</b:widget-setting>
        <b:widget-setting name='link-3'>https://time-news-1.blogspot.com/search/label/اقتصاد</b:widget-setting>
@@ -696,14 +476,13 @@ $('#related-posts img').attr('src', function(i, src) {return src.replace( '/defa
 <div class='slidertreexil'>
 <div class='container'>
 <b:section class='slidert' id='slidert' showaddelement='no'>
-  <b:widget id='HTML3' locked='true' title='Blog Posts' type='HTML'>
+  <b:widget id='HTML3' locked='true' title='Blog Posts' type='HTML' version='1'>
     <b:widget-settings>
       <b:widget-setting name='content'/>
     </b:widget-settings>
     <b:includable id='main'>
   <!-- only display title if it's non-empty -->
   <b:if cond='data:title != &quot;&quot;'>
-    <h2 class='title'><data:title/></h2>
   </b:if>
   <div class='widget-content'>
     <data:content/>
@@ -846,7 +625,7 @@ $('#related-posts img').attr('src', function(i, src) {return src.replace( '/defa
             <div class='comment-form'>
               <a name='comment-form'/>
               <b:if cond='data:mobile'>
-                <h4 id='comment-post-message'>
+                <h4 id=''>
                   <a expr:id='data:widget.instanceId + &quot;_comment-editor-toggle-link&quot;' href='javascript:void(0)'><data:postCommentMsg/></a></h4>
                 <p><data:blogCommentMessage/></p>
                 <data:blogTeamBlogMessage/>
@@ -898,16 +677,110 @@ $('#related-posts img').attr('src', function(i, src) {return src.replace( '/defa
             </b:if>
           </b:includable>
     <b:includable id='comments' var='post'>
-<div class='commentfb'>
-<p>اترك تعليقا: </p>
-<script src='//connect.facebook.net/ar_AR/all.js#xfbml=1'/>
-<div id='fb-root'/>
-<div id='container-commentfb' style='width: 100%;'>
-<fb:comments expr:href='data:post.url' num_posts='10' width='650'/>
-</div>
-</div>
+  <div class='comments' id='comments'>
+    <a name='comments'/>
+    <b:if cond='data:post.allowComments'>
+      <h4><data:post.commentLabelFull/>:</h4>
 
-          </b:includable>
+      <b:if cond='data:post.commentPagingRequired'>
+        <span class='paging-control-container'>
+          <b:if cond='data:post.hasOlderLinks'>
+            <a expr:class='data:post.oldLinkClass' expr:href='data:post.oldestLinkUrl'><data:post.oldestLinkText/></a>
+              &#160;
+            <a expr:class='data:post.oldLinkClass' expr:href='data:post.olderLinkUrl'><data:post.olderLinkText/></a>
+              &#160;
+          </b:if>
+
+          <data:post.commentRangeText/>
+
+          <b:if cond='data:post.hasNewerLinks'>
+            &#160;
+            <a expr:class='data:post.newLinkClass' expr:href='data:post.newerLinkUrl'><data:post.newerLinkText/></a>
+            &#160;
+            <a expr:class='data:post.newLinkClass' expr:href='data:post.newestLinkUrl'><data:post.newestLinkText/></a>
+          </b:if>
+        </span>
+      </b:if>
+
+      <div expr:id='data:widget.instanceId + &quot;_comments-block-wrapper&quot;'>
+        <dl expr:class='data:post.avatarIndentClass' id='comments-block'>
+          <b:loop values='data:post.comments' var='comment'>
+            <dt expr:class='&quot;comment-author &quot; + data:comment.authorClass' expr:id='data:comment.anchorName'>
+              <b:if cond='data:comment.favicon'>
+                <img expr:src='data:comment.favicon' height='16px' style='margin-bottom:-2px;' width='16px'/>
+              </b:if>
+              <a expr:name='data:comment.anchorName'/>
+              <b:if cond='data:blog.enabledCommentProfileImages'>
+                <data:comment.authorAvatarImage/>
+              </b:if>
+              <b:if cond='data:comment.authorUrl'>
+                <a expr:href='data:comment.authorUrl' rel='nofollow'><data:comment.author/></a>
+              <b:else/>
+                <data:comment.author/>
+              </b:if>
+              <data:commentPostedByMsg/>
+            </dt>
+            <dd class='' expr:id='data:widget.instanceId + data:comment.cmtBodyIdPostfix'>
+              <b:if cond=''>
+                <span class=''><data:comment.body/></span>
+              <b:else/>
+                <p>
+                  <data:comment.body/>
+                </p>
+              </b:if>
+            </dd>
+            <dd class='comment-footer'>
+              <span class='comment-timestamp'>
+                <a expr:href='data:comment.url' title='comment permalink'>
+                  <data:comment.timestamp/>
+                </a>
+                <b:include data='comment' name='commentDeleteIcon'/>
+              </span>
+            </dd>
+          </b:loop>
+        </dl>
+      </div>
+
+      <b:if cond='data:post.commentPagingRequired'>
+        <span class='paging-control-container'>
+          <a expr:class='data:post.oldLinkClass' expr:href='data:post.oldestLinkUrl'>
+            <data:post.oldestLinkText/>
+          </a>
+          <a expr:class='data:post.oldLinkClass' expr:href='data:post.olderLinkUrl'>
+            <data:post.olderLinkText/>
+          </a>
+          &#160;
+          <data:post.commentRangeText/>
+          &#160;
+          <a expr:class='data:post.newLinkClass' expr:href='data:post.newerLinkUrl'>
+            <data:post.newerLinkText/>
+          </a>
+          <a expr:class='data:post.newLinkClass' expr:href='data:post.newestLinkUrl'>
+            <data:post.newestLinkText/>
+          </a>
+        </span>
+      </b:if>
+<p class='comment-footer'>
+        <b:if cond='data:post.embedCommentForm'>
+          <b:if cond='data:post.allowNewComments'>
+            <b:include data='post' name='comment-form'/>
+          <b:else/>
+            <data:post.noNewCommentsText/>
+          </b:if>
+        <b:elseif cond='data:post.allowComments'/>
+          <a expr:href='data:post.addCommentUrl' expr:onclick='data:post.addCommentOnclick'><data:postCommentMsg/></a>
+        </b:if>
+      </p>
+    </b:if>
+    <b:if cond='data:showCmtPopup'>
+      <div id='comment-popup'>
+        <iframe allowtransparency='true' frameborder='0' id='comment-actions' name='comment-actions' scrolling='no'>
+        </iframe>
+      </div>
+    </b:if>
+     
+  </div>
+</b:includable>
     <b:includable id='feedLinks'> 
             <b:if cond='data:blog.pageType != &quot;item&quot;'> <!-- Blog feed links -->
               <b:if cond='data:feedLinks'>
@@ -1070,13 +943,13 @@ $('#related-posts img').attr('src', function(i, src) {return src.replace( '/defa
                             <b:if cond='data:post.authorProfileUrl'>
                               <span class='fn' itemprop='author' itemscope='itemscope' itemtype='http://schema.org/Person'>
                                 <meta expr:content='data:post.authorProfileUrl' itemprop='url'/>
-                                <a expr:href='data:post.authorProfileUrl' rel='author' title='author profile'>
-                                  <span itemprop='name'><data:post.author/></span>
+                                <a expr:href='data:post.authorProfileUrl' rel='author' title=''>
+                                  <span itemprop=''><data:post.author/></span>
                                 </a>
                               </span>
                             <b:else/>
                               <span class='fn' itemprop='author' itemscope='itemscope' itemtype='http://schema.org/Person'>
-                                <span itemprop='name'><data:post.author/></span>
+                                <span itemprop=''><data:post.author/></span>
                               </span>
                             </b:if>
                           </b:if>
@@ -1173,7 +1046,6 @@ $('#related-posts img').attr('src', function(i, src) {return src.replace( '/defa
 },
     &quot;description&quot;: &quot;<data:post.snippet/>&quot;,
 }
-
 </script>
 <div class='post hentry uncustomized-post-template'>
 <b:if cond='data:post.firstImageUrl'>
@@ -1193,27 +1065,22 @@ $('#related-posts img').attr('src', function(i, src) {return src.replace( '/defa
 </h3>
 </b:if>   
 <b:if cond='data:blog.pageType == &quot;item&quot;'>
+<div class='postt-author'>
+<b:if cond='data:post.authorPhoto.url'>
+<img expr:src='data:post.authorPhoto.url ? data:post.authorPhoto.url : &quot;//4.bp.blogspot.com/-nGK3MDjaX2c/WZG28l3WfZI/AAAAAAAAAcM/UBqe8XurHE4KAskRCviHldlJaueByAygwCK4BGAYYCw/s1600/alt-autho.png&quot;' itemprop='image' width='50px'/>
+</b:if>
+</div>
 <div class='postt-time'>
 <b:if cond='data:top.showTimestamp'>
 <b:if cond='data:post.url'>
 <meta expr:content='data:post.url.canonical' itemprop='url'/>
 <a class='timestamp-link' expr:href='data:post.url' rel='bookmark' title='permanent link'>
 <abbr class='published' expr:title='data:post.timestampISO8601' itemprop='datePublished'><i aria-hidden='true' class=''/><data:post.timestamp/></abbr></a>
+</b:if>  
+  </b:if>
+  </div>
 </b:if>
-</b:if>
-</div>
-</b:if>
-<div class='sharepostt'>
-<a class='share-wtsp' expr:data-href='data:post.url' expr:data-text='data:post.title' href='whatsapp://send' title='Share on Whatsapp'>
-<i class='fa fa-whatsapp'/></a>
-<a class='share-linkedin' expr:href='&quot;http://linkedin.com/share?url=&quot; + data:post.url' target='_blank'>
-<i class='fa fa-linkedin'/></a>
-<a class='share-gplus' expr:href='&quot;http://plus.google.com/share?url=&quot; + data:post.url' target='_blank'>
-<i class='fa fa-google-plus'/></a>
-<a class='share-twitter' expr:href='&quot;http://twitter.com/share?url=&quot; + data:post.url' target='_blank'>
-<i class='fa fa-twitter'/></a>
-<a class='share-facebook' expr:href='&quot;http://www.facebook.com/sharer.php?u=&quot; + data:post.url' target='_blank'>
-<i class='fa fa-facebook'/></a>
+  <div class=''>
 </div>
 </b:if>
 <b:if cond='data:blog.pageType not in {&quot;static_page&quot;, &quot;item&quot;}'>
@@ -1280,7 +1147,6 @@ $('#related-posts img').attr('src', function(i, src) {return src.replace( '/defa
 <div class='post-meta'>
 <span class='post-author vcard'>
 </span>
-
                 <span class='post-timestamp'>
                   <b:if cond='data:top.showTimestamp'>
                     <data:top.timestampLabel/>
@@ -1309,7 +1175,7 @@ $('#related-posts img').attr('src', function(i, src) {return src.replace( '/defa
 <div class='insidepost'>
 <div class='sharetpost'>
 <p>شارك المقالة عبر:</p>
-<a class='wtsp' expr:data-href='data:post.url' expr:data-text='data:https://time-news-1.blogspot.com/' href='whatsapp://send' title='Share on Whatsapp'>
+<a class='wtsp' expr:data-href='data:post.url' expr:data-text='data:post.title' href='whatsapp://send' title='Share on Whatsapp'>
 <i class='fa fa-whatsapp'/></a>
 <a class='linkedin' expr:href='&quot;http://linkedin.com/share?url=&quot; + data:post.url' target='_blank'>
 <i class='fa fa-linkedin'/></a>
@@ -1381,11 +1247,11 @@ printRelatedLabels_thumbs(&quot;<data:post.url/>&quot;);
 <b:if cond='data:post.authorAboutMe'>
 <div class='authorpost-profile'>
 <b:if cond='data:post.authorPhoto.url'>
-<img expr:src='data:post.authorPhoto.url ? data:post.authorPhoto.url : &quot;//4.bp.blogspot.com/-nGK3MDjaX2c/WZG28l3WfZI/AAAAAAAAAcM/UBqe8XurHE4KAskRCviHldlJaueByAygwCK4BGAYYCw/s1600/alt-autho.png&quot;' itemprop='image' width='50px'/>
+<img expr:src='data:post.authorPhoto.url ? data:post.authorPhoto.url : ;' itemprop='image' width='50px'/>
 </b:if>
 <div>
 <a class='g-profile' expr:href='data:post.authorProfileUrl' itemprop='url' rel='author' title='author profile'>
-<span itemprop='name'><data:post.author/></span>
+<span itemprop=''><data:post.author/></span>
 </a>
 </div>
 <span itemprop='description'><data:post.authorAboutMe/></span>
@@ -1622,16 +1488,41 @@ printRelatedLabels_thumbs(&quot;<data:post.url/>&quot;);
               })();
           // ]]>
             </script>
-          </b:includable>
-    <b:includable id='threaded_comments' var='post'>
-<div class='commentfb'>
-<p>اترك تعليقا: </p>
-<script src='//connect.facebook.net/ar_AR/all.js#xfbml=1'/>
-<div id='fb-root'/>
-<div id='container-commentfb' style='width: 100%;'><fb:comments href='https://scodamag-t.blogspot.com/2017/01/blog-post.html' num_posts='10' width='650'/></div>
-</div>
 
           </b:includable>
+    <b:includable id='threaded_comments' var='post'>
+  <div class='comments' id='comments'>
+    <a name='comments'/>
+    
+
+    <div class='comments-content'>
+      <b:include cond='data:post.embedCommentForm' data='post' name='threaded_comment_js'/>
+      <div id='comment-holder'>
+         <data:post.commentHtml/>
+      </div>
+    </div>
+
+    <p class='comment-footer'>
+      <b:if cond='data:post.allowNewComments'>
+        <b:include data='post' name='threaded-comment-form'/>
+      <b:else/>
+        <data:post.noNewCommentsText/>
+      </b:if>
+    </p>
+
+    <b:if cond='data:showCmtPopup'>
+      <div id='comment-popup'>
+        <iframe allowtransparency='true' frameborder='0' id='comment-actions' name='comment-actions' scrolling='no'>
+        </iframe>
+      </div>
+    </b:if>
+
+    <div id='backlinks-container'>
+    <div expr:id='data:widget.instanceId + &quot;_backlinks-container&quot;'>
+    </div>
+    </div>
+  </div>
+</b:includable>
   </b:widget>
 </b:section>
 </div>
@@ -1766,7 +1657,8 @@ printRelatedLabels_thumbs(&quot;<data:post.url/>&quot;);
 <div class='widgetsfooter'>
 <div class='container'>
 <div class='titlewidgets'>
-<p class='mostpopular'>الاكتر شيوعا</p>
+<p style="color: white;">الاكتر شيوعا</p>
+
 </div>
  <b:section class='footerw1' id='footerw1' preferred='yes'/>
  <b:section class='footerw2' id='footerw2' preferred='yes'/>
@@ -1776,31 +1668,32 @@ printRelatedLabels_thumbs(&quot;<data:post.url/>&quot;);
   <b:if cond='data:title != &quot;&quot;'>
     <h2 class='title'><data:title/></h2>
   </b:if>
-  <div class='contact-form-widget'>
-    <div class='form'>
+<div class='contact-form-widget' style="color: white !important;">
+    <div>
       <form name='contact-form'>
         <p/>
-        <data:contactFormNameMsg/>
+        <span style="color: white;"><data:contactFormNameMsg/></span>
         <br/>
-        <input class='contact-form-name' expr:id='data:widget.instanceId + &quot;_contact-form-name&quot;' name='name' size='30' type='text' value=''/>
+        <input  expr:id='data:widget.instanceId + &quot;_contact-form-name&quot;' name='name' size='30' type='text' value='' style="color: white; background-color: transparent; border: 1px solid white;"/>
         <p/>
-        <data:contactFormEmailMsg/> <span style='font-weight: bolder;'>*</span>
+        <span style="color: white;"><data:contactFormEmailMsg/></span> <span style='font-weight: bolder; color: white;'>*</span>
         <br/>
-        <input class='contact-form-email' expr:id='data:widget.instanceId + &quot;_contact-form-email&quot;' name='email' size='30' type='text' value=''/>
+        <input class='contact-form-email' expr:id='data:widget.instanceId + &quot;_contact-form-email&quot;' name='email' size='30' type='text' value='' style="color: white; background-color: transparent; border: 1px solid white;"/>
         <p/>
-        <data:contactFormMessageMsg/> <span style='font-weight: bolder;'>*</span>
+        <span style="color: white;"><data:contactFormMessageMsg/></span> <span style='font-weight: bolder; color: white;'>*</span>
         <br/>
-        <textarea class='contact-form-email-message' cols='25' expr:id='data:widget.instanceId + &quot;_contact-form-email-message&quot;' name='email-message' rows='5'/>
+        <textarea class='contact-form-email-message' cols='25' expr:id='data:widget.instanceId + &quot;_contact-form-email-message&quot;' name='email-message' rows='5' style="color: white; background-color: transparent; border: 1px solid white;"></textarea>
         <p/>
-        <input class='contact-form-button contact-form-button-submit' expr:id='data:widget.instanceId + &quot;_contact-form-submit&quot;' expr:value='data:contactFormSendMsg' type='button'/>
+        <input class='contact-form-button contact-form-button-submit' expr:id='data:widget.instanceId + &quot;_contact-form-submit&quot;' expr:value='data:contactFormSendMsg' type='button' style="color: white; background-color: black; border: 1px solid white;"/>
         <p/>
         <div style='text-align: center; max-width: 222px; width: 100%'>
-          <p class='contact-form-error-message' expr:id='data:widget.instanceId + &quot;_contact-form-error-message&quot;'/>
-          <p class='contact-form-success-message' expr:id='data:widget.instanceId + &quot;_contact-form-success-message&quot;'/>
+          <p class='contact-form-error-message' expr:id='data:widget.instanceId + &quot;_contact-form-error-message&quot;' style="color: white;"/>
+          <p class='contact-form-success-message' expr:id='data:widget.instanceId + &quot;_contact-form-success-message&quot;' style="color: white;"/>
         </div>
       </form>
     </div>
-  </div>
+</div>
+
   <b:include name='quickedit'/>
 </b:includable>
    </b:widget>
@@ -1819,7 +1712,7 @@ printRelatedLabels_thumbs(&quot;<data:post.url/>&quot;);
 
 </div>
 <div class='copyrighttreexil'>
-<i class='' style='color:black;'/> <a href='http://www.treexil.com' target='_blank'> </a>
+<i class='' style='color:;'/> <a href='http://www.treexil.com' target='_blank'> </a>
 </div>
 </div>
 </div>
