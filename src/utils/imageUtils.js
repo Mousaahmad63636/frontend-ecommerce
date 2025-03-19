@@ -1,4 +1,5 @@
 // src/utils/imageUtils.js
+
 export const getImageUrl = (imagePath, size = null, forWhatsApp = false) => {
     // Handle cases where size might be a boolean (from old usage)
     if (typeof size === 'boolean') {
@@ -19,23 +20,31 @@ export const getImageUrl = (imagePath, size = null, forWhatsApp = false) => {
     // Base URL for images
     const baseUrl = process.env.REACT_APP_UPLOAD_URL || 'https://spotlylb.com/uploads';
     
+    // Add size parameter if specified and not for WhatsApp
+    const sizeParam = (size && !forWhatsApp) ? `?size=${size}` : '';
+    
     // Regular path for all images
-    const url = `${baseUrl}/${cleanPath}`;
+    const url = `${baseUrl}/${cleanPath}${sizeParam}`;
     
     // Only add cache buster for normal image loading, NOT for WhatsApp sharing
-    if (!forWhatsApp) {
+    if (!forWhatsApp && !sizeParam) {
         // Use a static cache buster based on app version only
         // Using dynamic timestamps can cause unnecessary image reloads
         const cacheBuster = process.env.REACT_APP_VERSION || '1.0';
-        return `${url}?v=${cacheBuster}`;
+        return `${url}${sizeParam ? '&' : '?'}v=${cacheBuster}`;
     }
     
     return url;
 };
 
+// For thumbnail specific usage
+export const getThumbnailUrl = (imagePath) => {
+    return getImageUrl(imagePath, 'thumbnail');
+};
+
 // For backward compatibility
 export const getResponsiveImageUrl = (imagePath, size = 'medium') => {
-    return getImageUrl(imagePath);
+    return getImageUrl(imagePath, size);
 };
 
 // Get appropriate image size based on device

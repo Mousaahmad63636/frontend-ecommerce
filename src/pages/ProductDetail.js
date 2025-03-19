@@ -1,5 +1,5 @@
 // src/pages/ProductDetail.js
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useCart } from '../contexts/CartContext';
@@ -31,6 +31,76 @@ function ProductDetail() {
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
 
+  // Add this new function for thumbnail preloading
+  const preloadThumbnails = useCallback((imageUrls) => {
+    if (!imageUrls || imageUrls.length <= 1) return;
+    
+    console.log('Preloading all thumbnails...');
+    
+    // Create a queue of images to preload - starting with ones closest to current image
+    const preloadQueue = [];
+    
+    // Add images in order of priority (current first, then adjacent, then rest)
+    if (currentImageIndex < imageUrls.length) {
+      // Skip current image as it's already loaded in main view
+      
+      // Add next and previous images first (most likely to be needed)
+      const nextIndex = (currentImageIndex + 1) % imageUrls.length;
+      const prevIndex = (currentImageIndex - 1 + imageUrls.length) % imageUrls.length;
+      preloadQueue.push(nextIndex, prevIndex);
+      
+      // Add the rest of the images
+      for (let i = 0; i < imageUrls.length; i++) {
+        if (i !== currentImageIndex && i !== nextIndex && i !== prevIndex) {
+          preloadQueue.push(i);
+        }
+      }
+    } else {
+      // If current index is invalid, load all images
+      for (let i = 0; i < imageUrls.length; i++) {
+        preloadQueue.push(i);
+      }
+    }
+    
+    // Create throttled preload to avoid overwhelming the browser
+    let loadedCount = 0;
+    const BATCH_SIZE = 2; // Load 2 thumbnails at a time
+    
+    const loadNext = () => {
+      // Load a batch of images
+      const batch = preloadQueue.splice(0, BATCH_SIZE);
+      if (batch.length === 0) return;
+      
+      batch.forEach(index => {
+        const img = new Image();
+        img.onload = () => {
+          loadedCount++;
+          console.log(`Preloaded thumbnail ${index + 1}/${imageUrls.length}`);
+          
+          // If we've loaded all images or have capacity for more, load next batch
+          if (preloadQueue.length > 0 && (loadedCount % BATCH_SIZE === 0)) {
+            setTimeout(loadNext, 100); // Small delay to prevent browser throttling
+          }
+        };
+        
+        // Explicitly set width and height for thumbnails
+        const thumbnailUrl = getImageUrl(imageUrls[index]);
+        // Add a size parameter for thumbnails - server should handle this
+        img.src = `${thumbnailUrl.split('?')[0]}?size=120x120`;
+      });
+    };
+    
+    // Start the preloading process
+    loadNext();
+  }, [currentImageIndex]);
+
+  // Add this useEffect to trigger thumbnail preloading when product data is loaded
+  useEffect(() => {
+    if (product?.images?.length > 1) {
+      preloadThumbnails(product.images);
+    }
+  }, [product, preloadThumbnails]);
+
   useEffect(() => {
     if (product) {
       console.log("Product data:", product);
@@ -38,9 +108,6 @@ function ProductDetail() {
       console.log("Has sizes:", product.sizes && product.sizes.length > 0);
     }
   }, [product]);
-
-
-
 
   const handleGoBack = () => {
     navigate(-1); // Go back to previous page
@@ -239,6 +306,7 @@ function ProductDetail() {
     setUserRating(rating);
     showNotification(`You rated this product ${rating} stars`, 'success');
   };
+
   useEffect(() => {
     // Only run if product has multiple images
     if (product?.images?.length > 1) {
@@ -256,6 +324,7 @@ function ProductDetail() {
       preloadImage(prevIndex);
     }
   }, [currentImageIndex, product]);
+
   // Handle WhatsApp click
   const handleWhatsAppClick = () => {
     if (!product) return;
@@ -417,8 +486,6 @@ function ProductDetail() {
 
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="md:flex">
-
-
             {/* Product Images */}
             <div className="md:w-1/2 p-4">
               <div className="relative rounded-lg overflow-hidden bg-gray-100">
@@ -468,11 +535,13 @@ function ProductDetail() {
                   {product.images.map((image, index) => (
                     <button
                       key={index}
-                      className={`relative rounded-md overflow-hidden aspect-square border-2 ${currentImageIndex === index
+                      className={`relative rounded-md overflow-hidden aspect-square border-2 ${
+                        currentImageIndex === index
                           ? 'border-purple-500'
                           : 'border-transparent hover:border-gray-300'
-                        } transition duration-200`}
+                      } transition duration-200`}
                       onClick={() => selectImage(index)}
+                      aria-label={`View image ${index + 1}`}
                     >
                       <OptimizedImage
                         src={image}
@@ -480,11 +549,20 @@ function ProductDetail() {
                         className="w-full h-full"
                         style={{ objectFit: 'cover' }}
                         fallbackSrc="/placeholder.jpg"
-                        loading="eager" // Changed from lazy to eager
-                        preventCache={false} // Ensure caching works
-                        // Add explicit size constraints
+                        loading={index < 5 ? "eager" : "lazy"} // Only eager load first 5 thumbnails
+                        preventCache={false}
                         width={80}
                         height={80}
+                        fetchPriority={
+                          index === currentImageIndex || 
+                          index === (currentImageIndex + 1) % product.images.length || 
+                          index === (currentImageIndex - 1 + product.images.length) % product.images.length
+                            ? "high" 
+                            : "low"
+                        }
+                        data-index={index}
+                        data-thumbnail="true"
+                        onLoad={() => console.log(`Thumbnail ${index + 1} loaded`)}
                       />
                     </button>
                   ))}

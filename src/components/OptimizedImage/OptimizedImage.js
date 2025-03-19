@@ -11,27 +11,46 @@ const OptimizedImage = ({
   onError = () => {},
   fallbackSrc = '/placeholder.jpg',
   preventCache = false,
-  width, // Add width prop
-  height, // Add height prop
-  loading = 'lazy', // Add loading prop with default
+  width, 
+  height, 
+  loading = 'lazy',
+  fetchPriority = 'auto', // Add fetchPriority prop
   ...rest 
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [imageSrc, setImageSrc] = useState('');
   
-  // Create size attribute string for URL if dimensions provided
-  const sizeParam = (width && height) ? `&size=${width}x${height}` : '';
+  // Determine if this is a thumbnail based on size and data attributes
+  const isThumbnail = (width && width <= 120) || rest['data-thumbnail'] === 'true';
+  
+  // Different size parameter approach for thumbnails
+  const sizeParam = (width && height) 
+    ? isThumbnail 
+      ? `size=thumbnail` // Generic thumbnail size for the server to handle
+      : `size=${width}x${height}` 
+    : '';
   
   useEffect(() => {
+    if (!src) {
+      setHasError(true);
+      setIsLoading(false);
+      setImageSrc(fallbackSrc);
+      return;
+    }
+    
     setIsLoading(true);
     setHasError(false);
     
-    // Create a processed image URL with size parameters if provided
+    // Create a processed image URL with optimal parameters
     const baseUrl = getImageUrl(src).split('?')[0];
     const cacheBuster = preventCache ? `t=${Date.now()}` : '';
-    const paramConnector = (sizeParam || cacheBuster) ? '?' : '';
-    const params = [sizeParam, cacheBuster].filter(Boolean).join('&');
+    
+    // For thumbnails, always use a specific size parameter to help CDN caching
+    const thumbnailSuffix = isThumbnail ? 'thumb=1&' : '';
+    
+    const paramConnector = (sizeParam || thumbnailSuffix || cacheBuster) ? '?' : '';
+    const params = [thumbnailSuffix, sizeParam, cacheBuster].filter(Boolean).join('&');
     
     const processedSrc = `${baseUrl}${paramConnector}${params}`;
     
@@ -40,6 +59,12 @@ const OptimizedImage = ({
     
     // Preload the image
     const img = new Image();
+    
+    // Set importance based on fetchPriority
+    if ('importance' in img) {
+      img.importance = fetchPriority; // 'high', 'low', or 'auto'
+    }
+    
     img.src = processedSrc;
     
     img.onload = () => {
@@ -60,13 +85,17 @@ const OptimizedImage = ({
       img.onload = null;
       img.onerror = null;
     };
-  }, [src, preventCache, fallbackSrc, onLoad, onError, sizeParam]);
+  }, [src, preventCache, fallbackSrc, onLoad, onError, sizeParam, isThumbnail, fetchPriority]);
   
   return (
     <div className={`relative ${className}`} style={{...style, width, height}}>
+      {/* Simplified loading placeholder for thumbnails */}
       {isLoading && (
-        <div className="absolute inset-0 bg-gray-200 animate-pulse"></div>
+        <div 
+          className={`absolute inset-0 ${isThumbnail ? 'bg-gray-100' : 'bg-gray-200 animate-pulse'}`}
+        ></div>
       )}
+      
       <img
         src={imageSrc}
         alt={alt}
@@ -80,11 +109,15 @@ const OptimizedImage = ({
         width={width}
         height={height}
         loading={loading}
+        fetchpriority={fetchPriority} // HTML attribute for fetch priority
         {...rest}
       />
+      
       {hasError && !isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-          <span className="text-sm text-gray-500">Image failed to load</span>
+          <span className={`${isThumbnail ? 'text-xs' : 'text-sm'} text-gray-500`}>
+            {isThumbnail ? '!' : 'Image failed to load'}
+          </span>
         </div>
       )}
     </div>
