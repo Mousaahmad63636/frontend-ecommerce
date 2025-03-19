@@ -1,6 +1,6 @@
 // If you have a src/components/Banner.js file, edit it:
 import React, { useState } from 'react';
-import { getImageUrl } from '../utils/imageUtils';
+import { getImageUrl } from '../../utils/imageUtils';
 
 const Banner = ({ src, alt, title, subtitle, isVideo = false, onLoad, onError }) => {
   const [isLoaded, setIsLoaded] = useState(false);
