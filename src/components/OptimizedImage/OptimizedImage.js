@@ -1,119 +1,80 @@
-// src/components/OptimizedImage/OptimizedImage.js
+// src/components/OptimizedImage.js
 import React, { useState, useEffect } from 'react';
-import { getImageUrl } from '../../utils/imageUtils';
+import { loadImage, getImageUrl } from '../utils/imageUtils';
 
-const OptimizedImage = ({
-  src,
-  alt,
-  className = '',
-  width = '100%',
-  height = 'auto',
-  objectFit = 'cover',
-  lazyLoad = true,
-  placeholderSrc = '/placeholder.jpg',
-  onLoad = () => {},
-  onError = () => {}
+const OptimizedImage = ({ 
+  src, 
+  alt, 
+  className = '', 
+  style = {}, 
+  onLoad = () => {}, 
+  onError = () => {},
+  fallbackSrc = '/placeholder.jpg',
+  preventCache = false,
+  ...rest 
 }) => {
-  const [loaded, setLoaded] = useState(false);
-  const [error, setError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
   const [imageSrc, setImageSrc] = useState('');
-
+  
   useEffect(() => {
-    // Reset states when src changes
-    setLoaded(false);
-    setError(false);
+    setIsLoading(true);
+    setHasError(false);
     
-    if (!src) {
-      setError(true);
-      setImageSrc(placeholderSrc);
-      return;
-    }
-
-    // Use optimized image URL if possible
-    setImageSrc(getImageUrl(src));
-
-    // Preload the image
+    // Create a processed image URL
+    const processedSrc = preventCache 
+      ? `${getImageUrl(src).split('?')[0]}?t=${Date.now()}` 
+      : getImageUrl(src);
+    
+    // First set the source - this might be enough for simple cases
+    setImageSrc(processedSrc);
+    
+    // Also try to preload the image
     const img = new Image();
-    img.src = getImageUrl(src);
+    img.src = processedSrc;
     
     img.onload = () => {
-      setLoaded(true);
+      setIsLoading(false);
+      setImageSrc(processedSrc);
       onLoad();
     };
     
     img.onerror = () => {
-      console.error('Failed to load image:', src);
-      setError(true);
-      setImageSrc(placeholderSrc);
+      console.error(`Failed to load image: ${src}`);
+      setHasError(true);
+      setIsLoading(false);
+      setImageSrc(fallbackSrc);
       onError();
     };
-  }, [src, placeholderSrc, onLoad, onError]);
-
+    
+    return () => {
+      img.onload = null;
+      img.onerror = null;
+    };
+  }, [src, preventCache, fallbackSrc, onLoad, onError]);
+  
   return (
-    <div 
-      className={`optimized-image-container ${className}`}
-      style={{ 
-        width, 
-        height,
-        position: 'relative',
-        overflow: 'hidden',
-        background: '#f0f0f0'
-      }}
-    >
-      {!loaded && !error && (
-        <div 
-          className="image-placeholder"
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: '#f7f7f7'
-          }}
-        >
-          <div 
-            className="loading-shimmer"
-            style={{
-              width: '100%',
-              height: '100%',
-              backgroundImage: 'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%)',
-              backgroundSize: '200% 100%',
-              animation: 'shimmer 1.5s infinite',
-              position: 'absolute'
-            }}
-          />
-        </div>
+    <div className={`relative ${className}`} style={style}>
+      {isLoading && (
+        <div className="absolute inset-0 bg-gray-200 animate-pulse"></div>
       )}
-      
       <img
         src={imageSrc}
         alt={alt}
-        loading={lazyLoad ? "lazy" : "eager"}
-        style={{
-          width: '100%',
-          height: '100%',
-          objectFit,
-          opacity: loaded ? 1 : 0,
-          transition: 'opacity 0.3s ease',
-          position: 'relative'
-        }}
-        onLoad={() => setLoaded(true)}
+        className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+        style={{ ...style, objectFit: 'cover' }}
+        onLoad={() => setIsLoading(false)}
         onError={() => {
-          setError(true);
-          setImageSrc(placeholderSrc);
+          setHasError(true);
+          setImageSrc(fallbackSrc);
         }}
+        {...rest}
       />
-      
-      <style jsx>{`
-        @keyframes shimmer {
-          0% { background-position: -200% 0; }
-          100% { background-position: 200% 0; }
-        }
-      `}</style>
+      {hasError && !isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+          <span className="text-sm text-gray-500">Image failed to load</span>
+        </div>
+      )}
     </div>
   );
 };

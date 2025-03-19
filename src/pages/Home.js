@@ -202,20 +202,40 @@ useEffect(() => {
     };
   }, []);
 
-  useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const response = await api.getSettings();
-        if (response?.heroSection) {
-          setHeroSettings(response.heroSection);
-        }
-      } catch (error) {
-        console.error('Error fetching hero settings:', error);
+// Inside Home.js, update the hero settings fetch
+useEffect(() => {
+  const fetchSettings = async () => {
+    try {
+      setLoading(true); // Show loading state while fetching
+      const response = await api.getSettings();
+      if (response?.heroSection) {
+        // Pre-validate the hero image by checking if it exists
+        const { mediaUrl, ...otherSettings } = response.heroSection;
+        
+        // Set the hero settings right away, even before image validation
+        setHeroSettings({
+          ...otherSettings,
+          mediaUrl: mediaUrl || '/hero.jpg' // Fallback path right away if none provided
+        });
+        
+        // Image validation is now handled by the OptimizedImage component
       }
-    };
+    } catch (error) {
+      console.error('Error fetching hero settings:', error);
+      // Set default hero settings on error
+      setHeroSettings({
+        type: 'image',
+        mediaUrl: '/hero.jpg',
+        title: 'Just Trendy - Where Trends Meet Need!',
+        subtitle: 'Discover Amazing Products at Great Prices'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchSettings();
-  }, []);
+  fetchSettings();
+}, []);
 
   useEffect(() => {
     const fetchData = async () => {

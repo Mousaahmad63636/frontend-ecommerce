@@ -1,105 +1,94 @@
-// src/components/Banner/Banner.js
+// src/components/Banner.js
 import React, { useState, useEffect } from 'react';
-import { getImageUrl } from '../../utils/imageUtils';
+import OptimizedImage from './OptimizedImage';
+import { getImageUrl } from '../utils/imageUtils';
 
-const Banner = ({ 
-  src, 
-  alt = "Banner image",
-  title,
-  subtitle,
-  height = "auto",
-  isVideo = false,
-  onLoad = () => {},
-  onError = () => {} 
-}) => {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [hasError, setHasError] = useState(false);
+const Banner = ({ src, alt, title, subtitle, isVideo = false, onLoad, onError }) => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  // Reset states when src changes
+  // Force reload feature for problematic images
+  const [forceReload, setForceReload] = useState(false);
+
   useEffect(() => {
-    setIsLoaded(false);
-    setHasError(false);
+    // Reset states when src changes
+    setLoading(true);
+    setError(false);
+    setForceReload(false);
   }, [src]);
 
-  const handleLoad = () => {
-    setIsLoaded(true);
-    setHasError(false);
-    onLoad();
+  const handleImageError = () => {
+    console.error('Banner image failed to load:', src);
+    setError(true);
+    setLoading(false);
+    onError && onError();
+    
+    // Try one forced reload with cache busting if initial load fails
+    if (!forceReload) {
+      console.log('Attempting to force reload the banner image');
+      setForceReload(true);
+    }
   };
 
-  const handleError = () => {
-    setHasError(true);
-    onError();
+  const handleImageLoad = () => {
+    setLoading(false);
+    onLoad && onLoad();
   };
 
   return (
-    <div className="relative w-full overflow-hidden" style={{ height }}>
-      {/* Loading state - gray background with subtle animation */}
-      {!isLoaded && !hasError && (
-        <div className="absolute inset-0 bg-gray-200 animate-pulse"></div>
+    <div className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden">
+      {/* Loading indicator */}
+      {loading && (
+        <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
+          <div className="w-10 h-10 border-4 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+        </div>
       )}
-
-      {/* Actual media */}
+      
       {isVideo ? (
-        // Video banner
+        // Video content
         <video
-          src={getImageUrl(src)}
-          className="w-full h-full object-cover"
+          src={src}
           autoPlay
           loop
           muted
           playsInline
-          onLoadedData={handleLoad}
-          onError={handleError}
-          style={{ opacity: isLoaded ? 1 : 0, transition: 'opacity 0.3s ease' }}
+          className="absolute inset-0 w-full h-full object-cover"
+          onLoadedData={handleImageLoad}
+          onError={handleImageError}
         />
       ) : (
-        // Image banner
-        <img
-          src={getImageUrl(src)}
-          alt={alt}
-          className="w-full h-full object-cover"
-          onLoad={handleLoad}
-          onError={handleError}
-          style={{ opacity: isLoaded ? 1 : 0, transition: 'opacity 0.3s ease' }}
+        // Image content with OptimizedImage
+        <OptimizedImage
+          src={src}
+          alt={alt || "Banner image"}
+          className="absolute inset-0 w-full h-full object-cover"
+          preventCache={forceReload} // Use cache busting if force reloading
+          onLoad={handleImageLoad}
+          onError={handleImageError}
+          fallbackSrc="/hero.jpg" // Fallback to a local hero image
         />
       )}
-
-      {/* Error state - show fallback */}
-      {hasError && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-          <div className="text-center p-4">
-            <svg 
-              className="w-12 h-12 mx-auto text-gray-400 mb-2" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth="1" 
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" 
-              />
-            </svg>
-            <p className="text-gray-600">Unable to load banner</p>
-          </div>
-        </div>
-      )}
-
-      {/* Text overlay - only show when loaded and if title or subtitle exists */}
-      {isLoaded && !hasError && (title || subtitle) && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-black bg-opacity-40 p-6">
-          {title && (
-            <h1 className="text-3xl md:text-5xl font-bold mb-4 text-center max-w-4xl">
-              {title}
-            </h1>
-          )}
-          {subtitle && (
-            <p className="text-lg md:text-xl text-center max-w-2xl">
-              {subtitle}
-            </p>
-          )}
+      
+      {/* Overlay and text */}
+      <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-white p-6 text-center">
+        {title && <h1 className="text-4xl md:text-5xl font-bold mb-4">{title}</h1>}
+        {subtitle && <p className="text-xl md:text-2xl max-w-2xl">{subtitle}</p>}
+      </div>
+      
+      {/* Error state overlay */}
+      {error && !loading && (
+        <div className="absolute inset-0 bg-gray-800/80 flex flex-col items-center justify-center text-white p-6">
+          <p className="text-xl mb-4">Failed to load banner image</p>
+          <button 
+            onClick={() => {
+              setForceReload(true);
+              setLoading(true);
+              setError(false);
+            }}
+            className="px-4 py-2 bg-primary-600 rounded hover:bg-primary-700 transition-colors"
+          >
+            Try Again
+          </button>
         </div>
       )}
     </div>
