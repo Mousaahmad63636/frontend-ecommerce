@@ -12,6 +12,7 @@ import { useAuth } from '../contexts/AuthContext';
 import DailyTimer from '../components/DailyTimer/DailyTimer';
 // Component imports
 import ProductList from '../components/ProductList';
+import Banner from '../components/Banner';
 import ContactSection from '../components/ContactSection';
 import BlackFridayBanner from '../components/BlackFridayBanner/BlackFridayBanner';
 import api from '../api/api';
@@ -423,57 +424,26 @@ useEffect(() => {
         <meta name="description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices." />
       </Helmet>
 
-{/* Hero Section - Adjust top margin to accommodate the fixed header and navigator */}
+      // In Home.js, replace the hero section with this code
 {!showDiscountedOnly && !showAllProducts && !showSimilarProducts && !showCategoryView && !searchQuery && (
   <section
     ref={heroRef}
     className="w-full"
     style={{
-      marginTop: '0', // Remove any top margin
+      marginTop: '0',
       position: 'relative',
-      zIndex: 10 // Lower z-index than navigation
+      zIndex: 10
     }}
   >
-    <div className="w-full overflow-hidden">
-      <div className="relative">
-        {heroSettings.type === 'image' ? (
-          <OptimizedImage
-            src={heroSettings.mediaUrl}
-            alt="Hero banner"
-            className="w-full h-auto"
-            lazyLoad={false} // Don't lazy load the hero image
-            objectFit="cover"
-            width="100%"
-            height="auto"
-          />
-        ) : (
-          <video
-            src={getImageUrl(heroSettings.mediaUrl)}
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full h-auto"
-          />
-        )}
-        
-        {/* Hero text overlay if needed */}
-        {(heroSettings.title || heroSettings.subtitle) && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-black bg-opacity-40 p-6">
-            {heroSettings.title && (
-              <h1 className="text-3xl md:text-5xl font-bold mb-4 text-center max-w-4xl">
-                {heroSettings.title}
-              </h1>
-            )}
-            {heroSettings.subtitle && (
-              <p className="text-lg md:text-xl text-center max-w-2xl">
-                {heroSettings.subtitle}
-              </p>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
+    <Banner
+      src={heroSettings.mediaUrl}
+      alt="Hero banner"
+      title={heroSettings.title}
+      subtitle={heroSettings.subtitle}
+      isVideo={heroSettings.type === 'video'}
+      onLoad={() => console.log('Hero banner loaded successfully')}
+      onError={() => console.error('Failed to load hero banner')}
+    />
   </section>
 )}
 
