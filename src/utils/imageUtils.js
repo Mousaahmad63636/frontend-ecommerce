@@ -1,5 +1,5 @@
 // src/utils/imageUtils.js
-export const getImageUrl = (imagePath, size = 'medium', forWhatsApp = false) => {
+export const getImageUrl = (imagePath, size = null, forWhatsApp = false) => {
     if (!imagePath) return '/placeholder.jpg';
     
     // If already absolute URL, return as is
@@ -13,13 +13,14 @@ export const getImageUrl = (imagePath, size = 'medium', forWhatsApp = false) => 
     // Base URL for images
     const baseUrl = process.env.REACT_APP_UPLOAD_URL || 'https://spotlylb.com/uploads';
     
-    // Check if we should use optimized path
-    if (size && !forWhatsApp) {
-        // Use the new optimized endpoint with size
-        return `${baseUrl}/optimized/${size}/${cleanPath}`;
-    }
+    // IMPORTANT: Check if the optimized endpoint exists - for now, don't use it
+    // This will make the code backward compatible until the server endpoint is ready
+    // if (size && !forWhatsApp) {
+    //     // Use the new optimized endpoint with size
+    //     return `${baseUrl}/optimized/${size}/${cleanPath}`;
+    // }
     
-    // Regular path for non-optimized or WhatsApp sharing
+    // Regular path for all images (both optimized and non-optimized)
     const url = `${baseUrl}/${cleanPath}`;
     
     // Only add cache buster for normal image loading, NOT for WhatsApp sharing
