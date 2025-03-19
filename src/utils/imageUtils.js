@@ -11,7 +11,7 @@ export const getImageUrl = (imagePath, size = 'medium', forWhatsApp = false) => 
         .replace(/^uploads\//, ''); // Remove 'uploads/' if present
     
     // Base URL for images
-    const baseUrl = process.env.REACT_APP_UPLOAD_URL || 'https://backend-ecommerce-z7ih.onrender.com/uploads';
+    const baseUrl = process.env.REACT_APP_UPLOAD_URL || 'https://spotlylb.com/uploads';
     
     // Check if we should use optimized path
     if (size && !forWhatsApp) {
