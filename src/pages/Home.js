@@ -470,6 +470,11 @@ useEffect(() => {
         </section>
       )}
 
+// src/pages/Home.js - Fixed Hero Section
+
+// Remove the first hero section (around line 240-255)
+// And keep only this one hero section in the right place:
+
       {/* Black Friday Banner */}
       {blackFridayData && (
         <div className="bg-black text-white py-3">
@@ -484,23 +489,53 @@ useEffect(() => {
         </div>
       )}
 
-// In Home.js - Improve the condition for showing the hero section
-{!searchQuery && !showDiscountedOnly && !showAllProducts && !showSimilarProducts && !showCategoryView && (
-  <section
-    ref={heroRef}
-    className="w-full relative z-10 mt-0"
-  >
-    <Banner
-      src={heroSettings.mediaUrl}
-      alt="Hero banner"
-      title={heroSettings.title}
-      subtitle={heroSettings.subtitle}
-      isVideo={heroSettings.type === 'video'}
-      onLoad={() => console.log('Hero banner loaded successfully')}
-      onError={() => console.error('Failed to load hero banner')}
-    />
-  </section>
-)}
+      {/* Main content - either normal homepage or special views */}
+      {!searchQuery && !showDiscountedOnly && !showAllProducts && !showSimilarProducts && !showCategoryView && (
+        <>
+          {/* Hero Section */}
+          <section
+            ref={heroRef}
+            className="w-full relative z-10 mt-0"
+          >
+            <Banner
+              src={heroSettings.mediaUrl}
+              alt="Hero banner"
+              title={heroSettings.title}
+              subtitle={heroSettings.subtitle}
+              isVideo={heroSettings.type === 'video'}
+              onLoad={() => console.log('Hero banner loaded successfully')}
+              onError={() => console.error('Failed to load hero banner')}
+            />
+          </section>
+
+          {/* Special Offers Section - Horizontal Scrollable Row */}
+          <section className="py-10">
+            <div className="container mx-auto px-0">
+              {/* Daily Timer added here - above the Special Offers title */}
+              <DailyTimer />
+              <br></br>
+              <div className="mb-2 text-center">
+                <h2 className="text-3xl font-bold">Special Offers</h2>
+              </div>
+              <div>
+                {discountedProducts.length > 0 ? (
+                  <ProductList
+                    title=" "
+                    products={discountedProducts}
+                    scrollable={true}
+                    viewAllUrl={viewAllDiscountedUrl}
+                    viewAllText="View All"
+                  />
+                ) : (
+                  <div className="text-center py-5">
+                    <p className="text-gray-500">
+                      No discounted products available at the moment.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
 
           {/* Category Sections - Added new scrollable sections for each category */}
           {categories.map(category => {
