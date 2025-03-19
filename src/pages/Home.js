@@ -166,21 +166,6 @@ function Home() {
 
   }, [location.search]);
   
-  // Add this inside your Home component, at the top level
-useEffect(() => {
-  // Preload hero image
-  if (heroSettings?.mediaUrl) {
-    const preloadLink = document.createElement('link');
-    preloadLink.rel = 'preload';
-    preloadLink.as = 'image';
-    preloadLink.href = getImageUrl(heroSettings.mediaUrl, 'large');
-    document.head.appendChild(preloadLink);
-
-    return () => {
-      document.head.removeChild(preloadLink);
-    };
-  }
-}, [heroSettings]);
   // Calculate header height on mount and when window resizes
   useEffect(() => {
     const updateHeaderHeight = () => {
@@ -499,37 +484,23 @@ useEffect(() => {
         </div>
       )}
 
-      {/* Main content - either normal homepage or special views */}
-      {!searchQuery && !showDiscountedOnly && !showAllProducts && !showSimilarProducts && !showCategoryView && (
-        <>
-          {/* Special Offers Section - Horizontal Scrollable Row */}
-          <section className="py-10">
-            <div className="container mx-auto px-0">
-              {/* Daily Timer added here - above the Special Offers title */}
-              <DailyTimer />
-              <br></br>
-              <div className="mb-2 text-center">
-                <h2 className="text-3xl font-bold">Special Offers</h2>
-              </div>
-              <div>
-                {discountedProducts.length > 0 ? (
-                  <ProductList
-                    title=" "
-                    products={discountedProducts}
-                    scrollable={true}
-                    viewAllUrl={viewAllDiscountedUrl}
-                    viewAllText="View All"
-                  />
-                ) : (
-                  <div className="text-center py-5">
-                    <p className="text-gray-500">
-                      No discounted products available at the moment.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </section>
+// In Home.js - Improve the condition for showing the hero section
+{!searchQuery && !showDiscountedOnly && !showAllProducts && !showSimilarProducts && !showCategoryView && (
+  <section
+    ref={heroRef}
+    className="w-full relative z-10 mt-0"
+  >
+    <Banner
+      src={heroSettings.mediaUrl}
+      alt="Hero banner"
+      title={heroSettings.title}
+      subtitle={heroSettings.subtitle}
+      isVideo={heroSettings.type === 'video'}
+      onLoad={() => console.log('Hero banner loaded successfully')}
+      onError={() => console.error('Failed to load hero banner')}
+    />
+  </section>
+)}
 
           {/* Category Sections - Added new scrollable sections for each category */}
           {categories.map(category => {
