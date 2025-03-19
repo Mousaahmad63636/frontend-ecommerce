@@ -528,46 +528,34 @@ function ProductDetail() {
                   </div>
                 )}
               </div>
-
-              {/* Thumbnails */}
-              {product.images && product.images.length > 1 && (
-                <div className="mt-4 grid grid-cols-5 gap-2">
-                  {product.images.map((image, index) => (
-                    <button
-                      key={index}
-                      className={`relative rounded-md overflow-hidden aspect-square border-2 ${
-                        currentImageIndex === index
-                          ? 'border-purple-500'
-                          : 'border-transparent hover:border-gray-300'
-                      } transition duration-200`}
-                      onClick={() => selectImage(index)}
-                      aria-label={`View image ${index + 1}`}
-                    >
-                      <OptimizedImage
-                        src={image}
-                        alt={`${product.name} thumbnail ${index + 1}`}
-                        className="w-full h-full"
-                        style={{ objectFit: 'cover' }}
-                        fallbackSrc="/placeholder.jpg"
-                        loading={index < 5 ? "eager" : "lazy"} // Only eager load first 5 thumbnails
-                        preventCache={false}
-                        width={80}
-                        height={80}
-                        fetchPriority={
-                          index === currentImageIndex || 
-                          index === (currentImageIndex + 1) % product.images.length || 
-                          index === (currentImageIndex - 1 + product.images.length) % product.images.length
-                            ? "high" 
-                            : "low"
-                        }
-                        data-index={index}
-                        data-thumbnail="true"
-                        onLoad={() => console.log(`Thumbnail ${index + 1} loaded`)}
-                      />
-                    </button>
-                  ))}
-                </div>
-              )}
+{/* Thumbnails */}
+{product.images && product.images.length > 1 && (
+  <div className="mt-4 grid grid-cols-5 gap-2">
+    {product.images.map((image, index) => (
+      <button
+        key={index}
+        className={`relative rounded-md overflow-hidden aspect-square border-2 ${
+          currentImageIndex === index
+            ? 'border-purple-500'
+            : 'border-transparent hover:border-gray-300'
+        } transition duration-200`}
+        onClick={() => selectImage(index)}
+      >
+        {/* Use a basic img tag for thumbnails for maximum reliability */}
+        <img
+          src={getImageUrl(image)}
+          alt={`${product.name} thumbnail ${index + 1}`}
+          className="w-full h-full object-cover"
+          loading={index < 5 ? "eager" : "lazy"}
+          onError={(e) => {
+            console.error(`Thumbnail ${index + 1} failed to load`);
+            e.target.src = '/placeholder.jpg';
+          }}
+        />
+      </button>
+    ))}
+  </div>
+)}
             </div>
 
             {/* Product Info */}
