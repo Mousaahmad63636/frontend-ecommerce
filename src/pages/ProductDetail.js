@@ -13,6 +13,7 @@ import Loading from '../components/Loading/Loading';
 import RatingStars from '../components/RatingStars';
 import WhatsAppMetaTags from '../components/WhatsAppMetaTags';
 import ProductList from '../components/ProductList';
+import OptimizedImage from '../components/OptimizedImage'; 
 
 function ProductDetail() {
   const { id } = useParams();
@@ -21,7 +22,6 @@ function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [imagesLoaded, setImagesLoaded] = useState([]);
   const [similarProducts, setSimilarProducts] = useState([]);
   const [loadingSimilar, setLoadingSimilar] = useState(false);
   const { addToCart } = useCart();
@@ -39,28 +39,8 @@ function ProductDetail() {
     }
   }, [product]);
 
-  // Add this effect to initialize imagesLoaded array when product changes
-  useEffect(() => {
-    if (product?.images && product.images.length > 0) {
-      setImagesLoaded(new Array(product.images.length).fill(false));
-    }
-  }, [product]);
 
-  const handleImageLoad = (index) => {
-    setImagesLoaded(prev => {
-      const updated = [...prev];
-      updated[index] = true;
-      return updated;
-    });
-  };
 
-  const handleImageError = (index) => {
-    setImagesLoaded(prev => {
-      const updated = [...prev];
-      updated[index] = false;
-      return updated;
-    });
-  };
 
   const handleGoBack = () => {
     navigate(-1); // Go back to previous page
@@ -421,94 +401,78 @@ function ProductDetail() {
 
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="md:flex">
-            {/* Product Images */}
-            <div className="md:w-1/2 p-4">
-              <div className="relative rounded-lg overflow-hidden bg-gray-100">
-                <div className="relative aspect-square">
-                  {product.images && product.images.length > 0 ? (
-                    <>
-                      {/* Gray background placeholder always visible, fades when image loads */}
-                      <div 
-                        className={`absolute inset-0 bg-gray-100 transition-opacity duration-300 ${
-                          imagesLoaded[currentImageIndex] ? 'opacity-0' : 'opacity-100'
-                        }`}
-                      ></div>
-                      
-                      {/* Main product image */}
-                      <img
-                        src={getImageUrl(product.images[currentImageIndex])}
-                        alt={`${product.name} - Image ${currentImageIndex + 1}`}
-                        className="absolute inset-0 w-full h-full object-contain transition-opacity duration-300"
-                        style={{ opacity: imagesLoaded[currentImageIndex] ? 1 : 0 }}
-                        onLoad={() => handleImageLoad(currentImageIndex)}
-                        onError={() => handleImageError(currentImageIndex)}
-                      />
-                    </>
-                  ) : (
-                    <div className="flex items-center justify-center h-full">
-                      <p className="text-gray-500">No image available</p>
-                    </div>
-                  )}
-                </div>
+        
 
-                {product.images && product.images.length > 1 && (
-                  <div className="absolute inset-0 flex items-center justify-between px-4 pointer-events-none">
-                    <button
-                      className="bg-white/80 backdrop-blur-sm text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-md pointer-events-auto hover:bg-white transition duration-200"
-                      onClick={() => navigateImage('prev')}
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
-                      </svg>
-                    </button>
-                    <button
-                      className="bg-white/80 backdrop-blur-sm text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-md pointer-events-auto hover:bg-white transition duration-200"
-                      onClick={() => navigateImage('next')}
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-                      </svg>
-                    </button>
-                  </div>
-                )}
-              </div>
+{/* Product Images */}
+<div className="md:w-1/2 p-4">
+  <div className="relative rounded-lg overflow-hidden bg-gray-100">
+    <div className="relative aspect-square">
+      {product.images && product.images.length > 0 ? (
+        <OptimizedImage
+          src={product.images[currentImageIndex]}
+          alt={`${product.name} - Image ${currentImageIndex + 1}`}
+          className="w-full h-full"
+          style={{ objectFit: 'contain' }}
+          fallbackSrc="/placeholder.jpg"
+          onLoad={() => console.log(`Main image ${currentImageIndex + 1} loaded`)}
+          onError={() => console.error(`Failed to load image ${currentImageIndex + 1}`)}
+        />
+      ) : (
+        <div className="flex items-center justify-center h-full">
+          <p className="text-gray-500">No image available</p>
+        </div>
+      )}
+    </div>
 
-              {/* Thumbnails */}
-              {product.images && product.images.length > 1 && (
-                <div className="mt-4 grid grid-cols-5 gap-2">
-                  {product.images.map((image, index) => (
-                    <button
-                      key={index}
-                      className={`relative rounded-md overflow-hidden border-2 ${currentImageIndex === index
-                        ? 'border-purple-500'
-                        : 'border-transparent hover:border-gray-300'
-                        } transition duration-200`}
-                      onClick={() => selectImage(index)}
-                    >
-                      <div className="aspect-square">
-                        {/* Thumbnail placeholder */}
-                        <div 
-                          className={`absolute inset-0 bg-gray-100 transition-opacity duration-300 ${
-                            imagesLoaded[index] ? 'opacity-0' : 'opacity-100'
-                          }`}
-                        ></div>
-                        
-                        {/* Thumbnail image */}
-                        <img
-                          src={getImageUrl(image)}
-                          alt={`${product.name} thumbnail ${index + 1}`}
-                          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
-                          style={{ opacity: imagesLoaded[index] ? 1 : 0 }}
-                          onLoad={() => handleImageLoad(index)}
-                          onError={() => handleImageError(index)}
-                          loading="lazy"
-                        />
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+    {product.images && product.images.length > 1 && (
+      <div className="absolute inset-0 flex items-center justify-between px-4 pointer-events-none">
+        <button
+          className="bg-white/80 backdrop-blur-sm text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-md pointer-events-auto hover:bg-white transition duration-200"
+          onClick={() => navigateImage('prev')}
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <button
+          className="bg-white/80 backdrop-blur-sm text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-md pointer-events-auto hover:bg-white transition duration-200"
+          onClick={() => navigateImage('next')}
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+    )}
+  </div>
+
+  {/* Thumbnails */}
+  {product.images && product.images.length > 1 && (
+    <div className="mt-4 grid grid-cols-5 gap-2">
+      {product.images.map((image, index) => (
+        <button
+          key={index}
+          className={`relative rounded-md overflow-hidden aspect-square border-2 ${
+            currentImageIndex === index
+              ? 'border-purple-500'
+              : 'border-transparent hover:border-gray-300'
+          } transition duration-200`}
+          onClick={() => selectImage(index)}
+        >
+          <OptimizedImage
+            src={image}
+            alt={`${product.name} thumbnail ${index + 1}`}
+            className="w-full h-full"
+            style={{ objectFit: 'cover' }}
+            fallbackSrc="/placeholder.jpg"
+            loading="lazy"
+          />
+        </button>
+      ))}
+    </div>
+  )}
+</div>
+
             {/* Product Info */}
             <div className="md:w-1/2 p-6 md:border-l border-gray-100">
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
