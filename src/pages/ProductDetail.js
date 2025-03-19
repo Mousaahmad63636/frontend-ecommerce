@@ -12,7 +12,6 @@ import DiscountTimer from '../components/DiscountTimer/DiscountTimer';
 import Loading from '../components/Loading/Loading';
 import RatingStars from '../components/RatingStars';
 import WhatsAppMetaTags from '../components/WhatsAppMetaTags';
-import OptimizedImage from '../components/OptimizedImage/OptimizedImage';
 import ProductList from '../components/ProductList';
 
 function ProductDetail() {
@@ -22,6 +21,7 @@ function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [imagesLoaded, setImagesLoaded] = useState([]);
   const [similarProducts, setSimilarProducts] = useState([]);
   const [loadingSimilar, setLoadingSimilar] = useState(false);
   const { addToCart } = useCart();
@@ -38,6 +38,29 @@ function ProductDetail() {
       console.log("Has sizes:", product.sizes && product.sizes.length > 0);
     }
   }, [product]);
+
+  // Add this effect to initialize imagesLoaded array when product changes
+  useEffect(() => {
+    if (product?.images && product.images.length > 0) {
+      setImagesLoaded(new Array(product.images.length).fill(false));
+    }
+  }, [product]);
+
+  const handleImageLoad = (index) => {
+    setImagesLoaded(prev => {
+      const updated = [...prev];
+      updated[index] = true;
+      return updated;
+    });
+  };
+
+  const handleImageError = (index) => {
+    setImagesLoaded(prev => {
+      const updated = [...prev];
+      updated[index] = false;
+      return updated;
+    });
+  };
 
   const handleGoBack = () => {
     navigate(-1); // Go back to previous page
@@ -402,15 +425,30 @@ function ProductDetail() {
             <div className="md:w-1/2 p-4">
               <div className="relative rounded-lg overflow-hidden bg-gray-100">
                 <div className="relative aspect-square">
-                  <OptimizedImage
-                    src={product.images && product.images.length > 0
-                      ? product.images[currentImageIndex]
-                      : null}
-                    alt={product.name}
-                    className="w-full h-full"
-                    objectFit="contain"
-                    lazyLoad={false} // Main product image should load immediately
-                  />
+                  {product.images && product.images.length > 0 ? (
+                    <>
+                      {/* Gray background placeholder always visible, fades when image loads */}
+                      <div 
+                        className={`absolute inset-0 bg-gray-100 transition-opacity duration-300 ${
+                          imagesLoaded[currentImageIndex] ? 'opacity-0' : 'opacity-100'
+                        }`}
+                      ></div>
+                      
+                      {/* Main product image */}
+                      <img
+                        src={getImageUrl(product.images[currentImageIndex])}
+                        alt={`${product.name} - Image ${currentImageIndex + 1}`}
+                        className="absolute inset-0 w-full h-full object-contain transition-opacity duration-300"
+                        style={{ opacity: imagesLoaded[currentImageIndex] ? 1 : 0 }}
+                        onLoad={() => handleImageLoad(currentImageIndex)}
+                        onError={() => handleImageError(currentImageIndex)}
+                      />
+                    </>
+                  ) : (
+                    <div className="flex items-center justify-center h-full">
+                      <p className="text-gray-500">No image available</p>
+                    </div>
+                  )}
                 </div>
 
                 {product.images && product.images.length > 1 && (
@@ -441,19 +479,29 @@ function ProductDetail() {
                   {product.images.map((image, index) => (
                     <button
                       key={index}
-                      className={`rounded-md overflow-hidden border-2 ${currentImageIndex === index
+                      className={`relative rounded-md overflow-hidden border-2 ${currentImageIndex === index
                         ? 'border-purple-500'
                         : 'border-transparent hover:border-gray-300'
                         } transition duration-200`}
                       onClick={() => selectImage(index)}
                     >
                       <div className="aspect-square">
-                        <OptimizedImage
-                          src={image}
+                        {/* Thumbnail placeholder */}
+                        <div 
+                          className={`absolute inset-0 bg-gray-100 transition-opacity duration-300 ${
+                            imagesLoaded[index] ? 'opacity-0' : 'opacity-100'
+                          }`}
+                        ></div>
+                        
+                        {/* Thumbnail image */}
+                        <img
+                          src={getImageUrl(image)}
                           alt={`${product.name} thumbnail ${index + 1}`}
-                          className="w-full h-full"
-                          objectFit="cover"
-                          lazyLoad={true}
+                          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+                          style={{ opacity: imagesLoaded[index] ? 1 : 0 }}
+                          onLoad={() => handleImageLoad(index)}
+                          onError={() => handleImageError(index)}
+                          loading="lazy"
                         />
                       </div>
                     </button>
