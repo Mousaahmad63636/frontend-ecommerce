@@ -1,5 +1,11 @@
 // src/utils/imageUtils.js
 export const getImageUrl = (imagePath, size = null, forWhatsApp = false) => {
+    // Handle cases where size might be a boolean (from old usage where second param was forWhatsApp)
+    if (typeof size === 'boolean') {
+        forWhatsApp = size;
+        size = null;
+    }
+
     if (!imagePath) return '/placeholder.jpg';
     
     // If already absolute URL, return as is
@@ -43,6 +49,11 @@ export const getResponsiveSizeForImage = (containerWidth = null) => {
     if (width <= 1024) return 'medium';   // Tablet
     if (width <= 1600) return 'large';    // Desktop
     return 'original';                   // Large desktop or unknown
+};
+
+// For backward compatibility
+export const getResponsiveImageUrl = (imagePath, size = 'medium') => {
+    return getImageUrl(imagePath, size);
 };
 
 // Preload important images (call this for critical images)
