@@ -1,6 +1,6 @@
-// src/components/OptimizedImage.js
+// src/components/OptimizedImage/OptimizedImage.js
 import React, { useState, useEffect } from 'react';
-import { loadImage, getImageUrl } from '../../utils/imageUtils';
+import { getImageUrl } from '../../utils/imageUtils';
 
 const OptimizedImage = ({ 
   src, 
@@ -11,25 +11,34 @@ const OptimizedImage = ({
   onError = () => {},
   fallbackSrc = '/placeholder.jpg',
   preventCache = false,
+  width, // Add width prop
+  height, // Add height prop
+  loading = 'lazy', // Add loading prop with default
   ...rest 
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [imageSrc, setImageSrc] = useState('');
   
+  // Create size attribute string for URL if dimensions provided
+  const sizeParam = (width && height) ? `&size=${width}x${height}` : '';
+  
   useEffect(() => {
     setIsLoading(true);
     setHasError(false);
     
-    // Create a processed image URL
-    const processedSrc = preventCache 
-      ? `${getImageUrl(src).split('?')[0]}?t=${Date.now()}` 
-      : getImageUrl(src);
+    // Create a processed image URL with size parameters if provided
+    const baseUrl = getImageUrl(src).split('?')[0];
+    const cacheBuster = preventCache ? `t=${Date.now()}` : '';
+    const paramConnector = (sizeParam || cacheBuster) ? '?' : '';
+    const params = [sizeParam, cacheBuster].filter(Boolean).join('&');
     
-    // First set the source - this might be enough for simple cases
+    const processedSrc = `${baseUrl}${paramConnector}${params}`;
+    
+    // Set the source immediately for faster perceived loading
     setImageSrc(processedSrc);
     
-    // Also try to preload the image
+    // Preload the image
     const img = new Image();
     img.src = processedSrc;
     
@@ -51,10 +60,10 @@ const OptimizedImage = ({
       img.onload = null;
       img.onerror = null;
     };
-  }, [src, preventCache, fallbackSrc, onLoad, onError]);
+  }, [src, preventCache, fallbackSrc, onLoad, onError, sizeParam]);
   
   return (
-    <div className={`relative ${className}`} style={style}>
+    <div className={`relative ${className}`} style={{...style, width, height}}>
       {isLoading && (
         <div className="absolute inset-0 bg-gray-200 animate-pulse"></div>
       )}
@@ -62,12 +71,15 @@ const OptimizedImage = ({
         src={imageSrc}
         alt={alt}
         className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
-        style={{ ...style, objectFit: 'cover' }}
+        style={{ ...style, objectFit: style.objectFit || 'cover' }}
         onLoad={() => setIsLoading(false)}
         onError={() => {
           setHasError(true);
           setImageSrc(fallbackSrc);
         }}
+        width={width}
+        height={height}
+        loading={loading}
         {...rest}
       />
       {hasError && !isLoading && (

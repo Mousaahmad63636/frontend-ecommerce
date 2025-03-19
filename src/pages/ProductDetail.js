@@ -239,7 +239,23 @@ function ProductDetail() {
     setUserRating(rating);
     showNotification(`You rated this product ${rating} stars`, 'success');
   };
-
+  useEffect(() => {
+    // Only run if product has multiple images
+    if (product?.images?.length > 1) {
+      // Calculate next and previous indices
+      const nextIndex = (currentImageIndex + 1) % product.images.length;
+      const prevIndex = (currentImageIndex - 1 + product.images.length) % product.images.length;
+      
+      // Preload next and previous images
+      const preloadImage = (index) => {
+        const img = new Image();
+        img.src = getImageUrl(product.images[index]);
+      };
+      
+      preloadImage(nextIndex);
+      preloadImage(prevIndex);
+    }
+  }, [currentImageIndex, product]);
   // Handle WhatsApp click
   const handleWhatsAppClick = () => {
     if (!product) return;
