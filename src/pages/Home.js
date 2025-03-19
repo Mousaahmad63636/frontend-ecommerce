@@ -5,6 +5,9 @@ import { Helmet } from 'react-helmet-async';
 import { Spinner } from 'flowbite-react';
 import { useLocation } from 'react-router-dom';
 import { getImageUrl } from '../utils/imageUtils';
+// src/pages/Home.js
+// Add this import at the top of the file with the other imports
+import OptimizedImage from '../components/OptimizedImage';
 import { useAuth } from '../contexts/AuthContext';
 import DailyTimer from '../components/DailyTimer/DailyTimer';
 // Component imports
