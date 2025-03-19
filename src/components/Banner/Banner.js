@@ -1,7 +1,7 @@
 // src/components/Banner.js
 import React, { useState, useEffect } from 'react';
 import OptimizedImage from '../OptimizedImage';
-import { getImageUrl } from '../utils/imageUtils';
+import { getImageUrl } from '../../utils/imageUtils';
 
 const Banner = ({ src, alt, title, subtitle, isVideo = false, onLoad, onError }) => {
   const [loading, setLoading] = useState(true);
