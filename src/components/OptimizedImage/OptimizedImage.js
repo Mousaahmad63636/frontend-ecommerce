@@ -1,6 +1,6 @@
 // src/components/OptimizedImage.js
 import React, { useState, useEffect } from 'react';
-import { loadImage, getImageUrl } from '../utils/imageUtils';
+import { loadImage, getImageUrl } from '../../utils/imageUtils';
 
 const OptimizedImage = ({ 
   src, 
