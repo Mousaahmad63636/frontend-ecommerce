@@ -429,29 +429,6 @@ useEffect(() => {
         <meta name="description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices." />
       </Helmet>
 
-      // In Home.js, replace the hero section with this code
-{!showDiscountedOnly && !showAllProducts && !showSimilarProducts && !showCategoryView && !searchQuery && (
-  <section
-    ref={heroRef}
-    className="w-full"
-    style={{
-      marginTop: '0',
-      position: 'relative',
-      zIndex: 10
-    }}
-  >
-    <Banner
-      src={heroSettings.mediaUrl}
-      alt="Hero banner"
-      title={heroSettings.title}
-      subtitle={heroSettings.subtitle}
-      isVideo={heroSettings.type === 'video'}
-      onLoad={() => console.log('Hero banner loaded successfully')}
-      onError={() => console.error('Failed to load hero banner')}
-    />
-  </section>
-)}
-
       {/* Admin Panel Section */}
       {user && user.role === 'admin' && (
         <section className="py-8 bg-gray-100">
@@ -469,11 +446,6 @@ useEffect(() => {
           </div>
         </section>
       )}
-
-// src/pages/Home.js - Fixed Hero Section
-
-// Remove the first hero section (around line 240-255)
-// And keep only this one hero section in the right place:
 
       {/* Black Friday Banner */}
       {blackFridayData && (
@@ -878,7 +850,6 @@ useEffect(() => {
                 ))}
               </select>
             </div>
-
             {/* Products Grid */}
             {filteredProducts.length > 0 ? (
               <ProductList
