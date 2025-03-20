@@ -258,17 +258,17 @@ const api = {
         }).then(res => res.data);
     },
     
-    // Category Management Methods - NEW ENDPOINTS
     getCategories: async () => {
         try {
-            const response = await axiosInstance.get('/categories');
-            return response.data;
+          console.log('API: Fetching categories...');
+          const response = await axiosInstance.get('/categories');
+          console.log('API: Categories response:', response.data);
+          return response.data;
         } catch (error) {
-            console.error('Error fetching categories:', error);
-            throw error;
+          console.error('Error fetching categories:', error);
+          throw error;
         }
-    },
-    
+      },
     createCategory: async (name) => {
         try {
             const response = await axiosInstance.post('/categories', { name });
@@ -291,13 +291,14 @@ const api = {
     
     deleteCategory: async (name) => {
         try {
-            const response = await axiosInstance.delete(`/categories/${encodeURIComponent(name)}`);
-            return response.data;
+          console.log(`API: Deleting category: ${name}`);
+          const response = await axiosInstance.delete(`/categories/${encodeURIComponent(name)}`);
+          return response.data;
         } catch (error) {
-            console.error('Error deleting category:', error);
-            throw error;
+          console.error('Error deleting category:', error);
+          throw error;
         }
-    },
+      },
     
     mergeCategories: async (sourceCategory, targetCategory) => {
         try {

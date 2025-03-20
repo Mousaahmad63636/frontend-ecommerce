@@ -16,20 +16,28 @@ function CategoryManager() {
   useEffect(() => {
     fetchCategories();
   }, []);
+  useEffect(() => {
+    if (categories.length > 0 && categoryCounts) {
+      console.log('Categories and counts:', categories.map(cat => ({
+        name: cat,
+        count: categoryCounts[cat] || 0
+      })));
+    }
+  }, [categories, categoryCounts]);
 
   const fetchCategories = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       console.log('Fetching categories...');
       const response = await api.getCategories();
-      
+
       // Check response format
       if (!response || !response.categories) {
         throw new Error('Invalid response format');
       }
-      
+
       setCategories(response.categories);
       setCategoryCounts(response.categoryCounts || {});
       console.log(`Loaded ${response.categories.length} categories successfully`);
@@ -44,14 +52,14 @@ function CategoryManager() {
 
   const handleCreateCategory = async (e) => {
     e.preventDefault();
-    
+
     if (!newCategory.trim()) {
       showNotification('Category name cannot be empty', 'error');
       return;
     }
-    
+
     setLoading(true);
-    
+
     try {
       await api.createCategory(newCategory.trim());
       showNotification('Category created successfully', 'success');
@@ -60,7 +68,7 @@ function CategoryManager() {
     } catch (err) {
       console.error('Error creating category:', err);
       showNotification(
-        err.response?.data?.message || 'Failed to create category', 
+        err.response?.data?.message || 'Failed to create category',
         'error'
       );
     } finally {
@@ -80,19 +88,19 @@ function CategoryManager() {
 
   const handleUpdateCategory = async (e) => {
     e.preventDefault();
-    
+
     if (!updatedCategoryName.trim()) {
       showNotification('Category name cannot be empty', 'error');
       return;
     }
-    
+
     if (updatedCategoryName.trim() === editingCategory) {
       handleCancelEdit();
       return;
     }
-    
+
     setLoading(true);
-    
+
     try {
       await api.updateCategory(editingCategory, updatedCategoryName.trim());
       showNotification('Category updated successfully', 'success');
@@ -101,7 +109,7 @@ function CategoryManager() {
     } catch (err) {
       console.error('Error updating category:', err);
       showNotification(
-        err.response?.data?.message || 'Failed to update category', 
+        err.response?.data?.message || 'Failed to update category',
         'error'
       );
     } finally {
@@ -110,20 +118,21 @@ function CategoryManager() {
   };
 
   const handleDeleteCategory = async (category) => {
+    console.log(`Attempting to delete ${category}, count: ${categoryCounts[category]}`);
     if (categoryCounts[category] > 0) {
       showNotification(
-        `Cannot delete category "${category}" because it is used by ${categoryCounts[category]} products`, 
+        `Cannot delete category "${category}" because it is used by ${categoryCounts[category]} products`,
         'error'
       );
       return;
     }
-    
+
     if (!window.confirm(`Are you sure you want to delete the category "${category}"?`)) {
       return;
     }
-    
+
     setLoading(true);
-    
+
     try {
       await api.deleteCategory(category);
       showNotification('Category deleted successfully', 'success');
@@ -131,7 +140,7 @@ function CategoryManager() {
     } catch (err) {
       console.error('Error deleting category:', err);
       showNotification(
-        err.response?.data?.message || 'Failed to delete category', 
+        err.response?.data?.message || 'Failed to delete category',
         'error'
       );
     } finally {
@@ -144,25 +153,25 @@ function CategoryManager() {
       showNotification('You need at least 2 categories to merge', 'error');
       return;
     }
-    
+
     const sourceCategory = window.prompt('Enter the source category (the one to be merged):');
     if (!sourceCategory || !categories.includes(sourceCategory)) {
       showNotification('Invalid source category', 'error');
       return;
     }
-    
+
     const targetCategory = window.prompt('Enter the target category (the one to keep):');
     if (!targetCategory || !categories.includes(targetCategory) || targetCategory === sourceCategory) {
       showNotification('Invalid target category', 'error');
       return;
     }
-    
+
     if (!window.confirm(`Are you sure you want to merge "${sourceCategory}" into "${targetCategory}"?`)) {
       return;
     }
-    
+
     setLoading(true);
-    
+
     try {
       await api.mergeCategories(sourceCategory, targetCategory);
       showNotification(`Successfully merged "${sourceCategory}" into "${targetCategory}"`, 'success');
@@ -170,7 +179,7 @@ function CategoryManager() {
     } catch (err) {
       console.error('Error merging categories:', err);
       showNotification(
-        err.response?.data?.message || 'Failed to merge categories', 
+        err.response?.data?.message || 'Failed to merge categories',
         'error'
       );
     } finally {
@@ -194,7 +203,7 @@ function CategoryManager() {
       <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded relative mb-4">
         <strong className="font-bold">Error loading categories!</strong>
         <p className="block sm:inline"> {error}</p>
-        <button 
+        <button
           onClick={fetchCategories}
           className="mt-2 bg-red-100 hover:bg-red-200 text-red-800 font-semibold py-2 px-4 rounded"
         >
@@ -209,7 +218,7 @@ function CategoryManager() {
       {/* Create category form */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h2 className="text-xl font-bold text-gray-900 mb-4">Add New Category</h2>
-        
+
         <form onSubmit={handleCreateCategory} className="flex items-center gap-3">
           <input
             type="text"
@@ -243,7 +252,7 @@ function CategoryManager() {
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
           <h2 className="text-xl font-bold text-gray-900">Categories</h2>
-          
+
           <button
             onClick={handleMergeCategories}
             className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-md flex items-center"
@@ -257,7 +266,7 @@ function CategoryManager() {
             Merge Categories
           </button>
         </div>
-        
+
         {categories.length === 0 ? (
           <div className="p-8 text-center">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -336,17 +345,17 @@ function CategoryManager() {
                               <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                             </svg>
                           </button>
+
                           <button
                             onClick={() => handleDeleteCategory(category)}
-                            className={`p-1 ${
-                              categoryCounts[category] > 0
+                            className={`p-1 ${(categoryCounts[category] || 0) > 0
                                 ? 'text-gray-400 cursor-not-allowed'
                                 : 'text-red-600 hover:text-red-900'
-                            }`}
-                            title={categoryCounts[category] > 0 ? "Can't delete (in use)" : "Delete"}
-                            disabled={loading || categoryCounts[category] > 0}
+                              }`}
+                            title={categoryCounts[category] > 0 ? `Can't delete (used by ${categoryCounts[category]} products)` : "Delete"}
+                            disabled={loading || (categoryCounts[category] || 0) > 0}
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
                             </svg>
                           </button>
@@ -359,7 +368,7 @@ function CategoryManager() {
             </table>
           </div>
         )}
-        
+
         <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
           <p className="text-sm text-gray-600">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 inline-block mr-1 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
