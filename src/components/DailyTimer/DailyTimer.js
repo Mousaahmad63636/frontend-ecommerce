@@ -32,7 +32,7 @@ const DailyTimer = () => {
   return (
     <div className="w-full max-w-4xl mx-auto my-6 px-4">
       {/* Added "Offer Ends In" heading */}
-      <h3 className="text-center font-medium text-lg mb-3 text-gray-700">Offer Ends In</h3>
+      <h3 className="text-center font-medium text-lg mb-3 text-gray-700">Offers Ends In</h3>
       
       <div className="flex justify-center items-end">
         {/* Days */}

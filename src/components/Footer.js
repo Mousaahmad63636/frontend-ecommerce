@@ -62,7 +62,7 @@ function Footer() {
             <div className="space-y-2">
               <p className="flex items-center">
                 <i className="fas fa-phone mr-2"></i>
-                +961 76919370
+                +961 76 91 93 70
               </p>
               <p className="flex items-center">
                 <i className="fas fa-map-marker-alt mr-2"></i>
