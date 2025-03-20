@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 function Footer() {
   const [showScroll, setShowScroll] = useState(false);
-
+  
   const checkScrollTop = () => {
     if (!showScroll && window.pageYOffset > 400) {
       setShowScroll(true);
@@ -10,16 +10,16 @@ function Footer() {
       setShowScroll(false);
     }
   };
-
+  
   useEffect(() => {
     window.addEventListener('scroll', checkScrollTop);
     return () => window.removeEventListener('scroll', checkScrollTop);
   }, [showScroll]);
-
+  
   const scrollTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
+  
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-12">
@@ -56,7 +56,7 @@ function Footer() {
               </a>
             </div>
           </div>
-
+          
           <div>
             <h5 className="text-xl font-semibold mb-4">Contact Us</h5>
             <div className="space-y-2">
@@ -71,19 +71,29 @@ function Footer() {
             </div>
           </div>
         </div>
-
+        
         <div className="border-t border-gray-700 mt-8 pt-8">
           <p className="text-center text-gray-400">
-            &copy; {new Date().getFullYear()} Your E-commerce Store. All rights reserved.
+            &copy; {new Date().getFullYear()} Spotlylb. All rights reserved.
+          </p>
+          <p className="text-center text-gray-500 text-sm mt-2">
+            Website created by <a 
+              href="https://www.instagram.com/tss_lb" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-purple-400 hover:text-purple-300 transition-colors"
+            >
+              TSS_LB
+            </a>
           </p>
         </div>
       </div>
-
+      
       {showScroll && (
         <button 
           onClick={scrollTop}
-          className="fixed bottom-8 right-8 bg-primary-600 text-white w-10 h-10 rounded-full 
-            flex items-center justify-center shadow-lg hover:bg-primary-700 
+          className="fixed bottom-8 right-8 bg-primary-600 text-white w-10 h-10 rounded-full
+            flex items-center justify-center shadow-lg hover:bg-primary-700
             transition-colors duration-200"
           role="button"
           aria-label="Scroll to top"
