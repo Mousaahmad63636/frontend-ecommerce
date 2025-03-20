@@ -410,7 +410,7 @@ function Header() {
         )}
       </header>
 
-      {/* Category Navigator Section */}
+      {/* Category Navigator Section - MODIFIED: Passing hideArrows prop */}
       <div 
         className={`category-navigator-wrapper transition-transform duration-300 ${showCategoryNav ? 'translate-y-0' : '-translate-y-full'}`}
         style={{ 
@@ -421,7 +421,7 @@ function Header() {
           borderBottom: '1px solid #e5e7eb'
         }}
       >
-        <CategoryNavigator />
+        <CategoryNavigator hideArrows={true} />
       </div>
 
       {/* Modals */}

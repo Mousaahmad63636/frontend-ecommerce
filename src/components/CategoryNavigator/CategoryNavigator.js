@@ -3,7 +3,7 @@ import api from '../../api/api';
 import './CategoryNavigator.css';
 import React, { useState, useEffect, useRef } from 'react';
 
-function CategoryNavigator() {
+function CategoryNavigator({ hideArrows = false }) {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -109,11 +109,14 @@ function CategoryNavigator() {
 
   return (
     <nav className="category-navigator">
-      <div className="scroll-button left" onClick={() => scroll('left')}>
-        <i className="fas fa-chevron-left"></i>
-      </div>
+      {/* Left scroll button - Only render if hideArrows is false */}
+      {!hideArrows && (
+        <div className="scroll-button left" onClick={() => scroll('left')}>
+          <i className="fas fa-chevron-left"></i>
+        </div>
+      )}
       
-      <div className="container" ref={containerRef}>
+      <div className={`container ${hideArrows ? 'no-scroll-buttons' : ''}`} ref={containerRef}>
         <ul className="category-list">
           <li className={`category-item ${currentCategory === 'All Products' ? 'active' : ''}`}>
             <button 
@@ -139,9 +142,12 @@ function CategoryNavigator() {
         </ul>
       </div>
       
-      <div className="scroll-button right" onClick={() => scroll('right')}>
-        <i className="fas fa-chevron-right"></i>
-      </div>
+      {/* Right scroll button - Only render if hideArrows is false */}
+      {!hideArrows && (
+        <div className="scroll-button right" onClick={() => scroll('right')}>
+          <i className="fas fa-chevron-right"></i>
+        </div>
+      )}
     </nav>
   );
 }
