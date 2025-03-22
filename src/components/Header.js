@@ -55,20 +55,20 @@ function Header() {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
+
       // Set isScrolled for header styling
       setIsScrolled(currentScrollY > 20);
-      
+
       // Hide category navigator on scroll down, show on scroll up
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         setShowCategoryNav(false);
       } else {
         setShowCategoryNav(true);
       }
-      
+
       setLastScrollY(currentScrollY);
     };
-    
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
@@ -147,8 +147,8 @@ function Header() {
 
   return (
     <div className={`fixed top-0 left-0 right-0 z-50 ${isScrolled ? 'shadow-md' : ''}`}>
-            {/* Integrated banner - PART OF MAIN HEADER but with dynamic content */}
-      <div style={{ backgroundColor: '#8c52ff' }} className="text-white py-1 px-4 top-banner">
+      {/* Integrated banner - PART OF MAIN HEADER but with dynamic content */}
+      <div style={{ backgroundColor: '#8c52ff', position: 'relative', zIndex: 35 }} className="text-white py-1 px-4 top-banner">
         <div className="container mx-auto flex justify-between items-center">
           {/* Social Media Links - Hidden on mobile */}
           <div className="hidden md:flex items-center space-x-2">
@@ -410,12 +410,11 @@ function Header() {
         )}
       </header>
 
-      {/* Category Navigator Section - MODIFIED: Passing hideArrows prop */}
-      <div 
+      <div
         className={`category-navigator-wrapper transition-transform duration-300 ${showCategoryNav ? 'translate-y-0' : '-translate-y-full'}`}
-        style={{ 
+        style={{
           position: 'relative',
-          zIndex: 25,
+          zIndex: 20, // Lowered from 25 to 20
           background: '#fff',
           boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
           borderBottom: '1px solid #e5e7eb'
