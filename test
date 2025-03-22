@@ -257,6 +257,7 @@ $('#related-posts img').attr('src', function(i, src) {return src.replace( '/defa
        <b:widget-setting name='shownum'>9</b:widget-setting>
        <b:widget-setting name='link-3'>http://</b:widget-setting>
        <b:widget-setting name='sorting'>NONE</b:widget-setting>
+       <b:widget-setting name='link-4'>https://</b:widget-setting>
        <b:widget-setting name='text-1'>google-plus</b:widget-setting>
        <b:widget-setting name='link-1'>https://time-news-1.blogspot.com/</b:widget-setting>
        <b:widget-setting name='text-0'>instagram</b:widget-setting>
@@ -264,6 +265,7 @@ $('#related-posts img').attr('src', function(i, src) {return src.replace( '/defa
        <b:widget-setting name='text-3'>facebook</b:widget-setting>
        <b:widget-setting name='link-0'>http://</b:widget-setting>
        <b:widget-setting name='text-2'>twitter</b:widget-setting>
+       <b:widget-setting name='text-4'>linkedin</b:widget-setting>
      </b:widget-settings>
      <b:includable id='main'>
  <div class='widget-content'>
@@ -516,7 +518,7 @@ $('#related-posts img').attr('src', function(i, src) {return src.replace( '/defa
       <b:widget-setting name='style.textcolor'>#ffffff</b:widget-setting>
       <b:widget-setting name='showShareButtons'>false</b:widget-setting>
       <b:widget-setting name='authorLabel'>إسم الكاتب</b:widget-setting>
-      <b:widget-setting name='showCommentLink'>true</b:widget-setting>
+      <b:widget-setting name='showCommentLink'>false</b:widget-setting>
       <b:widget-setting name='style.urlcolor'>#ffffff</b:widget-setting>
       <b:widget-setting name='showAuthor'>true</b:widget-setting>
       <b:widget-setting name='style.linkcolor'>#ffffff</b:widget-setting>
@@ -1657,38 +1659,96 @@ printRelatedLabels_thumbs(&quot;<data:post.url/>&quot;);
 <div class='widgetsfooter'>
 <div class='container'>
 <div class='titlewidgets'>
-<p style="color: white;">الاكتر شيوعا</p>
+<p style='color: white;'>الاكتر شيوعا</p>
 
 </div>
- <b:section class='footerw1' id='footerw1' preferred='yes'/>
+ <b:section class='footerw1' id='footerw1' preferred='yes'>
+   <b:widget id='HTML4' locked='false' title='من نحن' type='HTML'>
+     <b:widget-settings>
+       <b:widget-setting name='content'><![CDATA[<style>
+  #aboutText {
+    display: none;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f3f3f3;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  .about-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  #ContactForm1 {
+    text-align: left !important; /* Align text to the left */
+    margin: 0; /* Remove any extra centering margins */
+    float: left; /* Move the form to the left */
+    width: 40%; /* Adjust width as needed */
+}
+
+</style>
+
+<button class="about-btn" onclick="toggleAbout()">About Us</button>
+
+<div id="aboutText">
+  <p>Welcome to our website! We provide high-quality services and are dedicated to customer satisfaction.</p>
+</div>
+
+<script>
+  function toggleAbout() {
+    var aboutText = document.getElementById("aboutText");
+    if (aboutText.style.display === "none" || aboutText.style.display === "") {
+      aboutText.style.display = "block";
+    } else {
+      aboutText.style.display = "none";
+    }
+  }
+</script>]]></b:widget-setting>
+     </b:widget-settings>
+     <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+   </b:widget>
+ </b:section>
  <b:section class='footerw2' id='footerw2' preferred='yes'/>
  <b:section class='footerw3' id='footerw3' preferred='yes'>
-   <b:widget id='ContactForm1' locked='false' title='Contact Form' type='ContactForm'>
+   <b:widget id='ContactForm1' locked='false' title='Contact Form' type='ContactForm' version='1'>
      <b:includable id='main'>
   <b:if cond='data:title != &quot;&quot;'>
     <h2 class='title'><data:title/></h2>
   </b:if>
-<div class='contact-form-widget' style="color: white !important;">
+<div class='contact-form-widget' style='color: white !important;'>
     <div>
       <form name='contact-form'>
         <p/>
-        <span style="color: white;"><data:contactFormNameMsg/></span>
+        <span style='color: white;'><data:contactFormNameMsg/></span>
         <br/>
-        <input  expr:id='data:widget.instanceId + &quot;_contact-form-name&quot;' name='name' size='30' type='text' value='' style="color: white; background-color: transparent; border: 1px solid white;"/>
+        <input expr:id='data:widget.instanceId + &quot;_contact-form-name&quot;' name='name' size='30' style='color: white; background-color: transparent; border: 1px solid white;' type='text' value=''/>
         <p/>
-        <span style="color: white;"><data:contactFormEmailMsg/></span> <span style='font-weight: bolder; color: white;'>*</span>
+        <span style='color: white;'><data:contactFormEmailMsg/></span> <span style='font-weight: bolder; color: white;'>*</span>
         <br/>
-        <input class='contact-form-email' expr:id='data:widget.instanceId + &quot;_contact-form-email&quot;' name='email' size='30' type='text' value='' style="color: white; background-color: transparent; border: 1px solid white;"/>
+        <input class='contact-form-email' expr:id='data:widget.instanceId + &quot;_contact-form-email&quot;' name='email' size='30' style='color: white; background-color: transparent; border: 1px solid white;' type='text' value=''/>
         <p/>
-        <span style="color: white;"><data:contactFormMessageMsg/></span> <span style='font-weight: bolder; color: white;'>*</span>
+        <span style='color: white;'><data:contactFormMessageMsg/></span> <span style='font-weight: bolder; color: white;'>*</span>
         <br/>
-        <textarea class='contact-form-email-message' cols='25' expr:id='data:widget.instanceId + &quot;_contact-form-email-message&quot;' name='email-message' rows='5' style="color: white; background-color: transparent; border: 1px solid white;"></textarea>
+        <textarea class='contact-form-email-message' cols='25' expr:id='data:widget.instanceId + &quot;_contact-form-email-message&quot;' name='email-message' rows='5' style='color: white; background-color: transparent; border: 1px solid white;'/>
         <p/>
-        <input class='contact-form-button contact-form-button-submit' expr:id='data:widget.instanceId + &quot;_contact-form-submit&quot;' expr:value='data:contactFormSendMsg' type='button' style="color: white; background-color: black; border: 1px solid white;"/>
+        <input class='contact-form-button contact-form-button-submit' expr:id='data:widget.instanceId + &quot;_contact-form-submit&quot;' expr:value='data:contactFormSendMsg' style='color: white; background-color: black; border: 1px solid white;' type='button'/>
         <p/>
         <div style='text-align: center; max-width: 222px; width: 100%'>
-          <p class='contact-form-error-message' expr:id='data:widget.instanceId + &quot;_contact-form-error-message&quot;' style="color: white;"/>
-          <p class='contact-form-success-message' expr:id='data:widget.instanceId + &quot;_contact-form-success-message&quot;' style="color: white;"/>
+          <p class='contact-form-error-message' expr:id='data:widget.instanceId + &quot;_contact-form-error-message&quot;' style='color: white;'/>
+          <p class='contact-form-success-message' expr:id='data:widget.instanceId + &quot;_contact-form-success-message&quot;' style='color: white;'/>
         </div>
       </form>
     </div>

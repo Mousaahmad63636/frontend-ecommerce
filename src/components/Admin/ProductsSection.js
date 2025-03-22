@@ -169,14 +169,16 @@ function ProductsSection() {
         filterAndSortProducts();
     }, [filterAndSortProducts]);
 
+
     const handleInputChange = (e) => {
         const { name, type, files, value } = e.target;
 
         if (type === 'file') {
             const fileArray = Array.from(files);
 
-            if (fileArray.length > 5) {
-                showNotification('Maximum 5 images allowed', 'error');
+            // Increase the limit from 5 to 10 or remove the check entirely
+            if (fileArray.length > 10) { // Changed from 5 to 10
+                showNotification('Maximum 10 images allowed', 'error');
                 return;
             }
 
@@ -298,7 +300,7 @@ function ProductsSection() {
 
             // Stringify the categories array properly
             formDataToSend.append('categories', JSON.stringify(formData.categories));
-            
+
             // Append colors and sizes
             formDataToSend.append('colors', JSON.stringify(formData.colors));
             formDataToSend.append('sizes', JSON.stringify(formData.sizes));
@@ -619,16 +621,16 @@ function ProductsSection() {
                             <div className="flex flex-wrap gap-2 mb-3">
                                 {formData.colors.length > 0 ? (
                                     formData.colors.map(color => (
-                                        <div 
-                                            key={color} 
+                                        <div
+                                            key={color}
                                             className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-200"
                                         >
-                                            <div 
-                                                className="w-4 h-4 rounded-full mr-2" 
+                                            <div
+                                                className="w-4 h-4 rounded-full mr-2"
                                                 style={{ backgroundColor: color }}
                                             ></div>
                                             <span>{color}</span>
-                                            <button 
+                                            <button
                                                 type="button"
                                                 onClick={() => handleRemoveColor(color)}
                                                 className="ml-2 text-gray-500 hover:text-red-500"
@@ -660,19 +662,19 @@ function ProductsSection() {
                                 </button>
                             </div>
                         </div>
-                        
+
                         {/* Sizes Section */}
                         <div className="col-span-2">
                             <label htmlFor="sizes" className="block text-sm font-medium text-gray-700 mb-2">Product Sizes</label>
                             <div className="flex flex-wrap gap-2 mb-3">
                                 {formData.sizes.length > 0 ? (
                                     formData.sizes.map(size => (
-                                        <div 
-                                            key={size} 
+                                        <div
+                                            key={size}
                                             className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-200"
                                         >
                                             <span>{size}</span>
-                                            <button 
+                                            <button
                                                 type="button"
                                                 onClick={() => handleRemoveSize(size)}
                                                 className="ml-2 text-gray-500 hover:text-red-500"
@@ -754,8 +756,8 @@ function ProductsSection() {
                                             type="button"
                                             onClick={() => handleAddCategoryToProduct(category)}
                                             className={`px-3 py-1 rounded-full text-sm ${formData.categories.includes(category)
-                                                    ? 'bg-indigo-500 text-white cursor-not-allowed'
-                                                    : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                                                ? 'bg-indigo-500 text-white cursor-not-allowed'
+                                                : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
                                                 }`}
                                             disabled={formData.categories.includes(category)}
                                         >
@@ -772,8 +774,12 @@ function ProductsSection() {
                             </div>
                         </div>
 
+
+
                         <div className="col-span-2">
-                            <label htmlFor="images" className="block text-sm font-medium text-gray-700">Product Images (Max 5)</label>
+                            <label htmlFor="images" className="block text-sm font-medium text-gray-700">
+                                Product Images (Max 10) {/* Changed from 5 to 10 */}
+                            </label>
                             <input
                                 type="file"
                                 id="images"
@@ -841,8 +847,8 @@ function ProductsSection() {
                             type="submit"
                             disabled={loading || formData.categories.length === 0}
                             className={`inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white ${loading || formData.categories.length === 0
-                                    ? 'bg-gray-400 cursor-not-allowed'
-                                    : 'bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                                ? 'bg-gray-400 cursor-not-allowed'
+                                : 'bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
                                 }`}
                         >
                             {loading ? (
@@ -957,13 +963,13 @@ function ProductsSection() {
                                             <div className="text-xs">
                                                 {product.colors && product.colors.length > 0 && (
                                                     <div className="mb-1">
-                                                        <span className="font-medium">Colors:</span> 
+                                                        <span className="font-medium">Colors:</span>
                                                         <div className="flex mt-1 space-x-1">
                                                             {product.colors.map(color => (
-                                                                <div 
-                                                                    key={color} 
-                                                                    className="w-4 h-4 rounded-full border border-gray-300" 
-                                                                    style={{backgroundColor: color}}
+                                                                <div
+                                                                    key={color}
+                                                                    className="w-4 h-4 rounded-full border border-gray-300"
+                                                                    style={{ backgroundColor: color }}
                                                                     title={color}
                                                                 ></div>
                                                             ))}
@@ -972,14 +978,14 @@ function ProductsSection() {
                                                 )}
                                                 {product.sizes && product.sizes.length > 0 && (
                                                     <div>
-                                                        <span className="font-medium">Sizes:</span> 
+                                                        <span className="font-medium">Sizes:</span>
                                                         <span className="ml-1">{product.sizes.join(', ')}</span>
                                                     </div>
                                                 )}
-                                                {(!product.colors || product.colors.length === 0) && 
-                                                 (!product.sizes || product.sizes.length === 0) && (
-                                                    <span className="text-gray-500">No variants</span>
-                                                )}
+                                                {(!product.colors || product.colors.length === 0) &&
+                                                    (!product.sizes || product.sizes.length === 0) && (
+                                                        <span className="text-gray-500">No variants</span>
+                                                    )}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
@@ -1019,69 +1025,69 @@ function ProductsSection() {
 
             // Replace the Category Modal section in ProductsSection.js with this code:
 
-{/* Category Modal - Fixed positioning with proper z-index */}
-{showCategoryModal && (
-    <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        {/* Background overlay */}
-        <div 
-            className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
-            onClick={() => setShowCategoryModal(false)}
-        ></div>
+            {/* Category Modal - Fixed positioning with proper z-index */}
+            {showCategoryModal && (
+                <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                    {/* Background overlay */}
+                    <div
+                        className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                        onClick={() => setShowCategoryModal(false)}
+                    ></div>
 
-        {/* Modal panel */}
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-                <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                    <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                        <div className="sm:flex sm:items-start">
-                            <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
-                                <svg className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                </svg>
-                            </div>
-                            <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
-                                <h3 className="text-base font-semibold leading-6 text-gray-900" id="modal-title">Add New Category</h3>
-                                <div className="mt-4">
-                                    <form onSubmit={handleAddCategory}>
-                                        <div className="mb-4">
-                                            <label htmlFor="newCategory" className="block text-sm font-medium text-gray-700">Category Name</label>
-                                            <input
-                                                type="text"
-                                                id="newCategory"
-                                                value={newCategory}
-                                                onChange={(e) => setNewCategory(e.target.value)}
-                                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                                placeholder="Enter category name"
-                                                required
-                                                autoFocus
-                                            />
+                    {/* Modal panel */}
+                    <div className="fixed inset-0 z-50 overflow-y-auto">
+                        <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                            <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                                <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                                    <div className="sm:flex sm:items-start">
+                                        <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
+                                            <svg className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                            </svg>
                                         </div>
+                                        <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+                                            <h3 className="text-base font-semibold leading-6 text-gray-900" id="modal-title">Add New Category</h3>
+                                            <div className="mt-4">
+                                                <form onSubmit={handleAddCategory}>
+                                                    <div className="mb-4">
+                                                        <label htmlFor="newCategory" className="block text-sm font-medium text-gray-700">Category Name</label>
+                                                        <input
+                                                            type="text"
+                                                            id="newCategory"
+                                                            value={newCategory}
+                                                            onChange={(e) => setNewCategory(e.target.value)}
+                                                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                                            placeholder="Enter category name"
+                                                            required
+                                                            autoFocus
+                                                        />
+                                                    </div>
 
-                                        <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                                            <button
-                                                type="submit"
-                                                className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto"
-                                            >
-                                                Add Category
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                                                onClick={() => setShowCategoryModal(false)}
-                                            >
-                                                Cancel
-                                            </button>
+                                                    <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                                                        <button
+                                                            type="submit"
+                                                            className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto"
+                                                        >
+                                                            Add Category
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                                                            onClick={() => setShowCategoryModal(false)}
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-)}
+            )}
         </div>
     );
 }

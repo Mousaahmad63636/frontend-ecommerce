@@ -34,21 +34,21 @@ function ProductDetail() {
   // Add this new function for thumbnail preloading
   const preloadThumbnails = useCallback((imageUrls) => {
     if (!imageUrls || imageUrls.length <= 1) return;
-    
+
     console.log('Preloading all thumbnails...');
-    
+
     // Create a queue of images to preload - starting with ones closest to current image
     const preloadQueue = [];
-    
+
     // Add images in order of priority (current first, then adjacent, then rest)
     if (currentImageIndex < imageUrls.length) {
       // Skip current image as it's already loaded in main view
-      
+
       // Add next and previous images first (most likely to be needed)
       const nextIndex = (currentImageIndex + 1) % imageUrls.length;
       const prevIndex = (currentImageIndex - 1 + imageUrls.length) % imageUrls.length;
       preloadQueue.push(nextIndex, prevIndex);
-      
+
       // Add the rest of the images
       for (let i = 0; i < imageUrls.length; i++) {
         if (i !== currentImageIndex && i !== nextIndex && i !== prevIndex) {
@@ -61,35 +61,35 @@ function ProductDetail() {
         preloadQueue.push(i);
       }
     }
-    
+
     // Create throttled preload to avoid overwhelming the browser
     let loadedCount = 0;
     const BATCH_SIZE = 2; // Load 2 thumbnails at a time
-    
+
     const loadNext = () => {
       // Load a batch of images
       const batch = preloadQueue.splice(0, BATCH_SIZE);
       if (batch.length === 0) return;
-      
+
       batch.forEach(index => {
         const img = new Image();
         img.onload = () => {
           loadedCount++;
           console.log(`Preloaded thumbnail ${index + 1}/${imageUrls.length}`);
-          
+
           // If we've loaded all images or have capacity for more, load next batch
           if (preloadQueue.length > 0 && (loadedCount % BATCH_SIZE === 0)) {
             setTimeout(loadNext, 100); // Small delay to prevent browser throttling
           }
         };
-        
+
         // Explicitly set width and height for thumbnails
         const thumbnailUrl = getImageUrl(imageUrls[index]);
         // Add a size parameter for thumbnails - server should handle this
         img.src = `${thumbnailUrl.split('?')[0]}?size=120x120`;
       });
     };
-    
+
     // Start the preloading process
     loadNext();
   }, [currentImageIndex]);
@@ -313,13 +313,13 @@ function ProductDetail() {
       // Calculate next and previous indices
       const nextIndex = (currentImageIndex + 1) % product.images.length;
       const prevIndex = (currentImageIndex - 1 + product.images.length) % product.images.length;
-      
+
       // Preload next and previous images
       const preloadImage = (index) => {
         const img = new Image();
         img.src = getImageUrl(product.images[index]);
       };
-      
+
       preloadImage(nextIndex);
       preloadImage(prevIndex);
     }
@@ -528,34 +528,37 @@ function ProductDetail() {
                   </div>
                 )}
               </div>
-{/* Thumbnails */}
-{product.images && product.images.length > 1 && (
-  <div className="mt-4 grid grid-cols-5 gap-2">
-    {product.images.map((image, index) => (
-      <button
-        key={index}
-        className={`relative rounded-md overflow-hidden aspect-square border-2 ${
-          currentImageIndex === index
-            ? 'border-purple-500'
-            : 'border-transparent hover:border-gray-300'
-        } transition duration-200`}
-        onClick={() => selectImage(index)}
-      >
-        {/* Use a basic img tag for thumbnails for maximum reliability */}
-        <img
-          src={getImageUrl(image)}
-          alt={`${product.name} thumbnail ${index + 1}`}
-          className="w-full h-full object-cover"
-          loading={index < 5 ? "eager" : "lazy"}
-          onError={(e) => {
-            console.error(`Thumbnail ${index + 1} failed to load`);
-            e.target.src = '/placeholder.jpg';
-          }}
-        />
-      </button>
-    ))}
-  </div>
-)}
+              {/* Scrollable Thumbnails */}
+              {product.images && product.images.length > 1 && (
+                <div className="mt-4 relative">
+                  <div className="overflow-x-auto pb-2 hide-scrollbar">
+                    <div className="flex gap-2 min-w-min">
+                      {product.images.map((image, index) => (
+                        <button
+                          key={index}
+                          className={`relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-md overflow-hidden border-2 ${currentImageIndex === index
+                              ? 'border-purple-500'
+                              : 'border-transparent hover:border-gray-300'
+                            } transition duration-200`}
+                          onClick={() => selectImage(index)}
+                        >
+                          {/* Use a basic img tag for thumbnails for maximum reliability */}
+                          <img
+                            src={getImageUrl(image)}
+                            alt={`${product.name} thumbnail ${index + 1}`}
+                            className="w-full h-full object-cover"
+                            loading={index < 5 ? "eager" : "lazy"}
+                            onError={(e) => {
+                              console.error(`Thumbnail ${index + 1} failed to load`);
+                              e.target.src = '/placeholder.jpg';
+                            }}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Product Info */}
