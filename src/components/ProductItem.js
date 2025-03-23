@@ -158,7 +158,6 @@ function ProductItem({ product }) {
           <button
             onClick={() => {
               addToCart(product);
-              showNotification('Added to cart', 'success');
             }}
             disabled={product.soldOut}
             className={`w-full py-1.5 rounded-full text-center text-sm font-medium transition-all duration-200 ${

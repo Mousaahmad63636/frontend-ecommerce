@@ -5,18 +5,14 @@ import { Helmet } from 'react-helmet-async';
 import { Spinner } from 'flowbite-react';
 import { useLocation } from 'react-router-dom';
 import { getImageUrl } from '../utils/imageUtils';
-// src/pages/Home.js
-// Add this import at the top of the file with the other imports
 import OptimizedImage from '../components/OptimizedImage';
 import { useAuth } from '../contexts/AuthContext';
 import DailyTimer from '../components/DailyTimer/DailyTimer';
-// Component imports
 import ProductList from '../components/ProductList';
 import Banner from '../components/Banner';
 import ContactSection from '../components/ContactSection';
 import BlackFridayBanner from '../components/BlackFridayBanner/BlackFridayBanner';
 import api from '../api/api';
-
 function Home() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -28,6 +24,7 @@ function Home() {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const searchQuery = searchParams.get('q');
+  
   const [headerHeight, setHeaderHeight] = useState(0);
   const [showDiscountedOnly, setShowDiscountedOnly] = useState(false);
   const [showAllProducts, setShowAllProducts] = useState(false);
@@ -35,6 +32,7 @@ function Home() {
   const [showCategoryView, setShowCategoryView] = useState(false); // New state for category view
   const [categoryViewName, setCategoryViewName] = useState(''); // Store the category name for the view
   const [relatedProductId, setRelatedProductId] = useState(null);
+  const [showScrollButton, setShowScrollButton] = useState(false);
   const heroRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
@@ -57,6 +55,28 @@ function Home() {
     setSelectedCategory('all');
     window.scrollTo(0, 0);
   };
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScrollButton(true);
+      } else {
+        setShowScrollButton(false);
+      }
+    };
+  
+    window.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+  // Add this function to handle scrolling to top
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+};
 
   // Separate useEffect for URL parameters and scroll functionality
   useEffect(() => {
@@ -958,6 +978,17 @@ useEffect(() => {
       )}
 
       <ContactSection />
+      {showScrollButton && (
+  <button
+    onClick={scrollToTop}
+    className="fixed bottom-8 right-8 bg-purple-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-purple-700 transition-all duration-300 z-50 animate-fade-in"
+    aria-label="Scroll to top"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+    </svg>
+  </button>
+)}
     </div>
   );
 }
