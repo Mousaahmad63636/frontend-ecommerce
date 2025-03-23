@@ -24,7 +24,7 @@ function Home() {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const searchQuery = searchParams.get('q');
-  
+
   const [headerHeight, setHeaderHeight] = useState(0);
   const [showDiscountedOnly, setShowDiscountedOnly] = useState(false);
   const [showAllProducts, setShowAllProducts] = useState(false);
@@ -72,20 +72,20 @@ function Home() {
         setShowScrollButton(false);
       }
     };
-  
+
     window.addEventListener('scroll', handleScroll);
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
   // Add this function to handle scrolling to top
-const scrollToTop = () => {
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
-};
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
 
   // Separate useEffect for URL parameters and scroll functionality
   useEffect(() => {
@@ -181,7 +181,7 @@ const scrollToTop = () => {
       setShowAllProducts(false);
       setShowSimilarProducts(false);
       setCategoryViewName(categoryParam);
-      
+
       // Scroll to products section
       setTimeout(() => {
         if (productsRef.current) {
@@ -194,7 +194,7 @@ const scrollToTop = () => {
     }
 
   }, [location.search]);
-  
+
   // Calculate header height on mount and when window resizes
   useEffect(() => {
     const updateHeaderHeight = () => {
@@ -216,40 +216,40 @@ const scrollToTop = () => {
     };
   }, []);
 
-// Inside Home.js, update the hero settings fetch
-useEffect(() => {
-  const fetchSettings = async () => {
-    try {
-      setLoading(true); // Show loading state while fetching
-      const response = await api.getSettings();
-      if (response?.heroSection) {
-        // Pre-validate the hero image by checking if it exists
-        const { mediaUrl, ...otherSettings } = response.heroSection;
-        
-        // Set the hero settings right away, even before image validation
-        setHeroSettings({
-          ...otherSettings,
-          mediaUrl: mediaUrl || '/hero.jpg' // Fallback path right away if none provided
-        });
-        
-        // Image validation is now handled by the OptimizedImage component
-      }
-    } catch (error) {
-      console.error('Error fetching hero settings:', error);
-      // Set default hero settings on error
-      setHeroSettings({
-        type: 'image',
-        mediaUrl: '/hero.jpg',
-        title: 'Just Trendy - Where Trends Meet Need!',
-        subtitle: 'Discover Amazing Products at Great Prices'
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Inside Home.js, update the hero settings fetch
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        setLoading(true); // Show loading state while fetching
+        const response = await api.getSettings();
+        if (response?.heroSection) {
+          // Pre-validate the hero image by checking if it exists
+          const { mediaUrl, ...otherSettings } = response.heroSection;
 
-  fetchSettings();
-}, []);
+          // Set the hero settings right away, even before image validation
+          setHeroSettings({
+            ...otherSettings,
+            mediaUrl: mediaUrl || '/hero.jpg' // Fallback path right away if none provided
+          });
+
+          // Image validation is now handled by the OptimizedImage component
+        }
+      } catch (error) {
+        console.error('Error fetching hero settings:', error);
+        // Set default hero settings on error
+        setHeroSettings({
+          type: 'image',
+          mediaUrl: '/hero.jpg',
+          title: 'Just Trendy - Where Trends Meet Need!',
+          subtitle: 'Discover Amazing Products at Great Prices'
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSettings();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -1004,8 +1004,14 @@ useEffect(() => {
       {showScrollButton && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 bg-purple-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-purple-700 transition-all duration-300 z-50 animate-fade-in"
+          className="!fixed !bottom-8 !right-8 bg-purple-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-purple-700 transition-all duration-300 !z-[9999] animate-fade-in"
           aria-label="Scroll to top"
+          style={{
+            position: 'fixed',
+            bottom: '32px',
+            right: '32px',
+            zIndex: 9999
+          }}
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
