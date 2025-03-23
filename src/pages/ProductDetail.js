@@ -134,27 +134,58 @@ function ProductDetail() {
   };
 
   const shareToFacebook = () => {
-    const productUrl = encodeURIComponent(window.location.href);
-    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${productUrl}`;
-    window.open(shareUrl, '_blank', 'width=600,height=400');
-    setShareDropdownOpen(false);
+    try {
+      // Create a clean URL - just the main product URL without query parameters
+      const baseUrl = window.location.origin + window.location.pathname;
+      const productUrl = encodeURIComponent(baseUrl);
+      const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${productUrl}`;
+      
+      // Open in a new window
+      window.open(shareUrl, '_blank', 'width=600,height=400');
+      setShareDropdownOpen(false);
+    } catch (error) {
+      console.error('Error sharing to Facebook:', error);
+      showNotification('Failed to share to Facebook. Please try copying the link instead.', 'error');
+    }
   };
 
   const shareToWhatsApp = () => {
-    const productUrl = encodeURIComponent(window.location.href);
-    const text = encodeURIComponent(`Check out this product: ${product.name} ${productUrl}`);
-    const shareUrl = `https://wa.me/?text=${text}`;
-    window.open(shareUrl, '_blank');
-    setShareDropdownOpen(false);
+    try {
+      // Create a clean URL without query parameters
+      const baseUrl = window.location.origin + window.location.pathname;
+      // Create a clean message with the product name and URL
+      const message = `Check out this product: ${product.name} - ${baseUrl}`;
+      const encodedText = encodeURIComponent(message);
+      const shareUrl = `https://wa.me/?text=${encodedText}`;
+      
+      window.open(shareUrl, '_blank');
+      setShareDropdownOpen(false);
+    } catch (error) {
+      console.error('Error sharing to WhatsApp:', error);
+      showNotification('Failed to share to WhatsApp. Please try copying the link instead.', 'error');
+    }
   };
   const shareToInstagram = () => {
-    showNotification('Opening Instagram. Take a screenshot to share this product!', 'info');
-    window.location.href = 'instagram://camera';
-    setTimeout(() => {
-      window.open('https://www.instagram.com/', '_blank');
-    }, 500);
-
-    setShareDropdownOpen(false);
+    try {
+      // Copy the link to clipboard
+      const baseUrl = window.location.origin + window.location.pathname;
+      navigator.clipboard.writeText(baseUrl)
+        .then(() => {
+          showNotification('Link copied! Now you can paste it in Instagram.', 'success');
+          
+          // Open Instagram website
+          window.open('https://www.instagram.com/', '_blank');
+        })
+        .catch(err => {
+          console.error('Error copying link:', err);
+          showNotification('Could not copy link automatically. Please try the Copy Link button instead.', 'error');
+        });
+      
+      setShareDropdownOpen(false);
+    } catch (error) {
+      console.error('Error with Instagram share:', error);
+      showNotification('Something went wrong. Please try copying the link instead.', 'error');
+    }
   };
   useEffect(() => {
     const fetchProduct = async () => {
