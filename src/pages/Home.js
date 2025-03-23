@@ -45,6 +45,15 @@ function Home() {
     subtitle: 'Discover Amazing Products at Great Prices'
   });
 
+  // Define preferred category order
+  const preferredCategoryOrder = [
+    'Trendy Products',
+    'Home & Kitchen',
+    'Beauty & Health',
+    'Electronic',
+    'Toys'
+  ];
+
   // Handle navigation to home
   const goToHome = () => {
     navigate('/', { replace: true });
@@ -421,6 +430,32 @@ useEffect(() => {
     return getProductsByCategory(categoryName).length > 0;
   };
 
+  // Function to render a category section
+  const renderCategorySection = (category) => {
+    // Get products for this category
+    const categoryProducts = getProductsByCategory(category);
+
+    // Skip rendering if the category has no products
+    if (categoryProducts.length === 0) return null;
+
+    return (
+      <section key={category} className="py-6">
+        <div className="container mx-auto px-0">
+          <div className="mb-2 text-center">
+            <h2 className="text-2xl font-bold">{category}</h2>
+          </div>
+          <ProductList
+            title=" "
+            products={categoryProducts}
+            scrollable={true}
+            viewAllUrl={`/?category=${encodeURIComponent(category)}`}
+            viewAllText="View All"
+          />
+        </div>
+      </section>
+    );
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -529,31 +564,19 @@ useEffect(() => {
             </div>
           </section>
 
-          {/* Category Sections - Added new scrollable sections for each category */}
-          {categories.map(category => {
-            // Get products for this category
-            const categoryProducts = getProductsByCategory(category);
-
-            // Skip rendering if the category has no products
-            if (categoryProducts.length === 0) return null;
-
-            return (
-              <section key={category} className="py-6">
-                <div className="container mx-auto px-0">
-                  <div className="mb-2 text-center">
-                    <h2 className="text-2xl font-bold">{category}</h2>
-                  </div>
-                  <ProductList
-                    title=" "
-                    products={categoryProducts}
-                    scrollable={true}
-                    viewAllUrl={`/?category=${encodeURIComponent(category)}`}
-                    viewAllText="View All"
-                  />
-                </div>
-              </section>
-            );
+          {/* Render preferred categories first in the specified order */}
+          {preferredCategoryOrder.map(category => {
+            // Only render if the category exists in the fetched categories
+            if (categories.includes(category)) {
+              return renderCategorySection(category);
+            }
+            return null;
           })}
+
+          {/* Render remaining categories that are not in the preferred list */}
+          {categories
+            .filter(category => !preferredCategoryOrder.includes(category))
+            .map(category => renderCategorySection(category))}
 
           {/* Explore Our Products Section - Now also Horizontal Scrollable */}
           <section ref={productsRef} className="py-10">
@@ -979,16 +1002,16 @@ useEffect(() => {
 
       <ContactSection />
       {showScrollButton && (
-  <button
-    onClick={scrollToTop}
-    className="fixed bottom-8 right-8 bg-purple-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-purple-700 transition-all duration-300 z-50 animate-fade-in"
-    aria-label="Scroll to top"
-  >
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-    </svg>
-  </button>
-)}
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 bg-purple-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-purple-700 transition-all duration-300 z-50 animate-fade-in"
+          aria-label="Scroll to top"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+          </svg>
+        </button>
+      )}
     </div>
   );
 }

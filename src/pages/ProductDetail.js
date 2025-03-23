@@ -1,4 +1,3 @@
-// src/pages/ProductDetail.js
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -27,47 +26,38 @@ function ProductDetail() {
   const { addToCart } = useCart();
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const { showNotification } = useNotification();
+  const [shareDropdownOpen, setShareDropdownOpen] = useState(false);
   const [userRating, setUserRating] = useState(0);
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
 
-  // Add this new function for thumbnail preloading
   const preloadThumbnails = useCallback((imageUrls) => {
     if (!imageUrls || imageUrls.length <= 1) return;
 
     console.log('Preloading all thumbnails...');
 
-    // Create a queue of images to preload - starting with ones closest to current image
     const preloadQueue = [];
 
-    // Add images in order of priority (current first, then adjacent, then rest)
     if (currentImageIndex < imageUrls.length) {
-      // Skip current image as it's already loaded in main view
-
-      // Add next and previous images first (most likely to be needed)
       const nextIndex = (currentImageIndex + 1) % imageUrls.length;
       const prevIndex = (currentImageIndex - 1 + imageUrls.length) % imageUrls.length;
       preloadQueue.push(nextIndex, prevIndex);
 
-      // Add the rest of the images
       for (let i = 0; i < imageUrls.length; i++) {
         if (i !== currentImageIndex && i !== nextIndex && i !== prevIndex) {
           preloadQueue.push(i);
         }
       }
     } else {
-      // If current index is invalid, load all images
       for (let i = 0; i < imageUrls.length; i++) {
         preloadQueue.push(i);
       }
     }
 
-    // Create throttled preload to avoid overwhelming the browser
     let loadedCount = 0;
-    const BATCH_SIZE = 2; // Load 2 thumbnails at a time
+    const BATCH_SIZE = 2;
 
     const loadNext = () => {
-      // Load a batch of images
       const batch = preloadQueue.splice(0, BATCH_SIZE);
       if (batch.length === 0) return;
 
@@ -77,24 +67,19 @@ function ProductDetail() {
           loadedCount++;
           console.log(`Preloaded thumbnail ${index + 1}/${imageUrls.length}`);
 
-          // If we've loaded all images or have capacity for more, load next batch
           if (preloadQueue.length > 0 && (loadedCount % BATCH_SIZE === 0)) {
-            setTimeout(loadNext, 100); // Small delay to prevent browser throttling
+            setTimeout(loadNext, 100);
           }
         };
 
-        // Explicitly set width and height for thumbnails
         const thumbnailUrl = getImageUrl(imageUrls[index]);
-        // Add a size parameter for thumbnails - server should handle this
         img.src = `${thumbnailUrl.split('?')[0]}?size=120x120`;
       });
     };
 
-    // Start the preloading process
     loadNext();
   }, [currentImageIndex]);
 
-  // Add this useEffect to trigger thumbnail preloading when product data is loaded
   useEffect(() => {
     if (product?.images?.length > 1) {
       preloadThumbnails(product.images);
@@ -110,14 +95,74 @@ function ProductDetail() {
   }, [product]);
 
   const handleGoBack = () => {
-    navigate(-1); // Go back to previous page
+    navigate(-1);
   };
+
+  const toggleShareDropdown = () => {
+    setShareDropdownOpen(prev => !prev);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (shareDropdownOpen && !event.target.closest('.share-dropdown-container')) {
+        setShareDropdownOpen(false);
+      }
+    };
+  
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [shareDropdownOpen]);
 
   const goToHome = () => {
-    navigate('/'); // Go directly to homepage
+    navigate('/');
   };
 
-  // Fetch product data
+  const copyProductLink = () => {
+    const productUrl = window.location.href;
+    
+    navigator.clipboard.writeText(productUrl)
+      .then(() => {
+        showNotification('Product link copied to clipboard!', 'success');
+        setShareDropdownOpen(false);
+      })
+      .catch((error) => {
+        console.error('Error copying link: ', error);
+        showNotification('Failed to copy link. Please try again.', 'error');
+      });
+  };
+
+  const shareToFacebook = () => {
+    const productUrl = encodeURIComponent(window.location.href);
+    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${productUrl}`;
+    window.open(shareUrl, '_blank', 'width=600,height=400');
+    setShareDropdownOpen(false);
+  };
+  
+  const shareToTwitter = () => {
+    const productUrl = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(`Check out this product: ${product.name}`);
+    const shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${productUrl}`;
+    window.open(shareUrl, '_blank', 'width=600,height=400');
+    setShareDropdownOpen(false);
+  };
+  
+  const shareToWhatsApp = () => {
+    const productUrl = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(`Check out this product: ${product.name} ${productUrl}`);
+    const shareUrl = `https://wa.me/?text=${text}`;
+    window.open(shareUrl, '_blank');
+    setShareDropdownOpen(false);
+  };
+  
+  const shareByEmail = () => {
+    const subject = encodeURIComponent(`Check out this product: ${product.name}`);
+    const body = encodeURIComponent(`I found this amazing product and thought you might like it:\n\n${product.name}\n\n${window.location.href}`);
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    setShareDropdownOpen(false);
+  };
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -125,7 +170,6 @@ function ProductDetail() {
         const data = await api.getProductById(id);
         setProduct(data);
 
-        // Set default color and size if available
         if (data.colors && data.colors.length > 0) {
           setSelectedColor(data.colors[0]);
         }
@@ -133,7 +177,6 @@ function ProductDetail() {
           setSelectedSize(data.sizes[0]);
         }
 
-        // Pass the complete product to fetchSimilarProducts instead of just the category
         fetchSimilarProducts(data);
       } catch (error) {
         console.error('Error fetching product:', error);
@@ -146,49 +189,39 @@ function ProductDetail() {
     fetchProduct();
   }, [id, showNotification]);
 
-  // Updated fetchSimilarProducts to account for multiple categories
   const fetchSimilarProducts = async (currentProduct) => {
     if (!currentProduct) return;
 
     try {
       setLoadingSimilar(true);
 
-      // Get all categories associated with the product (both primary and from categories array)
       const productCategories = new Set();
 
-      // Add primary category
       if (currentProduct.category) {
         productCategories.add(currentProduct.category);
       }
 
-      // Add all categories from the categories array if it exists
       if (Array.isArray(currentProduct.categories) && currentProduct.categories.length > 0) {
         currentProduct.categories.forEach(cat => {
           if (cat) productCategories.add(cat);
         });
       }
 
-      // If no categories found, return
       if (productCategories.size === 0) {
         setLoadingSimilar(false);
         return;
       }
 
-      // Convert Set to Array for easier use
       const categoriesArray = Array.from(productCategories);
       console.log('Looking for similar products in categories:', categoriesArray);
 
       const products = await api.getProducts();
 
-      // Filter products that match any of the current product's categories
       const filtered = products.filter(p => {
-        // Skip the current product
         if (p._id === currentProduct._id) return false;
 
-        // Check if primary category matches any of our product's categories
         if (p.category && categoriesArray.includes(p.category)) return true;
 
-        // Check if any category in the categories array matches
         if (Array.isArray(p.categories) && p.categories.length > 0) {
           return p.categories.some(cat => categoriesArray.includes(cat));
         }
@@ -196,7 +229,6 @@ function ProductDetail() {
         return false;
       });
 
-      // Take only the first 10 matches instead of 4 for a better scrolling experience
       setSimilarProducts(filtered.slice(0, 10));
     } catch (error) {
       console.error('Error fetching similar products:', error);
@@ -205,26 +237,21 @@ function ProductDetail() {
     }
   };
 
-  // In the ProductDetail.js file, update the containsArabic function
   const containsArabic = (text) => {
     if (!text) return false;
     const arabicPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
     return arabicPattern.test(text);
   };
 
-  // Add a helper function to determine primary text direction
   const getPrimaryDirection = (text) => {
     if (!text) return 'ltr';
 
-    // Count Arabic vs Latin characters
     const arabicChars = (text.match(/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/g) || []).length;
     const latinChars = (text.match(/[A-Za-z]/g) || []).length;
 
-    // If Arabic characters dominate, use RTL
     return arabicChars > latinChars ? 'rtl' : 'ltr';
   };
 
-  // Handle quantity changes
   const handleQuantityChange = (change) => {
     const newQuantity = quantity + change;
     if (newQuantity >= 1 && newQuantity <= 10) {
@@ -232,33 +259,19 @@ function ProductDetail() {
     }
   };
 
-  // Update quantity from input field
   const handleInputChange = (e) => {
     const value = parseInt(e.target.value);
     if (!isNaN(value) && value >= 1 && value <= 10) {
       setQuantity(value);
     }
   };
-  const handleShareProduct = () => {
-    const productUrl = window.location.href;
-    
-    // Use the Clipboard API to copy the URL
-    navigator.clipboard.writeText(productUrl)
-      .then(() => {
-        showNotification('Product link copied to clipboard!', 'success');
-      })
-      .catch((error) => {
-        console.error('Error copying link: ', error);
-        showNotification('Failed to copy link. Please try again.', 'error');
-      });
-  };
+
   const handleAddToCart = () => {
     if (!product) {
       showNotification('Product not available', 'error');
       return;
     }
 
-    // Check if product has color options but none selected
     if (product.colors && product.colors.length > 0) {
       if (!selectedColor) {
         showNotification('Please select a color before adding to cart', 'error');
@@ -266,7 +279,6 @@ function ProductDetail() {
       }
     }
 
-    // Check if product has size options but none selected
     if (product.sizes && product.sizes.length > 0) {
       if (!selectedSize) {
         showNotification('Please select a size before adding to cart', 'error');
@@ -274,21 +286,18 @@ function ProductDetail() {
       }
     }
 
-    // Get validated values to pass to addToCart
     const colorToAdd = selectedColor || '';
     const sizeToAdd = selectedSize || '';
 
-    // Log what we're adding to the cart (useful for debugging)
     console.log('Adding to cart:', {
       product: product.name,
       quantity,
       color: colorToAdd,
       size: sizeToAdd
     });
-    // Add to cart with explicit color and size parameters
+
     addToCart(product, quantity, colorToAdd, sizeToAdd);
 
-    // Show success notification
     let successMessage = `Added to cart: ${product.name}`;
     if (colorToAdd && sizeToAdd) {
       successMessage += ` (${colorToAdd}, ${sizeToAdd})`;
@@ -301,7 +310,6 @@ function ProductDetail() {
     showNotification(successMessage, 'success');
   };
 
-  // Handle wishlist toggle
   const handleWishlistToggle = () => {
     if (!product) return;
 
@@ -312,20 +320,16 @@ function ProductDetail() {
     }
   };
 
-  // Handle rating change
   const handleRatingChange = (rating) => {
     setUserRating(rating);
     showNotification(`You rated this product ${rating} stars`, 'success');
   };
 
   useEffect(() => {
-    // Only run if product has multiple images
     if (product?.images?.length > 1) {
-      // Calculate next and previous indices
       const nextIndex = (currentImageIndex + 1) % product.images.length;
       const prevIndex = (currentImageIndex - 1 + product.images.length) % product.images.length;
 
-      // Preload next and previous images
       const preloadImage = (index) => {
         const img = new Image();
         img.src = getImageUrl(product.images[index]);
@@ -336,18 +340,15 @@ function ProductDetail() {
     }
   }, [currentImageIndex, product]);
 
-  // Handle WhatsApp click
   const handleWhatsAppClick = () => {
     if (!product) return;
 
     const phoneNumber = '96176919370';
     const productUrl = window.location.href;
 
-    // Include color and size in the message if selected
     let colorInfo = selectedColor ? `\n *Selected Color:* ${selectedColor}` : '';
     let sizeInfo = selectedSize ? `\n *Selected Size:* ${selectedSize}` : '';
 
-    // Add preview parameter to help WhatsApp recognize this is a product page
     const messageWithPreview = encodeURIComponent(
       `Hello! I want to buy the following product(s):\n *Product Name:* ${product.name} \n *Price:* ${product.price} $${colorInfo}${sizeInfo}\n *URL:* ${productUrl}?preview=true`
     );
@@ -355,7 +356,6 @@ function ProductDetail() {
     window.open(`https://wa.me/${phoneNumber}?text=${messageWithPreview}`, '_blank');
   };
 
-  // Navigate to next/previous image
   const navigateImage = (direction) => {
     if (!product || !product.images || product.images.length <= 1) return;
 
@@ -369,14 +369,12 @@ function ProductDetail() {
     setCurrentImageIndex(newIndex);
   };
 
-  // Handle direct image selection
   const selectImage = (index) => {
     if (index >= 0 && index < (product?.images?.length || 0)) {
       setCurrentImageIndex(index);
     }
   };
 
-  // Format categories for display
   const getFormattedCategories = () => {
     if (!product) return [];
 
@@ -387,35 +385,28 @@ function ProductDetail() {
     return product.category ? [product.category] : [];
   };
 
-  // Check if product has a discount
   const hasDiscount = product && product.originalPrice && product.price < product.originalPrice;
 
-  // Calculate discount percentage
   const getDiscountPercentage = () => {
     if (!hasDiscount) return 0;
 
     return Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
   };
 
-  // Calculate total price based on quantity
   const getTotalPrice = () => {
     if (!product) return 0;
     return product.price * quantity;
   };
 
-  // Create view all URL for similar products
   const getViewAllUrl = () => {
     if (!product) return '/';
 
-    // Gather all categories associated with the product
     const categories = [];
 
-    // Add primary category
     if (product.category) {
       categories.push(product.category);
     }
 
-    // Add all categories from the categories array if it exists
     if (Array.isArray(product.categories) && product.categories.length > 0) {
       product.categories.forEach(cat => {
         if (cat && !categories.includes(cat)) {
@@ -424,10 +415,8 @@ function ProductDetail() {
       });
     }
 
-    // If no categories found, return home
     if (categories.length === 0) return '/';
 
-    // Use the first category for filtering and add product ID to context
     return `/?relatedTo=${encodeURIComponent(product._id)}&category=${encodeURIComponent(categories[0])}`;
   };
 
@@ -453,37 +442,27 @@ function ProductDetail() {
 
   return (
     <div className="product-detail-page bg-gray-50">
-      {/* Add Helmet for dynamic OpenGraph metadata */}
       <WhatsAppMetaTags product={product} />
       <Helmet prioritizeSeoTags>
         <title>{product.name} | Spotlylb</title>
         <meta name="description" content={product.description.substring(0, 160)} />
-
-        {/* Primary OpenGraph tags - ORDER IS IMPORTANT */}
         <meta property="og:title" content={product.name} />
         <meta property="og:url" content={window.location.href} />
         <meta property="og:type" content="product" />
-
-        {/* Image tags - This needs to come BEFORE description for WhatsApp */}
         <meta property="og:image" content={product.images && product.images.length > 0
           ? getImageUrl(product.images[0], true)
           : 'https://spotlylb.com/placeholder.jpg'} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:image:alt" content={product.name} />
-
-        {/* Description comes AFTER image */}
         <meta property="og:description" content={product.description.substring(0, 160)} />
         <meta property="og:site_name" content="Spotlylb" />
-
-        {/* Product specific metadata */}
         <meta property="product:price:amount" content={product.price} />
         <meta property="product:price:currency" content="USD" />
       </Helmet>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Single Back to Home Button - With added margin/padding for visibility */}
-        <div className="mb-6 mt-14 pt-4"> {/* Added mt-14 (margin-top) and pt-4 (padding-top) */}
+        <div className="mb-6 mt-14 pt-4">
           <button
             onClick={goToHome}
             className="flex items-center text-purple-600 hover:text-purple-800 transition-colors"
@@ -497,7 +476,6 @@ function ProductDetail() {
 
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="md:flex">
-            {/* Product Images */}
             <div className="md:w-1/2 p-4">
               <div className="relative rounded-lg overflow-hidden bg-gray-100">
                 <div className="relative aspect-square">
@@ -539,7 +517,6 @@ function ProductDetail() {
                   </div>
                 )}
               </div>
-              {/* Scrollable Thumbnails */}
               {product.images && product.images.length > 1 && (
                 <div className="mt-4 relative">
                   <div className="overflow-x-auto pb-2 hide-scrollbar">
@@ -553,7 +530,6 @@ function ProductDetail() {
                             } transition duration-200`}
                           onClick={() => selectImage(index)}
                         >
-                          {/* Use a basic img tag for thumbnails for maximum reliability */}
                           <img
                             src={getImageUrl(image)}
                             alt={`${product.name} thumbnail ${index + 1}`}
@@ -572,11 +548,9 @@ function ProductDetail() {
               )}
             </div>
 
-            {/* Product Info */}
             <div className="md:w-1/2 p-6 md:border-l border-gray-100">
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
 
-              {/* Categories */}
               <div className="flex flex-wrap gap-2 mb-3">
                 {getFormattedCategories().map(category => (
                   <Link
@@ -589,7 +563,6 @@ function ProductDetail() {
                 ))}
               </div>
 
-              {/* Product Rating */}
               <div className="flex items-center mb-4">
                 <div className="flex mr-2">
                   {[1, 2, 3, 4, 5].map(star => (
@@ -608,21 +581,17 @@ function ProductDetail() {
                 </span>
               </div>
 
-              {/* Price Section - All in a single row */}
               <div className="mb-6">
                 {hasDiscount ? (
                   <div className="flex items-center flex-wrap">
-                    {/* Current price - bold */}
                     <span className="text-3xl font-bold text-purple-600 mr-3">
                       {formatPrice(getTotalPrice())}
                     </span>
 
-                    {/* Original price - strikethrough */}
                     <span className="text-lg text-gray-500 line-through mr-3">
                       {formatPrice(product.originalPrice * quantity)}
                     </span>
 
-                    {/* Savings amount */}
                     <span className="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded">
                       Save {formatPrice((product.originalPrice - product.price) * quantity)}
                     </span>
@@ -636,7 +605,6 @@ function ProductDetail() {
                 )}
               </div>
 
-              {/* Discount Timer */}
               {product.discountEndDate && new Date(product.discountEndDate) > new Date() && (
                 <div className="mb-6 p-3 bg-orange-50 rounded-lg border border-orange-100">
                   <h5 className="font-medium text-orange-800 mb-1">Limited Time Offer:</h5>
@@ -671,7 +639,6 @@ function ProductDetail() {
                 </div>
               </div>
 
-              {/* Color Selection */}
               {product.colors && product.colors.length > 0 && (
                 <div className="mb-6">
                   <h5 className="font-medium text-gray-900 mb-2">Color:</h5>
@@ -699,7 +666,6 @@ function ProductDetail() {
                 </div>
               )}
 
-              {/* Size Selection */}
               {product.sizes && product.sizes.length > 0 && (
                 <div className="mb-6">
                   <h5 className="font-medium text-gray-900 mb-2">Size:</h5>
@@ -721,7 +687,6 @@ function ProductDetail() {
                 </div>
               )}
 
-              {/* Quantity Selector */}
               <div className="mb-6">
                 <h5 className="font-medium text-gray-900 mb-2">Quantity:</h5>
                 <div className="flex items-center">
@@ -754,7 +719,6 @@ function ProductDetail() {
                 </div>
               </div>
 
-              {/* Selected Options Summary */}
               {(selectedColor || selectedSize) && (
                 <div className="mb-6 p-3 bg-gray-50 rounded-lg">
                   <h5 className="font-medium text-gray-900 mb-2">Selected Options:</h5>
@@ -776,7 +740,6 @@ function ProductDetail() {
                 </div>
               )}
 
-              {/* Action Buttons */}
               <div className="space-y-3">
                 <div className="flex gap-2">
                   <button
@@ -802,18 +765,75 @@ function ProductDetail() {
                     </svg>
                   </button>
 
-                  <button
-                    className="p-3 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition duration-200"
-                    onClick={handleShareProduct}
-                    aria-label="Share product"
-                  >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
-                    </svg>
-                  </button>
+                  <div className="relative share-dropdown-container">
+                    <button
+                      className="p-3 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition duration-200"
+                      onClick={toggleShareDropdown}
+                      aria-label="Share product"
+                    >
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                      </svg>
+                    </button>
+                    
+                    {shareDropdownOpen && (
+                      <div className="absolute right-0 mt-2 z-10 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <div className="py-1">
+                          <button 
+                            onClick={copyProductLink}
+                            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            <svg className="w-5 h-5 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                            </svg>
+                            Copy Link
+                          </button>
+                          
+                          <button 
+                            onClick={shareToFacebook}
+                            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            <svg className="w-5 h-5 mr-3 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                            </svg>
+                            Facebook
+                          </button>
+                          
+                          <button 
+                            onClick={shareToTwitter}
+                            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            <svg className="w-5 h-5 mr-3 text-blue-400" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 14-7.496 14-13.986 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59l-.047-.02z"/>
+                            </svg>
+                            Twitter
+                          </button>
+                          
+                          <button 
+                            onClick={shareToWhatsApp}
+                            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            <svg className="w-5 h-5 mr-3 text-green-500" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                            </svg>
+                            WhatsApp
+                          </button>
+                          
+                          <button 
+                            onClick={shareByEmail}
+                            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            <svg className="w-5 h-5 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                            Email
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                {/* Buy on WhatsApp button */}
                 <button
                   className="w-full py-3 px-4 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition duration-200"
                   onClick={handleWhatsAppClick}
@@ -825,7 +845,6 @@ function ProductDetail() {
                 </button>
               </div>
 
-              {/* Stock Status */}
               <div className="mt-4">
                 <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${product.soldOut
                   ? 'bg-red-100 text-red-800'
@@ -840,7 +859,6 @@ function ProductDetail() {
           </div>
         </div>
 
-        {/* User Rating Section - MOVED HERE FROM PRODUCT INFO */}
         <div className="mt-10 mx-auto max-w-4xl">
           <div className="bg-white p-8 rounded-xl shadow-sm text-center">
             <h2 className="text-2xl font-bold text-purple-600 mb-6">Rate This Product</h2>
@@ -855,7 +873,6 @@ function ProductDetail() {
           </div>
         </div>
 
-        {/* Similar Products - Now using ProductList for horizontal scrolling */}
         {similarProducts.length > 0 && (
           <div className="mt-12">
             <ProductList
