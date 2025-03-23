@@ -45,13 +45,12 @@ function Home() {
     subtitle: 'Discover Amazing Products at Great Prices'
   });
 
-  // Define preferred category order
   const preferredCategoryOrder = [
-    'Trendy Products',
-    'Home & Kitchen',
-    'Beauty & Health',
-    'Electronic',
-    'Toys'
+    'TRENDY PRODUCTS',
+    'HOME & KITCHEN',
+    'BEAUTY & HEALTH',
+    'ELECTRONICS & CAR ACCESSORIES',
+    'TOYS'
   ];
 
   // Handle navigation to home
