@@ -27,8 +27,8 @@ function ContactPage() {
             </p>
             <div className="mt-6 flex justify-center">
               <a 
-                href="https://wa.me/96176919370"
-                target="_blank"
+                href="https://wa.me/96176919370" 
+                target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center bg-green-500 text-white py-3 px-8 rounded-full hover:bg-green-600 transition-colors shadow-md"
               >

@@ -21,7 +21,7 @@ function CheckoutPage() {
   // Form state
   const [formData, setFormData] = useState({
     customerName: '',
-    customerEmail: '',
+    // customerEmail: '', // Commented out email field
     phoneNumber: '',
     address: '',
     specialInstructions: ''
@@ -43,7 +43,7 @@ function CheckoutPage() {
     } else if (isAuthenticated && user) {
       setFormData({
         customerName: user.name || '',
-        customerEmail: user.email || '',
+        // customerEmail: user.email || '', // Commented out email field
         phoneNumber: user.phoneNumber || '',
         address: user.address || '',
         specialInstructions: ''
@@ -53,7 +53,7 @@ function CheckoutPage() {
 
   // Save customer info when it changes
   useEffect(() => {
-    if (formData.customerName || formData.customerEmail) {
+    if (formData.customerName) { // Removed email check
       localStorage.setItem('customerInfo', JSON.stringify(formData));
     }
   }, [formData]);
@@ -95,10 +95,7 @@ function CheckoutPage() {
       errors.address = 'Delivery address is required';
     }
 
-    // Optional field validations
-    if (formData.customerEmail && !/\S+@\S+\.\S+/.test(formData.customerEmail)) {
-      errors.customerEmail = 'Please enter a valid email address';
-    }
+    // Email validation removed
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -132,7 +129,7 @@ function CheckoutPage() {
         phoneNumber: formData.phoneNumber.trim(),
         address: formData.address.trim(),
         specialInstructions: formData.specialInstructions,
-        customerEmail: formData.customerEmail?.trim() || '',
+        customerEmail: '', // Empty string instead of formData.customerEmail
         promoCode: cartData.promoCode || null,
         promoDiscount: cartData.discount ? {
           type: 'percentage',
@@ -303,40 +300,22 @@ function CheckoutPage() {
                     )}
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Email (Optional)
-                      </label>
-                      <input
-                        type="email"
-                        name="customerEmail"
-                        value={formData.customerEmail}
-                        onChange={handleInputChange}
-                        className={`w-full px-3 py-2 border ${formErrors.customerEmail ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500`}
-                        placeholder="Your email address"
-                      />
-                      {formErrors.customerEmail && (
-                        <p className="mt-1 text-sm text-red-600">{formErrors.customerEmail}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Phone Number<span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="tel"
-                        name="phoneNumber"
-                        value={formData.phoneNumber}
-                        onChange={handleInputChange}
-                        className={`w-full px-3 py-2 border ${formErrors.phoneNumber ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500`}
-                        placeholder="8-digit phone number"
-                      />
-                      {formErrors.phoneNumber && (
-                        <p className="mt-1 text-sm text-red-600">{formErrors.phoneNumber}</p>
-                      )}
-                    </div>
+                  {/* Email field removed */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Phone Number<span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      name="phoneNumber"
+                      value={formData.phoneNumber}
+                      onChange={handleInputChange}
+                      className={`w-full px-3 py-2 border ${formErrors.phoneNumber ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500`}
+                      placeholder="8-digit phone number"
+                    />
+                    {formErrors.phoneNumber && (
+                      <p className="mt-1 text-sm text-red-600">{formErrors.phoneNumber}</p>
+                    )}
                   </div>
 
                   <div>
