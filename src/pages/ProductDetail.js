@@ -140,14 +140,6 @@ function ProductDetail() {
     setShareDropdownOpen(false);
   };
   
-  const shareToTwitter = () => {
-    const productUrl = encodeURIComponent(window.location.href);
-    const text = encodeURIComponent(`Check out this product: ${product.name}`);
-    const shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${productUrl}`;
-    window.open(shareUrl, '_blank', 'width=600,height=400');
-    setShareDropdownOpen(false);
-  };
-  
   const shareToWhatsApp = () => {
     const productUrl = encodeURIComponent(window.location.href);
     const text = encodeURIComponent(`Check out this product: ${product.name} ${productUrl}`);
@@ -156,13 +148,6 @@ function ProductDetail() {
     setShareDropdownOpen(false);
   };
   
-  const shareByEmail = () => {
-    const subject = encodeURIComponent(`Check out this product: ${product.name}`);
-    const body = encodeURIComponent(`I found this amazing product and thought you might like it:\n\n${product.name}\n\n${window.location.href}`);
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
-    setShareDropdownOpen(false);
-  };
-
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -798,16 +783,7 @@ function ProductDetail() {
                             </svg>
                             Facebook
                           </button>
-                          
-                          <button 
-                            onClick={shareToTwitter}
-                            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >
-                            <svg className="w-5 h-5 mr-3 text-blue-400" viewBox="0 0 24 24" fill="currentColor">
-                              <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 14-7.496 14-13.986 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59l-.047-.02z"/>
-                            </svg>
-                            Twitter
-                          </button>
+                        
                           
                           <button 
                             onClick={shareToWhatsApp}
@@ -818,16 +794,7 @@ function ProductDetail() {
                             </svg>
                             WhatsApp
                           </button>
-                          
-                          <button 
-                            onClick={shareByEmail}
-                            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >
-                            <svg className="w-5 h-5 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                            </svg>
-                            Email
-                          </button>
+
                         </div>
                       </div>
                     )}
