@@ -3,9 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
-import { useAuth } from '../contexts/AuthContext';
+// import { useAuth } from '../contexts/AuthContext';
 import { useNotification } from '../components/Notification/NotificationProvider';
-import LoginModal from './Auth/LoginModal';
+// import LoginModal from './Auth/LoginModal';
 import SideCart from './SideCart/SideCart';
 import api from '../api/api';
 import './Header.css';
@@ -14,13 +14,13 @@ import CategoryNavigator from './CategoryNavigator/CategoryNavigator';
 function Header() {
   const { getCartItemsCount } = useCart();
   const { getWishlistCount } = useWishlist();
-  const { user, logout, isAuthenticated } = useAuth();
+  // const { user, logout, isAuthenticated } = useAuth();
   const { showNotification } = useNotification();
   const navigate = useNavigate();
   const location = useLocation();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [showLoginModal, setShowLoginModal] = useState(false);
+  // const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSideCart, setShowSideCart] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
@@ -47,9 +47,9 @@ function Header() {
   }, []);
 
   // Debug authentication state
-  useEffect(() => {
+  /* useEffect(() => {
     console.log('Authentication state:', { isAuthenticated, user });
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user]); */
 
   // Handle scroll effect with category navigator visibility
   useEffect(() => {
@@ -104,7 +104,7 @@ function Header() {
     }
   };
 
-  const handleLogout = async () => {
+  /* const handleLogout = async () => {
     try {
       await logout();
       navigate('/');
@@ -113,7 +113,7 @@ function Header() {
     } catch (error) {
       showNotification('Error logging out', 'error');
     }
-  };
+  }; */
 
   // Function to render banner text with ShopNow link
   const renderBannerText = () => {
@@ -269,7 +269,7 @@ function Header() {
                 )}
               </button>
 
-              {/* User Menu */}
+              {/* User Menu - COMMENTED OUT 
               {isAuthenticated ? (
                 <div className="relative hidden md:block user-menu-container">
                   <button
@@ -281,7 +281,6 @@ function Header() {
                     <i className="fas fa-user-circle text-lg"></i>
                   </button>
 
-                  {/* User dropdown menu */}
                   {showUserMenu && (
                     <div className="absolute right-0 mt-1 w-44 py-1 bg-white rounded-md shadow-xl z-20 dropdown-animation">
                       <Link
@@ -334,7 +333,7 @@ function Header() {
                     <i className="fas fa-user-circle text-lg"></i>
                   </button>
                 </div>
-              )}
+              )} */}
 
               {/* Mobile Menu Toggle */}
               <button
@@ -381,6 +380,7 @@ function Header() {
               <Link to="/contact" className="block text-sm text-gray-700 hover:text-purple-600 hover:pl-2 mobile-nav-link py-1">Contact</Link>
               <Link to="/about" className="block text-sm text-gray-700 hover:text-purple-600 hover:pl-2 mobile-nav-link py-1">About</Link>
 
+              {/* Authentication Links - COMMENTED OUT 
               {isAuthenticated ? (
                 <>
                   <Link to="/profile" className="block text-sm text-gray-700 hover:text-purple-600 hover:pl-2 mobile-nav-link py-1">My Profile</Link>
@@ -405,6 +405,7 @@ function Header() {
                   Sign In
                 </button>
               )}
+              */}
             </nav>
           </div>
         )}
@@ -424,6 +425,7 @@ function Header() {
       </div>
 
       {/* Modals */}
+      {/* 
       {showLoginModal && (
         <LoginModal
           onClose={() => setShowLoginModal(false)}
@@ -433,6 +435,7 @@ function Header() {
           }}
         />
       )}
+      */}
 
       <SideCart
         isOpen={showSideCart}
