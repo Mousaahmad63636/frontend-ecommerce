@@ -239,7 +239,19 @@ function ProductDetail() {
       setQuantity(value);
     }
   };
-
+  const handleShareProduct = () => {
+    const productUrl = window.location.href;
+    
+    // Use the Clipboard API to copy the URL
+    navigator.clipboard.writeText(productUrl)
+      .then(() => {
+        showNotification('Product link copied to clipboard!', 'success');
+      })
+      .catch((error) => {
+        console.error('Error copying link: ', error);
+        showNotification('Failed to copy link. Please try again.', 'error');
+      });
+  };
   const handleAddToCart = () => {
     if (!product) {
       showNotification('Product not available', 'error');
@@ -273,19 +285,6 @@ function ProductDetail() {
       color: colorToAdd,
       size: sizeToAdd
     });
-    const handleShareProduct = () => {
-      const productUrl = window.location.href;
-
-      // Use the Clipboard API to copy the URL
-      navigator.clipboard.writeText(productUrl)
-        .then(() => {
-          showNotification('Product link copied to clipboard!', 'success');
-        })
-        .catch((error) => {
-          console.error('Error copying link: ', error);
-          showNotification('Failed to copy link. Please try again.', 'error');
-        });
-    };
     // Add to cart with explicit color and size parameters
     addToCart(product, quantity, colorToAdd, sizeToAdd);
 
