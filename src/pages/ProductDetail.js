@@ -299,8 +299,6 @@ function ProductDetail() {
     } else if (sizeToAdd) {
       successMessage += ` (${sizeToAdd})`;
     }
-
-    showNotification(successMessage, 'success');
   };
 
   const handleWishlistToggle = () => {
