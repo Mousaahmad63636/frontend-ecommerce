@@ -111,7 +111,7 @@ function OrdersPage() {
                       </div>
                     )}
                     <div className="d-flex justify-content-between mb-2">
-                      <span>Shipping:</span>
+                      <span>delivery:</span>
                       <span>${order.shippingFee.toFixed(2)}</span>
                     </div>
                     <hr />
@@ -132,7 +132,7 @@ function OrdersPage() {
               <div className="card-footer">
                 <div className="row">
                   <div className="col-md-6">
-                    <h6 className="mb-1">Shipping Address:</h6>
+                    <h6 className="mb-1">delivery Address:</h6>
                     <p className="mb-0 small">{order.address}</p>
                   </div>
                   <div className="col-md-6 text-md-end">

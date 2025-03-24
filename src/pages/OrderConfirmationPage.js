@@ -107,7 +107,7 @@ function OrderConfirmationPage() {
             {/* Customer Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
-                <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Shipping Information</h3>
+                <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">delivery Information</h3>
                 <div className="space-y-1 text-sm">
                   <p><span className="font-medium">Name:</span> {order.customerName || 'N/A'}</p>
                   <p><span className="font-medium">Email:</span> {order.customerEmail || 'N/A'}</p>
@@ -242,7 +242,7 @@ function OrderConfirmationPage() {
 
               <div className="px-4 py-3 border-b border-gray-200">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Shipping</span>
+                  <span className="text-sm text-gray-600">delivery</span>
                   <span className="text-sm font-medium">${shippingFee.toFixed(2)}</span>
                 </div>
               </div>

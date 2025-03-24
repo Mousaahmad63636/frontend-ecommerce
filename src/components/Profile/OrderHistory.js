@@ -253,7 +253,7 @@ function OrderHistory() {
                         </div>
                       )}
                       <div className="mb-2">
-                        <small className="text-muted">Shipping:</small>
+                        <small className="text-muted">delivery:</small>
                         <br />
                         {formatPrice(order.shippingFee)}
                       </div>
@@ -277,7 +277,7 @@ function OrderHistory() {
               <div className="card-footer">
                 <div className="row">
                   <div className="col-md-6">
-                    <small className="text-muted">Shipping Address:</small>
+                    <small className="text-muted">delivery Address:</small>
                     <p className="mb-0 small">{order.address}</p>
                   </div>
                   <div className="col-md-6 text-md-end">

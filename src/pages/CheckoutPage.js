@@ -247,7 +247,7 @@ function CheckoutPage() {
                 )}
                 
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Shipping</span>
+                  <span className="text-gray-600">delivery</span>
                   <span>${cartData.shipping.toFixed(2)}</span>
                 </div>
                 

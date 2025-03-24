@@ -124,7 +124,7 @@ const SideCart = ({ isOpen, onClose }) => {
     <div className="side-cart-overlay" onClick={onClose}>
       <div className="side-cart" onClick={e => e.stopPropagation()}>
         <div className="side-cart-header">
-          <h5>Shopping Cart ({cartItems.length})</h5>
+          <h5>delivery({cartItems.length})</h5>
           <button 
             className="btn-close" 
             onClick={onClose} 
@@ -270,7 +270,7 @@ const SideCart = ({ isOpen, onClose }) => {
             )}
 
             <div className="d-flex justify-content-between summary-row">
-              <span>Shipping</span>
+              <span>delivery</span>
               <span>${shippingFee.toFixed(2)}</span>
             </div>
 

@@ -358,7 +358,7 @@ function PromoCodesSection() {
                                                     ? `${promo.discountValue}%`
                                                     : promo.discountType === 'fixed'
                                                         ? `$${promo.discountValue}`
-                                                        : 'Free Shipping'
+                                                        : 'Free delivery'
                                                 }
                                             </td>
                                             <td>
