@@ -197,7 +197,7 @@ function PromoCodesSection() {
                                 >
                                     <option value="percentage">Percentage</option>
                                     <option value="fixed">Fixed Amount</option>
-                                    <option value="shipping">Free Shipping</option>
+                                    <option value="shipping">Free delivery</option>
                                 </select>
                             </div>
     

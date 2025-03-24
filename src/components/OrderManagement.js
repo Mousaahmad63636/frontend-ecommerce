@@ -589,7 +589,7 @@ ${order.address ? `📍 عنوان التوصيل:\n${order.address}\n\n` : ''}
                           </div>
                         )}
                         <div className="small text-muted">
-                          Shipping: ${safeToFixed(order.shippingFee)}
+                          delivery: ${safeToFixed(order.shippingFee)}
                         </div>
                       </td>
                       <td>

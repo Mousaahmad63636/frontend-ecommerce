@@ -19,7 +19,7 @@ export const ORDER_STATUS = {
     'FREESHIP': {
       type: 'shipping',
       discount: 100,
-      description: 'Free shipping on your order'
+      description: 'Free delivery on your order'
     }
   };
   
