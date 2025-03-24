@@ -142,7 +142,7 @@ function CheckoutPage() {
 
       clearCart();
       localStorage.removeItem('cartData');
-      showNotification('Order placed successfully!', 'success');
+
       navigate(`/order-confirmation/${response.order._id}`);
       
     } catch (error) {
