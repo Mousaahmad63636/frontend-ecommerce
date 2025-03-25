@@ -17,7 +17,7 @@ const SideCart = ({ isOpen, onClose }) => {
   const [promoDiscount, setPromoDiscount] = useState(null);
   const [specialInstructions, setSpecialInstructions] = useState('');
   const [isSubmittingPromo, setIsSubmittingPromo] = useState(false);
-  const shippingFee = 4;
+  const shippingFee = 3;
 
   // Update the global window variable when the isOpen prop changes
   useEffect(() => {

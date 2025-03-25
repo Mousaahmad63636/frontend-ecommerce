@@ -23,7 +23,7 @@ export const ORDER_STATUS = {
     }
   };
   
-  export const SHIPPING_FEE = 5;
+  export const SHIPPING_FEE = 3;
   
   export const VALIDATION_RULES = {
     email: {
