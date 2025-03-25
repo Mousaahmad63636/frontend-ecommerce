@@ -128,52 +128,53 @@ function Header() {
 
   return (
     <>
-      {/* Top banner - Normal document flow, will scroll away */}
-      <div 
-        ref={bannerRef}
-        style={{ backgroundColor: '#8c52ff' }} 
-        className="text-white py-1 px-4 top-banner"
-      >
-        <div className="container mx-auto flex justify-between items-center">
-          {/* Social Media Links - Hidden on mobile */}
-          <div className="hidden md:flex items-center space-x-2">
-            <a href="https://www.facebook.com/profile.php?id=61570963155100&mibextid=LQQJ4d" className="text-white hover:opacity-80 social-icon">
-              <i className="fab fa-facebook"></i>
-            </a>
-            <a href="https://www.instagram.com/spotlylb?igsh=Zng3NWhlc3c5ejRh&utm_source=qr" className="text-white hover:opacity-80 social-icon">
-              <i className="fab fa-instagram"></i>
-            </a>
-            <a href="https://www.tiktok.com/@spotlylb?_t=ZS-8uMGOEL8oOi&_r=1" className="text-white hover:opacity-80 social-icon">
-              <i className="fab fa-tiktok"></i>
-            </a>
-            <span className="text-xs ml-1">Follow us!</span>
-          </div>
+      {/* Complete Fixed Header Container */}
+      <div className="fixed-header-container">
+        {/* Purple Banner - Now part of the fixed header */}
+        <div 
+          ref={bannerRef}
+          style={{ backgroundColor: '#8c52ff' }} 
+          className="text-white py-1 px-4 top-banner"
+        >
+          <div className="container mx-auto flex justify-between items-center">
+            {/* Social Media Links - Hidden on mobile */}
+            <div className="hidden md:flex items-center space-x-2">
+              <a href="https://www.facebook.com/profile.php?id=61570963155100&mibextid=LQQJ4d" className="text-white hover:opacity-80 social-icon">
+                <i className="fab fa-facebook"></i>
+              </a>
+              <a href="https://www.instagram.com/spotlylb?igsh=Zng3NWhlc3c5ejRh&utm_source=qr" className="text-white hover:opacity-80 social-icon">
+                <i className="fab fa-instagram"></i>
+              </a>
+              <a href="https://www.tiktok.com/@spotlylb?_t=ZS-8uMGOEL8oOi&_r=1" className="text-white hover:opacity-80 social-icon">
+                <i className="fab fa-tiktok"></i>
+              </a>
+              <span className="text-xs ml-1">Follow us!</span>
+            </div>
 
-          {/* Dynamic Banner Text from API */}
-          <div className="flex-1 md:flex-none text-center">
-            {renderBannerText()}
-          </div>
+            {/* Dynamic Banner Text from API */}
+            <div className="flex-1 md:flex-none text-center">
+              {renderBannerText()}
+            </div>
 
-          {/* Contact Text - Hidden on mobile */}
-          <div className="hidden md:flex items-center space-x-2">
-            <a href="https://wa.me/96176919370?text=Hello!%20I'm%20interested%20in%20your%20products."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center space-x-2 text-white hover:opacity-80 transition-all duration-300"
-            >
-              <span className="text-xs">Get in touch with us</span>
-              <i className="fab fa-whatsapp text-lg text-white-400 whatsapp-icon"></i>
-            </a>
-          </div>
+            {/* Contact Text - Hidden on mobile */}
+            <div className="hidden md:flex items-center space-x-2">
+              <a href="https://wa.me/96176919370?text=Hello!%20I'm%20interested%20in%20your%20products."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-2 text-white hover:opacity-80 transition-all duration-300"
+              >
+                <span className="text-xs">Get in touch with us</span>
+                <i className="fab fa-whatsapp text-lg text-white-400 whatsapp-icon"></i>
+              </a>
+            </div>
 
-          {/* Empty div for mobile layout balance */}
-          <div className="md:hidden"></div>
+            {/* Empty div for mobile layout balance */}
+            <div className="md:hidden"></div>
+          </div>
         </div>
-      </div>
 
-      {/* Main Header - Fixed at the top */}
-      <div className="main-nav-fixed">
-        <div className="main-header bg-white shadow-md">
+        {/* Main Header */}
+        <div className="main-header bg-white">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between">
               {/* Logo - SMALLER SIZE */}
@@ -304,7 +305,7 @@ function Header() {
           )}
         </div>
 
-        {/* Category Navigator - Part of the fixed header */}
+        {/* Category Navigator */}
         <div
           className={`category-nav-section ${showCategoryNav ? 'visible' : 'hidden'}`}
         >

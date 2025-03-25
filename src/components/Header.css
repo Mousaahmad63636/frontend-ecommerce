@@ -90,10 +90,20 @@
   transition: all 0.3s ease;
 }
 
-/* Top banner styles - Normal document flow (will scroll away) */
+/* Fixed Header Container */
+.fixed-header-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Purple Banner - Now part of the fixed header */
 .top-banner {
-  position: relative; /* Regular flow */
-  z-index: 30;
+  background-color: #8c52ff;
+  color: white;
   overflow: hidden;
 }
 
@@ -113,45 +123,36 @@
   animation: shine 6s infinite;
 }
 
-/* Fixed Navigation Container */
-.main-nav-fixed {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  background-color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
 /* Main header */
 .main-header {
   padding: 10px 0;
   background-color: white;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 /* Category navigation section */
 .category-nav-section {
   background-color: white;
-  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
   transition: all 0.3s ease;
 }
 
 .category-nav-section.hidden {
-  transform: translateY(-100%);
+  max-height: 0;
+  overflow: hidden;
   opacity: 0;
   visibility: hidden;
 }
 
 .category-nav-section.visible {
-  transform: translateY(0);
+  max-height: 60px; /* Adjust based on your category nav height */
   opacity: 1;
   visibility: visible;
 }
 
 /* Header spacer - to prevent content jumps */
 .header-spacer {
-  height: 120px; /* Adjust based on the combined height of your header and category nav */
+  height: 138px; /* Adjust based on the combined height of your banner + header + category nav */
 }
 
 /* Ensure dropdown menus appear above other elements */
