@@ -135,16 +135,13 @@
 
 /* Header positioning and z-index adjustments */
 header {
-  position: sticky;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 30; /* Higher than category navigator */
+  position: relative; /* Changed from fixed/sticky */
+  z-index: 30;
 }
 
 /* Category Navigator Wrapper Styles */
 .category-navigator-wrapper {
-  position: sticky;
+  position: relative; /* Changed from sticky */
   z-index: 25;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s ease, opacity 0.3s ease;
@@ -154,16 +151,6 @@ header {
 .category-navigator-wrapper.hidden {
   transform: translateY(-100%);
   opacity: 0;
-}
-
-/* Fixed header adjustments */
-.fixed {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 30;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Ensure dropdown menus appear above other elements */

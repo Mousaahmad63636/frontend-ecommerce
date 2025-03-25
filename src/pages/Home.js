@@ -518,10 +518,10 @@ function Home() {
       {/* Main content - either normal homepage or special views */}
       {!searchQuery && !showDiscountedOnly && !showAllProducts && !showSimilarProducts && !showCategoryView && (
         <>
-          {/* Hero Section */}
+          {/* Hero Section - REMOVED PADDING */}
           <section
             ref={heroRef}
-            className="w-full relative z-10 pt-[120px]" // Add padding-top here
+            className="w-full relative z-10"
           >
             <Banner
               src={heroSettings.mediaUrl}
@@ -622,12 +622,11 @@ function Home() {
         </>
       )}
 
-      {/* Category View Section - New section for displaying all products of a specific category */}
+      {/* Category View Section - REMOVED PADDINGTOP STYLE */}
       {!searchQuery && !showDiscountedOnly && !showAllProducts && !showSimilarProducts && showCategoryView && (
         <section
           ref={productsRef}
           className="py-10"
-          style={{ paddingTop: `${headerHeight + 40}px` }} // Add headerHeight
         >
           <div className="container mx-auto px-4">
             {/* Back to Home Button with Title */}
@@ -687,12 +686,11 @@ function Home() {
         </section>
       )}
 
-      {/* Similar Products Section */}
+      {/* Similar Products Section - REMOVED PADDINGTOP STYLE */}
       {!searchQuery && !showDiscountedOnly && !showAllProducts && showSimilarProducts && (
         <section
           ref={productsRef}
           className="py-10"
-          style={{ paddingTop: `${headerHeight + 40}px` }}
         >
           <div className="container mx-auto px-4">
             {/* Back to Home Button with Title */}
@@ -770,12 +768,11 @@ function Home() {
         </section>
       )}
 
-      {/* View All Discounted Products Section */}
+      {/* View All Discounted Products Section - REMOVED PADDINGTOP STYLE */}
       {!searchQuery && showDiscountedOnly && !showAllProducts && !showSimilarProducts && (
         <section
           ref={productsRef}
           className="py-10"
-          style={{ paddingTop: `${headerHeight + 40}px` }} // Add headerHeight
         >
           <div className="container mx-auto px-4">
             {/* Back to Home Button - Above the title */}
@@ -853,12 +850,11 @@ function Home() {
         </section>
       )}
 
-      {/* View All Products Section */}
+      {/* View All Products Section - REMOVED PADDINGTOP STYLE */}
       {!searchQuery && !showDiscountedOnly && showAllProducts && !showSimilarProducts && (
         <section
           ref={productsRef}
           className="py-10"
-          style={{ paddingTop: `${headerHeight + 40}px` }} // Add headerHeight
         >
           <div className="container mx-auto px-4">
             {/* Back to Home Button with Title */}
@@ -935,11 +931,10 @@ function Home() {
         </section>
       )}
 
-      {/* Search Results Section */}
+      {/* Search Results Section - REMOVED PADDINGTOP STYLE */}
       {searchQuery && (
         <section
           className="py-10"
-          style={{ paddingTop: `${headerHeight + 40}px` }} // Add headerHeight
         >
           <div className="container mx-auto px-4">
             {/* Back to Home Button with Title */}

@@ -3,9 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
-// import { useAuth } from '../contexts/AuthContext';
 import { useNotification } from '../components/Notification/NotificationProvider';
-// import LoginModal from './Auth/LoginModal';
 import SideCart from './SideCart/SideCart';
 import api from '../api/api';
 import './Header.css';
@@ -14,13 +12,11 @@ import CategoryNavigator from './CategoryNavigator/CategoryNavigator';
 function Header() {
   const { getCartItemsCount } = useCart();
   const { getWishlistCount } = useWishlist();
-  // const { user, logout, isAuthenticated } = useAuth();
   const { showNotification } = useNotification();
   const navigate = useNavigate();
   const location = useLocation();
 
   const [searchQuery, setSearchQuery] = useState('');
-  // const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSideCart, setShowSideCart] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
@@ -46,12 +42,7 @@ function Header() {
     fetchSettings();
   }, []);
 
-  // Debug authentication state
-  /* useEffect(() => {
-    console.log('Authentication state:', { isAuthenticated, user });
-  }, [isAuthenticated, user]); */
-
-  // Handle scroll effect with category navigator visibility
+  // Handle scroll effect for styling changes but not position
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -59,7 +50,7 @@ function Header() {
       // Set isScrolled for header styling
       setIsScrolled(currentScrollY > 20);
 
-      // Hide category navigator on scroll down, show on scroll up
+      // Update category navigator visibility
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         setShowCategoryNav(false);
       } else {
@@ -104,17 +95,6 @@ function Header() {
     }
   };
 
-  /* const handleLogout = async () => {
-    try {
-      await logout();
-      navigate('/');
-      setShowMobileMenu(false);
-      setShowUserMenu(false);
-    } catch (error) {
-      showNotification('Error logging out', 'error');
-    }
-  }; */
-
   // Function to render banner text with ShopNow link
   const renderBannerText = () => {
     // If text already contains ShopNow, just return it as is
@@ -146,9 +126,9 @@ function Header() {
   };
 
   return (
-    <div className={`fixed top-0 left-0 right-0 z-50 ${isScrolled ? 'shadow-md' : ''}`}>
+    <div className="relative z-50 bg-white">
       {/* Integrated banner - PART OF MAIN HEADER but with dynamic content */}
-      <div style={{ backgroundColor: '#8c52ff', position: 'relative', zIndex: 35 }} className="text-white py-1 px-4 top-banner">
+      <div style={{ backgroundColor: '#8c52ff' }} className="text-white py-1 px-4 top-banner">
         <div className="container mx-auto flex justify-between items-center">
           {/* Social Media Links - Hidden on mobile */}
           <div className="hidden md:flex items-center space-x-2">
@@ -269,72 +249,6 @@ function Header() {
                 )}
               </button>
 
-              {/* User Menu - COMMENTED OUT 
-              {isAuthenticated ? (
-                <div className="relative hidden md:block user-menu-container">
-                  <button
-                    className="flex items-center space-x-1 text-gray-700 hover:text-purple-600 transition-colors duration-300"
-                    onClick={() => setShowUserMenu(!showUserMenu)}
-                    aria-label="User menu"
-                  >
-                    <span className="hidden lg:block text-sm">{user?.name?.split(' ')[0] || 'User'}</span>
-                    <i className="fas fa-user-circle text-lg"></i>
-                  </button>
-
-                  {showUserMenu && (
-                    <div className="absolute right-0 mt-1 w-44 py-1 bg-white rounded-md shadow-xl z-20 dropdown-animation">
-                      <Link
-                        to="/profile"
-                        className="block px-3 py-1 text-xs text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors duration-200"
-                        onClick={() => setShowUserMenu(false)}
-                      >
-                        My Profile
-                      </Link>
-                      <Link
-                        to="/orders"
-                        className="block px-3 py-1 text-xs text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors duration-200"
-                        onClick={() => setShowUserMenu(false)}
-                      >
-                        My Orders
-                      </Link>
-                      <Link
-                        to="/wishlist"
-                        className="block px-3 py-1 text-xs text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors duration-200"
-                        onClick={() => setShowUserMenu(false)}
-                      >
-                        My Wishlist
-                      </Link>
-                      {user?.role === 'admin' && (
-                        <Link
-                          to="/admin"
-                          className="block px-3 py-1 text-xs text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors duration-200"
-                          onClick={() => setShowUserMenu(false)}
-                        >
-                          Admin Dashboard
-                        </Link>
-                      )}
-                      <hr className="my-1 border-gray-200" />
-                      <button
-                        className="block w-full text-left px-3 py-1 text-xs text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors duration-200"
-                        onClick={handleLogout}
-                      >
-                        Sign Out
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="hidden md:block">
-                  <button
-                    onClick={() => setShowLoginModal(true)}
-                    className="text-gray-700 hover:text-purple-600 transition-colors duration-300 icon-button"
-                    aria-label="Sign in"
-                  >
-                    <i className="fas fa-user-circle text-lg"></i>
-                  </button>
-                </div>
-              )} */}
-
               {/* Mobile Menu Toggle */}
               <button
                 className="lg:hidden text-gray-700 hover:text-purple-600 transition-colors duration-300 icon-button"
@@ -379,43 +293,17 @@ function Header() {
               </Link>
               <Link to="/contact" className="block text-sm text-gray-700 hover:text-purple-600 hover:pl-2 mobile-nav-link py-1">Contact</Link>
               <Link to="/about" className="block text-sm text-gray-700 hover:text-purple-600 hover:pl-2 mobile-nav-link py-1">About</Link>
-
-              {/* Authentication Links - COMMENTED OUT 
-              {isAuthenticated ? (
-                <>
-                  <Link to="/profile" className="block text-sm text-gray-700 hover:text-purple-600 hover:pl-2 mobile-nav-link py-1">My Profile</Link>
-                  {user?.role === 'admin' && (
-                    <Link to="/admin" className="block text-sm text-gray-700 hover:text-purple-600 hover:pl-2 mobile-nav-link py-1">Admin Dashboard</Link>
-                  )}
-                  <button
-                    onClick={handleLogout}
-                    className="block w-full text-left text-sm text-red-600 hover:text-red-700 hover:pl-2 mobile-nav-link py-1"
-                  >
-                    Sign Out
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => {
-                    setShowLoginModal(true);
-                    setShowMobileMenu(false);
-                  }}
-                  className="block w-full text-left text-sm text-purple-600 hover:text-purple-700 hover:pl-2 mobile-nav-link py-1"
-                >
-                  Sign In
-                </button>
-              )}
-              */}
             </nav>
           </div>
         )}
       </header>
 
+      {/* Category Navigator */}
       <div
         className={`category-navigator-wrapper transition-transform duration-300 ${showCategoryNav ? 'translate-y-0' : '-translate-y-full'}`}
         style={{
           position: 'relative',
-          zIndex: 20, // Lowered from 25 to 20
+          zIndex: 20,
           background: '#fff',
           boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
           borderBottom: '1px solid #e5e7eb'
@@ -425,18 +313,6 @@ function Header() {
       </div>
 
       {/* Modals */}
-      {/* 
-      {showLoginModal && (
-        <LoginModal
-          onClose={() => setShowLoginModal(false)}
-          onSuccess={() => {
-            setShowLoginModal(false);
-            showNotification('Logged in successfully!', 'success');
-          }}
-        />
-      )}
-      */}
-
       <SideCart
         isOpen={showSideCart}
         onClose={() => setShowSideCart(false)}
