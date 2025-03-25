@@ -80,11 +80,11 @@ const Banner = ({ src, alt, title, subtitle, isVideo = false, onLoad, onError })
         />
       )}
       
-      {/* Overlay with text */}
-      <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-white p-6 text-center">
-        {title && <h1 className="text-4xl md:text-5xl font-bold mb-4">{title}</h1>}
-        {subtitle && <p className="text-xl md:text-2xl max-w-2xl">{subtitle}</p>}
-      </div>
+     {/* Overlay with text - removed bg-black/40 */}
+<div className="absolute inset-0 flex flex-col items-center justify-center text-white p-6 text-center">
+  {title && <h1 className="text-4xl md:text-5xl font-bold mb-4 text-shadow-lg">{title}</h1>}
+  {subtitle && <p className="text-xl md:text-2xl max-w-2xl text-shadow-md">{subtitle}</p>}
+</div>
       
       {/* Error state */}
       {hasError && (
