@@ -1,12 +1,43 @@
-// If you have a src/components/Banner.js file, edit it:
-import React, { useState } from 'react';
+// src/components/Banner/Banner.js
+import React, { useState, useRef, useEffect } from 'react';
 import { getImageUrl } from '../../utils/imageUtils';
 
 const Banner = ({ src, alt, title, subtitle, isVideo = false, onLoad, onError }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [containerStyle, setContainerStyle] = useState({});
+  const containerRef = useRef(null);
   
-  const handleLoad = () => {
+  // Calculate container dimensions based on image size and viewport
+  useEffect(() => {
+    if (isLoaded && dimensions.width > 0 && dimensions.height > 0 && containerRef.current) {
+      const containerWidth = containerRef.current.offsetWidth;
+      const aspectRatio = dimensions.height / dimensions.width;
+      
+      // Determine max height based on viewport
+      const viewportHeight = window.innerHeight * 0.8; // 80% of viewport height
+      const calculatedHeight = containerWidth * aspectRatio;
+      
+      // Apply the appropriate height while respecting max height constraints
+      const finalHeight = Math.min(calculatedHeight, viewportHeight);
+      
+      setContainerStyle({
+        height: `${finalHeight}px`,
+        maxHeight: `${viewportHeight}px`
+      });
+    }
+  }, [isLoaded, dimensions, containerRef]);
+  
+  const handleLoad = (e) => {
+    // Capture natural image dimensions
+    if (e.target) {
+      setDimensions({
+        width: e.target.naturalWidth,
+        height: e.target.naturalHeight
+      });
+    }
+    
     setIsLoaded(true);
     if (onLoad) onLoad();
   };
@@ -18,7 +49,11 @@ const Banner = ({ src, alt, title, subtitle, isVideo = false, onLoad, onError })
   };
   
   return (
-    <div className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden">
+    <div 
+      ref={containerRef}
+      className="relative w-full overflow-hidden transition-all duration-300"
+      style={containerStyle}
+    >
       {/* Loading placeholder */}
       {!isLoaded && !hasError && (
         <div className="absolute inset-0 bg-gray-200 animate-pulse"></div>
@@ -31,7 +66,7 @@ const Banner = ({ src, alt, title, subtitle, isVideo = false, onLoad, onError })
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-contain"
           onLoadedData={handleLoad}
           onError={handleError}
         />
@@ -39,7 +74,7 @@ const Banner = ({ src, alt, title, subtitle, isVideo = false, onLoad, onError })
         <img
           src={getImageUrl(src)}
           alt={alt || "Banner image"}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+          className={`w-full h-full object-contain transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
           onLoad={handleLoad}
           onError={handleError}
         />
