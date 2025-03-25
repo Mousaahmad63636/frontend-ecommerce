@@ -89,31 +89,11 @@
 .social-icon {
   transition: all 0.3s ease;
 }
-/* Add to src/components/Header.css */
+
+/* Top banner styles - NOT fixed */
 .top-banner {
   position: relative;
   z-index: 35;
-}
-
-.category-navigator-wrapper {
-  position: relative;
-  z-index: 20;
-  background: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  border-bottom: 1px solid #e5e7eb;
-}
-.social-icon:hover {
-  transform: scale(1.2);
-}
-
-/* WhatsApp icon animation */
-.whatsapp-icon {
-  animation: float 3s ease-in-out infinite;
-}
-
-/* Top banner animation */
-.top-banner {
-  position: relative;
   overflow: hidden;
 }
 
@@ -133,16 +113,19 @@
   animation: shine 6s infinite;
 }
 
-/* Header positioning and z-index adjustments */
-header {
-  position: relative; /* Changed from fixed/sticky */
-  z-index: 30;
+/* Sticky header styles - FIXED when scrolling */
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Category Navigator Wrapper Styles */
 .category-navigator-wrapper {
-  position: relative; /* Changed from sticky */
-  z-index: 25;
+  position: relative;
+  z-index: 20;
+  background: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s ease, opacity 0.3s ease;
   border-bottom: 1px solid #e5e7eb;
@@ -157,6 +140,16 @@ header {
 .user-menu-container .dropdown-animation,
 .mobile-menu-animation {
   z-index: 35;
+}
+
+/* Social icon hover effect */
+.social-icon:hover {
+  transform: scale(1.2);
+}
+
+/* WhatsApp icon animation */
+.whatsapp-icon {
+  animation: float 3s ease-in-out infinite;
 }
 
 /* Animations */

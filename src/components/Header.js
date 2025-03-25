@@ -126,8 +126,8 @@ function Header() {
   };
 
   return (
-    <div className="relative z-50 bg-white">
-      {/* Integrated banner - PART OF MAIN HEADER but with dynamic content */}
+    <div className="relative z-50">
+      {/* Top banner - NOT fixed, scrolls normally */}
       <div style={{ backgroundColor: '#8c52ff' }} className="text-white py-1 px-4 top-banner">
         <div className="container mx-auto flex justify-between items-center">
           {/* Social Media Links - Hidden on mobile */}
@@ -166,150 +166,152 @@ function Header() {
         </div>
       </div>
 
-      {/* Main Header - REDUCED HEIGHT */}
-      <header className={`bg-white/95 backdrop-blur-sm transition-all duration-300 ${isScrolled ? 'py-1' : 'py-2'}`}>
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            {/* Logo - SMALLER SIZE */}
-            <Link to="/" className="flex items-center space-x-2 -ml-1 logo-animation">
-              <img
-                src="/logo.png"
-                alt="Logo"
-                className="h-8 w-auto"
-              />
-            </Link>
-
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-6">
-              <Link
-                to="/"
-                className="nav-link text-sm"
-                onClick={() => {
-                  // Force navigation to home and reset state
-                  window.location.href = '/';
-                }}
-              >
-                Home
-              </Link>
-              <Link
-                to="/?scrollToProducts=true"
-                className="nav-link text-sm"
-              >
-                Our Products
-              </Link>
-              <Link to="/contact" className="nav-link text-sm">Contact</Link>
-              <Link to="/about" className="nav-link text-sm">About</Link>
-            </nav>
-
-            {/* Right Section */}
-            <div className="flex items-center space-x-3 md:space-x-4">
-              {/* Desktop Search */}
-              <form onSubmit={handleSearch} className="hidden md:block relative">
-                <input
-                  type="search"
-                  placeholder="Search for products..."
-                  className="w-40 lg:w-56 px-3 py-1 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 text-xs search-input"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+      {/* Main Header - THIS WILL BE STICKY */}
+      <div className="sticky-header bg-white shadow-md z-50">
+        <header className={`bg-white/95 backdrop-blur-sm transition-all duration-300 ${isScrolled ? 'py-1' : 'py-2'}`}>
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between">
+              {/* Logo - SMALLER SIZE */}
+              <Link to="/" className="flex items-center space-x-2 -ml-1 logo-animation">
+                <img
+                  src="/logo.png"
+                  alt="Logo"
+                  className="h-8 w-auto"
                 />
-                <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-600 transition-colors duration-300">
-                  <i className="fas fa-search text-xs"></i>
-                </button>
-              </form>
-
-              {/* Mobile Search Toggle */}
-              <button
-                className="md:hidden text-gray-700 hover:text-purple-600 transition-colors duration-300 icon-button"
-                onClick={() => setShowSearch(!showSearch)}
-                aria-label="Search"
-              >
-                <i className="fas fa-search text-lg"></i>
-              </button>
-
-              {/* Icons */}
-              <Link to="/wishlist" className="relative text-gray-700 hover:text-purple-600 transition-colors duration-300 icon-button" aria-label="Wishlist">
-                <i className="far fa-heart text-lg"></i>
-                {getWishlistCount() > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-xs flex items-center justify-center badge-animation">
-                    {getWishlistCount()}
-                  </span>
-                )}
               </Link>
 
-              <button
-                onClick={() => setShowSideCart(true)}
-                className="relative text-gray-700 hover:text-purple-600 transition-colors duration-300 icon-button"
-                aria-label="Cart"
-              >
-                <i className="fas fa-shopping-cart text-lg"></i>
-                {getCartItemsCount() > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-xs flex items-center justify-center badge-animation">
-                    {getCartItemsCount()}
-                  </span>
-                )}
-              </button>
+              {/* Desktop Navigation */}
+              <nav className="hidden lg:flex items-center space-x-6">
+                <Link
+                  to="/"
+                  className="nav-link text-sm"
+                  onClick={() => {
+                    // Force navigation to home and reset state
+                    window.location.href = '/';
+                  }}
+                >
+                  Home
+                </Link>
+                <Link
+                  to="/?scrollToProducts=true"
+                  className="nav-link text-sm"
+                >
+                  Our Products
+                </Link>
+                <Link to="/contact" className="nav-link text-sm">Contact</Link>
+                <Link to="/about" className="nav-link text-sm">About</Link>
+              </nav>
 
-              {/* Mobile Menu Toggle */}
-              <button
-                className="lg:hidden text-gray-700 hover:text-purple-600 transition-colors duration-300 icon-button"
-                onClick={() => setShowMobileMenu(!showMobileMenu)}
-                aria-label="Toggle menu"
-              >
-                <i className={`fas ${showMobileMenu ? 'fa-times' : 'fa-bars'} text-lg`}></i>
-              </button>
+              {/* Right Section */}
+              <div className="flex items-center space-x-3 md:space-x-4">
+                {/* Desktop Search */}
+                <form onSubmit={handleSearch} className="hidden md:block relative">
+                  <input
+                    type="search"
+                    placeholder="Search for products..."
+                    className="w-40 lg:w-56 px-3 py-1 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 text-xs search-input"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-600 transition-colors duration-300">
+                    <i className="fas fa-search text-xs"></i>
+                  </button>
+                </form>
+
+                {/* Mobile Search Toggle */}
+                <button
+                  className="md:hidden text-gray-700 hover:text-purple-600 transition-colors duration-300 icon-button"
+                  onClick={() => setShowSearch(!showSearch)}
+                  aria-label="Search"
+                >
+                  <i className="fas fa-search text-lg"></i>
+                </button>
+
+                {/* Icons */}
+                <Link to="/wishlist" className="relative text-gray-700 hover:text-purple-600 transition-colors duration-300 icon-button" aria-label="Wishlist">
+                  <i className="far fa-heart text-lg"></i>
+                  {getWishlistCount() > 0 && (
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-xs flex items-center justify-center badge-animation">
+                      {getWishlistCount()}
+                    </span>
+                  )}
+                </Link>
+
+                <button
+                  onClick={() => setShowSideCart(true)}
+                  className="relative text-gray-700 hover:text-purple-600 transition-colors duration-300 icon-button"
+                  aria-label="Cart"
+                >
+                  <i className="fas fa-shopping-cart text-lg"></i>
+                  {getCartItemsCount() > 0 && (
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-xs flex items-center justify-center badge-animation">
+                      {getCartItemsCount()}
+                    </span>
+                  )}
+                </button>
+
+                {/* Mobile Menu Toggle */}
+                <button
+                  className="lg:hidden text-gray-700 hover:text-purple-600 transition-colors duration-300 icon-button"
+                  onClick={() => setShowMobileMenu(!showMobileMenu)}
+                  aria-label="Toggle menu"
+                >
+                  <i className={`fas ${showMobileMenu ? 'fa-times' : 'fa-bars'} text-lg`}></i>
+                </button>
+              </div>
             </div>
+
+            {/* Mobile Search Bar */}
+            {showSearch && (
+              <div className="md:hidden mt-2 pb-2 dropdown-animation">
+                <form onSubmit={handleSearch} className="relative">
+                  <input
+                    type="search"
+                    placeholder="Search for products..."
+                    className="w-full px-3 py-1 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 text-xs search-input"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-600 transition-colors duration-300">
+                    <i className="fas fa-search text-xs"></i>
+                  </button>
+                </form>
+              </div>
+            )}
           </div>
 
-          {/* Mobile Search Bar */}
-          {showSearch && (
-            <div className="md:hidden mt-2 pb-2 dropdown-animation">
-              <form onSubmit={handleSearch} className="relative">
-                <input
-                  type="search"
-                  placeholder="Search for products..."
-                  className="w-full px-3 py-1 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 text-xs search-input"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-600 transition-colors duration-300">
-                  <i className="fas fa-search text-xs"></i>
-                </button>
-              </form>
+          {/* Mobile Menu - COMPACT */}
+          {showMobileMenu && (
+            <div className="lg:hidden border-t mt-1 mobile-menu-animation">
+              <nav className="container mx-auto px-4 py-2 space-y-2">
+                <Link to="/" className="block text-sm text-gray-700 hover:text-purple-600 hover:pl-2 mobile-nav-link py-1">Home</Link>
+                <Link
+                  to="/?scrollToProducts=true"
+                  className="block text-sm text-gray-700 hover:text-purple-600 hover:pl-2 mobile-nav-link py-1"
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  Our Products
+                </Link>
+                <Link to="/contact" className="block text-sm text-gray-700 hover:text-purple-600 hover:pl-2 mobile-nav-link py-1">Contact</Link>
+                <Link to="/about" className="block text-sm text-gray-700 hover:text-purple-600 hover:pl-2 mobile-nav-link py-1">About</Link>
+              </nav>
             </div>
           )}
+        </header>
+
+        {/* Category Navigator - Part of the sticky section */}
+        <div
+          className={`category-navigator-wrapper transition-transform duration-300 ${showCategoryNav ? 'translate-y-0' : '-translate-y-full'}`}
+          style={{
+            position: 'relative',
+            zIndex: 20,
+            background: '#fff',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+            borderBottom: '1px solid #e5e7eb'
+          }}
+        >
+          <CategoryNavigator hideArrows={true} />
         </div>
-
-        {/* Mobile Menu - COMPACT */}
-        {showMobileMenu && (
-          <div className="lg:hidden border-t mt-1 mobile-menu-animation">
-            <nav className="container mx-auto px-4 py-2 space-y-2">
-              <Link to="/" className="block text-sm text-gray-700 hover:text-purple-600 hover:pl-2 mobile-nav-link py-1">Home</Link>
-              <Link
-                to="/?scrollToProducts=true"
-                className="block text-sm text-gray-700 hover:text-purple-600 hover:pl-2 mobile-nav-link py-1"
-                onClick={() => setShowMobileMenu(false)}
-              >
-                Our Products
-              </Link>
-              <Link to="/contact" className="block text-sm text-gray-700 hover:text-purple-600 hover:pl-2 mobile-nav-link py-1">Contact</Link>
-              <Link to="/about" className="block text-sm text-gray-700 hover:text-purple-600 hover:pl-2 mobile-nav-link py-1">About</Link>
-            </nav>
-          </div>
-        )}
-      </header>
-
-      {/* Category Navigator */}
-      <div
-        className={`category-navigator-wrapper transition-transform duration-300 ${showCategoryNav ? 'translate-y-0' : '-translate-y-full'}`}
-        style={{
-          position: 'relative',
-          zIndex: 20,
-          background: '#fff',
-          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
-          borderBottom: '1px solid #e5e7eb'
-        }}
-      >
-        <CategoryNavigator hideArrows={true} />
       </div>
 
       {/* Modals */}
