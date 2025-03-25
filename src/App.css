@@ -46,9 +46,14 @@ h1, h2, h3, h4, h5, h6 {
   flex-direction: column;
 }
 
+/* Adjust main content to account for fixed header */
 .main-content {
   flex: 1;
-  padding-top: 80px; /* Account for fixed header */
+  padding-top: 60px; /* Same as header-spacer height */
+}
+
+body.has-banner .main-content {
+  padding-top: 0; /* Let the header-spacer handle the spacing */
 }
 
 /* Custom Button Styles */

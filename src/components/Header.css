@@ -115,10 +115,28 @@
 
 /* Sticky header styles - FIXED when scrolling */
 .sticky-header {
-  position: sticky;
+  position: fixed; /* Changed from sticky to fixed */
   top: 0;
-  z-index: 50;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000; /* Increased z-index to ensure it stays above all content */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: white; /* Ensure background is solid */
+}
+
+/* Add this to handle the space that would be taken up by the fixed header */
+.header-spacer {
+  height: 60px; /* Adjust this value based on your header height */
+}
+
+/* Adjust for the top banner if needed */
+body.has-banner .sticky-header {
+  top: 40px; /* Height of the banner - adjust as needed */
+}
+
+body.has-banner .header-spacer {
+  height: 100px; /* Combined height of header and banner - adjust as needed */
 }
 
 /* Category Navigator Wrapper Styles */

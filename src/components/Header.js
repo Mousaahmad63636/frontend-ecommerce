@@ -25,6 +25,8 @@ function Header() {
   const [bannerText, setBannerText] = useState(' ');
   const [showCategoryNav, setShowCategoryNav] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [bannerHeight, setBannerHeight] = useState(0);
+  const bannerRef = useRef(null);
 
   // Add effect to fetch settings and get banner text
   useEffect(() => {
@@ -40,6 +42,19 @@ function Header() {
     };
 
     fetchSettings();
+  }, []);
+
+  // Measure banner height and add class to the body
+  useEffect(() => {
+    if (bannerRef.current) {
+      const height = bannerRef.current.offsetHeight;
+      setBannerHeight(height);
+      document.body.classList.add('has-banner');
+    }
+    
+    return () => {
+      document.body.classList.remove('has-banner');
+    };
   }, []);
 
   // Handle scroll effect for styling changes but not position
@@ -128,7 +143,11 @@ function Header() {
   return (
     <div className="relative z-50">
       {/* Top banner - NOT fixed, scrolls normally */}
-      <div style={{ backgroundColor: '#8c52ff' }} className="text-white py-1 px-4 top-banner">
+      <div 
+        ref={bannerRef}
+        style={{ backgroundColor: '#8c52ff' }} 
+        className="text-white py-1 px-4 top-banner"
+      >
         <div className="container mx-auto flex justify-between items-center">
           {/* Social Media Links - Hidden on mobile */}
           <div className="hidden md:flex items-center space-x-2">
@@ -166,7 +185,10 @@ function Header() {
         </div>
       </div>
 
-      {/* Main Header - THIS WILL BE STICKY */}
+      {/* Add spacer to prevent content from jumping */}
+      <div className="header-spacer"></div>
+
+      {/* Main Header - THIS WILL BE FIXED */}
       <div className="sticky-header bg-white shadow-md z-50">
         <header className={`bg-white/95 backdrop-blur-sm transition-all duration-300 ${isScrolled ? 'py-1' : 'py-2'}`}>
           <div className="container mx-auto px-4">
