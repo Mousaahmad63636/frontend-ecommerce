@@ -92,8 +92,8 @@
 
 /* Top banner styles - Normal document flow (will scroll away) */
 .top-banner {
-  position: relative; /* Not fixed */
-  z-index: 35;
+  position: relative; /* Regular flow */
+  z-index: 30;
   overflow: hidden;
 }
 
@@ -113,36 +113,45 @@
   animation: shine 6s infinite;
 }
 
-/* Sticky header styles - FIXED at top of viewport */
-.sticky-header {
+/* Fixed Navigation Container */
+.main-nav-fixed {
   position: fixed;
-  top: 0; /* Always fixed at the very top of viewport */
+  top: 0;
   left: 0;
   right: 0;
-  width: 100%;
-  z-index: 1000; /* High z-index to stay above all content */
+  z-index: 1000;
+  background-color: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  background-color: white; /* Solid background */
 }
 
-/* Header spacer - to prevent content jumps when header becomes fixed */
-.header-spacer {
-  height: 150px; /* Combined height of header + category nav - adjust as needed */
+/* Main header */
+.main-header {
+  padding: 10px 0;
+  background-color: white;
 }
 
-/* Category Navigator Wrapper Styles */
-.category-navigator-wrapper {
-  position: relative;
-  z-index: 20;
-  background: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, opacity 0.3s ease;
-  border-bottom: 1px solid #e5e7eb;
+/* Category navigation section */
+.category-nav-section {
+  background-color: white;
+  border-top: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
 }
 
-.category-navigator-wrapper.hidden {
+.category-nav-section.hidden {
   transform: translateY(-100%);
   opacity: 0;
+  visibility: hidden;
+}
+
+.category-nav-section.visible {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Header spacer - to prevent content jumps */
+.header-spacer {
+  height: 120px; /* Adjust based on the combined height of your header and category nav */
 }
 
 /* Ensure dropdown menus appear above other elements */

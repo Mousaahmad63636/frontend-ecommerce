@@ -127,7 +127,7 @@ function Header() {
   };
 
   return (
-    <div className="relative">
+    <>
       {/* Top banner - Normal document flow, will scroll away */}
       <div 
         ref={bannerRef}
@@ -171,9 +171,9 @@ function Header() {
         </div>
       </div>
 
-      {/* Main Header - THIS WILL BE FIXED and always at the top of viewport */}
-      <div className="sticky-header bg-white shadow-md z-50">
-        <header className={`bg-white/95 backdrop-blur-sm transition-all duration-300 ${isScrolled ? 'py-1' : 'py-2'}`}>
+      {/* Main Header - Fixed at the top */}
+      <div className="main-nav-fixed">
+        <div className="main-header bg-white shadow-md">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between">
               {/* Logo - SMALLER SIZE */}
@@ -302,24 +302,17 @@ function Header() {
               </nav>
             </div>
           )}
-        </header>
+        </div>
 
-        {/* Category Navigator - Part of the sticky section */}
+        {/* Category Navigator - Part of the fixed header */}
         <div
-          className={`category-navigator-wrapper transition-transform duration-300 ${showCategoryNav ? 'translate-y-0' : '-translate-y-full'}`}
-          style={{
-            position: 'relative',
-            zIndex: 20,
-            background: '#fff',
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
-            borderBottom: '1px solid #e5e7eb'
-          }}
+          className={`category-nav-section ${showCategoryNav ? 'visible' : 'hidden'}`}
         >
           <CategoryNavigator hideArrows={true} />
         </div>
       </div>
 
-      {/* Spacer to prevent content jumps - must be outside the fixed header */}
+      {/* Spacer to prevent content jumps */}
       <div className="header-spacer"></div>
 
       {/* Modals */}
@@ -327,7 +320,7 @@ function Header() {
         isOpen={showSideCart}
         onClose={() => setShowSideCart(false)}
       />
-    </div>
+    </>
   );
 }
 
