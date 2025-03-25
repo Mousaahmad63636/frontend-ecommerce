@@ -1,4 +1,4 @@
-// If you have a src/components/Banner.js file, edit it:
+// src/components/Banner/Banner.js
 import React, { useState } from 'react';
 import { getImageUrl } from '../../utils/imageUtils';
 
@@ -18,7 +18,7 @@ const Banner = ({ src, alt, title, subtitle, isVideo = false, onLoad, onError })
   };
   
   return (
-    <div className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden">
+    <div className="relative w-full h-[70vh] md:h-[80vh] overflow-hidden">
       {/* Loading placeholder */}
       {!isLoaded && !hasError && (
         <div className="absolute inset-0 bg-gray-200 animate-pulse"></div>
@@ -31,7 +31,7 @@ const Banner = ({ src, alt, title, subtitle, isVideo = false, onLoad, onError })
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-contain"
           onLoadedData={handleLoad}
           onError={handleError}
         />
@@ -39,7 +39,7 @@ const Banner = ({ src, alt, title, subtitle, isVideo = false, onLoad, onError })
         <img
           src={getImageUrl(src)}
           alt={alt || "Banner image"}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+          className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
           onLoad={handleLoad}
           onError={handleError}
         />
