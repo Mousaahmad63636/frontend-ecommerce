@@ -46,15 +46,9 @@ h1, h2, h3, h4, h5, h6 {
   flex-direction: column;
 }
 
-/* Updated to remove fixed header padding */
 .main-content {
   flex: 1;
-  padding-top: 0; /* Removed padding-top for natural flow */
-}
-
-/* Non-home pages can add specific padding if needed */
-.inner-page {
-  padding-top: 20px;
+  padding-top: 80px; /* Account for fixed header */
 }
 
 /* Custom Button Styles */
@@ -253,7 +247,16 @@ a:hover {
     padding: 0 1rem;
   }
 }
+/* src/App.css */
+.main-content {
+  flex: 1;
+  padding-top: 0; /* Changed from 80px to 0 */
+}
 
+/* Add this to ensure other pages (non-home) still have proper spacing */
+.main-content > *:not(.hero-section):first-child {
+  padding-top: 80px;
+}
 /* View all button styling */
 .view-all-button {
   transition: all 0.3s ease;

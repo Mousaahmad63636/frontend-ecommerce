@@ -127,7 +127,7 @@ function Header() {
 
   return (
     <div className="relative z-50">
-      {/* Top banner - NOT fixed, scrolls away */}
+      {/* Top banner - NOT fixed, scrolls normally */}
       <div style={{ backgroundColor: '#8c52ff' }} className="text-white py-1 px-4 top-banner">
         <div className="container mx-auto flex justify-between items-center">
           {/* Social Media Links - Hidden on mobile */}
@@ -166,9 +166,9 @@ function Header() {
         </div>
       </div>
 
-      {/* Main Header - FIXED ON SCROLL */}
-      <div className="main-header-wrapper">
-        <header className={`bg-white/95 backdrop-blur-sm transition-all duration-300 ${isScrolled ? 'py-1 shadow-md' : 'py-2'}`}>
+      {/* Main Header - THIS WILL BE STICKY */}
+      <div className="sticky-header bg-white shadow-md z-50">
+        <header className={`bg-white/95 backdrop-blur-sm transition-all duration-300 ${isScrolled ? 'py-1' : 'py-2'}`}>
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between">
               {/* Logo - SMALLER SIZE */}
@@ -298,13 +298,20 @@ function Header() {
             </div>
           )}
         </header>
-      </div>
 
-      {/* Category Navigator - Shown/hidden based on scroll position */}
-      <div
-        className={`category-navigator-wrapper transition-all duration-300 ${showCategoryNav ? 'translate-y-0' : '-translate-y-full'}`}
-      >
-        <CategoryNavigator hideArrows={true} />
+        {/* Category Navigator - Part of the sticky section */}
+        <div
+          className={`category-navigator-wrapper transition-transform duration-300 ${showCategoryNav ? 'translate-y-0' : '-translate-y-full'}`}
+          style={{
+            position: 'relative',
+            zIndex: 20,
+            background: '#fff',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+            borderBottom: '1px solid #e5e7eb'
+          }}
+        >
+          <CategoryNavigator hideArrows={true} />
+        </div>
       </div>
 
       {/* Modals */}
