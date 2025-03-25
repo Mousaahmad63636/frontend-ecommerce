@@ -521,7 +521,7 @@ function Home() {
           {/* Hero Section */}
           <section
             ref={heroRef}
-            className="w-full relative z-10 mt-0"
+            className="w-full relative z-10 pt-[120px]" // Add padding-top here
           >
             <Banner
               src={heroSettings.mediaUrl}
