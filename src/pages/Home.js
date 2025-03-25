@@ -518,10 +518,10 @@ function Home() {
       {/* Main content - either normal homepage or special views */}
       {!searchQuery && !showDiscountedOnly && !showAllProducts && !showSimilarProducts && !showCategoryView && (
         <>
-          {/* Hero Section - REMOVED PADDING */}
+          {/* Hero Section - ENSURE NO TOP PADDING CONFLICTS */}
           <section
             ref={heroRef}
-            className="w-full relative z-10"
+            className="w-full relative z-10 mt-0" // Ensure margin-top is 0
           >
             <Banner
               src={heroSettings.mediaUrl}
