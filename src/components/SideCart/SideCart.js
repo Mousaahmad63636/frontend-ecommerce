@@ -289,7 +289,7 @@ const SideCart = ({ isOpen, onClose }) => {
               onClick={handleCheckout}
               disabled={cartItems.length === 0}
             >
-              Proceed to Checkout
+              Buy Now
             </button>
             <button
               className="btn btn-outline-secondary continue-btn"
