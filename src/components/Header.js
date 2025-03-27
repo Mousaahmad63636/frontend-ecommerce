@@ -43,6 +43,27 @@ function Header() {
     fetchSettings();
   }, []);
 
+
+  useEffect(() => {
+    // Add event listeners for cart control
+    const handleOpenCart = () => {
+      setShowSideCart(true);
+    };
+
+    const handleCloseCart = () => {
+      setShowSideCart(false);
+    };
+
+    document.addEventListener('openSideCart', handleOpenCart);
+    document.addEventListener('closeSideCart', handleCloseCart);
+
+    // Clean up event listeners on unmount
+    return () => {
+      document.removeEventListener('openSideCart', handleOpenCart);
+      document.removeEventListener('closeSideCart', handleCloseCart);
+    };
+  }, []);
+
   // Handle scroll effect for styling changes
   useEffect(() => {
     const handleScroll = () => {
@@ -131,9 +152,9 @@ function Header() {
       {/* Complete Fixed Header Container */}
       <div className="fixed-header-container">
         {/* Purple Banner - Now part of the fixed header */}
-        <div 
+        <div
           ref={bannerRef}
-          style={{ backgroundColor: '#8c52ff' }} 
+          style={{ backgroundColor: '#8c52ff' }}
           className="text-white py-1 px-4 top-banner"
         >
           <div className="container mx-auto flex justify-between items-center">

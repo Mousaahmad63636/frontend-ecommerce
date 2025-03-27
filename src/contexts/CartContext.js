@@ -1,7 +1,7 @@
 // src/contexts/CartContext.js
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useNotification } from '../components/Notification/NotificationProvider';
-
+import { openSideCart } from '../utils/cartUtils';
 const CartContext = createContext();
 
 export const useCart = () => {
@@ -38,6 +38,7 @@ export const CartProvider = ({ children }) => {
 
     // Fixed and unified addToCart function
     const addToCart = (product, quantity = 1, selectedColor = '', selectedSize = '') => {
+
         // Create a unique identifier for this product + options combination
         const itemId = `${product._id}${selectedColor ? `-${selectedColor}` : ''}${selectedSize ? `-${selectedSize}` : ''}`;
         
@@ -84,6 +85,7 @@ export const CartProvider = ({ children }) => {
                     itemId: itemId               // Store unique identifier for variants
                 }];
             }
+            openSideCart();
         });
 
         const colorInfo = selectedColor ? ` (${selectedColor})` : '';
