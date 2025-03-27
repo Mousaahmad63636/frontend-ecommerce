@@ -43,6 +43,8 @@ function Header() {
     fetchSettings();
   }, []);
 
+  // src/components/Header.js
+  // Inside the component:
 
   useEffect(() => {
     // Add event listeners for cart control

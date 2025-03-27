@@ -13,6 +13,7 @@ import RatingStars from '../components/RatingStars';
 import WhatsAppMetaTags from '../components/WhatsAppMetaTags';
 import ProductList from '../components/ProductList';
 import OptimizedImage from '../components/OptimizedImage';
+import { openSideCart } from '../utils/cartUtils'; 
 
 function ProductDetail() {
   const { id } = useParams();
@@ -284,6 +285,8 @@ function ProductDetail() {
     });
 
     addToCart(product, quantity, colorToAdd, sizeToAdd);
+
+    openSideCart();
 
     let successMessage = `Added to cart: ${product.name}`;
     if (colorToAdd && sizeToAdd) {

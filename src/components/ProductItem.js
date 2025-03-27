@@ -5,6 +5,7 @@ import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useNotification } from './Notification/NotificationProvider';
 import { getImageUrl } from '../utils/imageUtils';
+import { openSideCart } from '../utils/cartUtils'; // Add this import
 
 function ProductItem({ product }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -158,6 +159,7 @@ function ProductItem({ product }) {
           <button
             onClick={() => {
               addToCart(product);
+              openSideCart(); // Open the cart after adding to cart
             }}
             disabled={product.soldOut}
             className={`w-full py-1.5 rounded-full text-center text-sm font-medium transition-all duration-200 ${
