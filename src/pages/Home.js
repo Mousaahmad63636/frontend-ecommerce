@@ -71,7 +71,28 @@ function Home() {
         setShowScrollButton(false);
       }
     };
+    useEffect(() => {
+      // Save the current scroll position when component unmounts
+      return () => {
+        sessionStorage.setItem('homeScrollPosition', window.scrollY.toString());
+      };
+    }, []);
 
+    // Add this effect to restore scroll position when returning to the page
+    useEffect(() => {
+      // Only run once when component mounts
+      const savedPosition = sessionStorage.getItem('homeScrollPosition');
+
+      if (savedPosition) {
+        // Small timeout to ensure the DOM is fully rendered
+        setTimeout(() => {
+          window.scrollTo({
+            top: parseInt(savedPosition, 10),
+            behavior: 'auto' // Use 'auto' instead of 'smooth' for immediate positioning
+          });
+        }, 100);
+      }
+    }, []);
     window.addEventListener('scroll', handleScroll);
 
     return () => {
