@@ -1,6 +1,6 @@
 // src/components/ProductItem.js
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useNotification } from './Notification/NotificationProvider';
@@ -13,6 +13,7 @@ function ProductItem({ product }) {
   const { addToCart } = useCart();
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const { showNotification } = useNotification();
+  const navigate = useNavigate();
 
   const isWishlisted = isInWishlist(product._id);
   const hasDiscount = product.discountPercentage > 0;
@@ -41,6 +42,24 @@ function ProductItem({ product }) {
     
     return product.images[0];
   };
+  
+  // Go to product detail
+  const goToProductDetail = () => {
+    navigate(`/product/${product._id}`);
+  };
+  
+  // Function for wishlist toggle
+  const handleWishlistToggle = (e) => {
+    e.stopPropagation();
+    isWishlisted ? removeFromWishlist(product._id) : addToWishlist(product);
+  };
+  
+  // Function for image dots
+  const handleDotClick = (e, idx) => {
+    e.stopPropagation();
+    setCurrentImageIndex(idx);
+    setIsImageLoaded(false);
+  };
 
   return (
     <div className="group w-full bg-white rounded-lg overflow-hidden transition-all duration-300 border border-gray-100 hover:border-gray-200 hover:shadow-md relative">
@@ -51,12 +70,12 @@ function ProductItem({ product }) {
         </div>
       )}
       
-      {/* Product Image Container */}
-      <div className="relative w-full pt-[100%] bg-gray-50 overflow-hidden">
-        <Link 
-          to={`/product/${product._id}`} 
-          className="absolute inset-0 flex items-center justify-center p-3"
-        >
+      {/* Product Image Container - Use div with onClick instead of Link */}
+      <div 
+        className="relative w-full pt-[100%] bg-gray-50 overflow-hidden cursor-pointer"
+        onClick={goToProductDetail}
+      >
+        <div className="absolute inset-0 flex items-center justify-center p-3">
           {/* Image with placeholder */}
           <div className="relative w-full h-full">
             {/* Gray background placeholder always visible, fades when image loads */}
@@ -73,14 +92,11 @@ function ProductItem({ product }) {
               loading="lazy"
             />
           </div>
-        </Link>
+        </div>
         
         {/* Wishlist Button */}
         <button
-          onClick={(e) => {
-            e.preventDefault();
-            isWishlisted ? removeFromWishlist(product._id) : addToWishlist(product);
-          }}
+          onClick={handleWishlistToggle}
           className="absolute top-2 right-2 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white transition-colors duration-300"
           aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
         >
@@ -89,18 +105,14 @@ function ProductItem({ product }) {
         
         {/* Image Navigation Dots */}
         {product.images && product.images.length > 1 && (
-          <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5">
+          <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5 z-10">
             {product.images.map((_, idx) => (
               <button
                 key={idx}
                 className={`h-1.5 rounded-full transition-all duration-200 ${
                   idx === currentImageIndex ? 'w-4 bg-gray-800' : 'w-1.5 bg-gray-400'
                 }`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setCurrentImageIndex(idx);
-                  setIsImageLoaded(false); // Reset when changing images
-                }}
+                onClick={(e) => handleDotClick(e, idx)}
                 aria-label={`View image ${idx + 1}`}
               />
             ))}
@@ -110,12 +122,13 @@ function ProductItem({ product }) {
       
       {/* Product Info */}
       <div className="p-3 flex flex-col min-h-[120px]">
-        <Link 
-          to={`/product/${product._id}`} 
-          className="block mb-1"
+        {/* Product title using onClick instead of Link */}
+        <div 
+          className="block mb-1 cursor-pointer"
+          onClick={goToProductDetail}
         >
           <h3 className="text-sm font-medium text-gray-900 line-clamp-1 hover:text-gray-700 transition-colors duration-200">{product.name}</h3>
-        </Link>
+        </div>
         
         {/* Categories */}
         <div className="flex items-center mb-1.5 h-5 overflow-hidden">
@@ -125,6 +138,7 @@ function ProductItem({ product }) {
                 key={category}
                 to={`/?category=${encodeURIComponent(category)}`}
                 className="inline-block text-xs px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-sm hover:bg-gray-200 transition-colors duration-200 whitespace-nowrap"
+                onClick={(e) => e.stopPropagation()}
               >
                 {category}
               </Link>
@@ -163,7 +177,8 @@ function ProductItem({ product }) {
         {/* Add to Cart Button */}
         <div className="mt-auto">
           <button
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               addToCart(product);
               openSideCart();
             }}
