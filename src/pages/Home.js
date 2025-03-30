@@ -13,7 +13,10 @@ import Banner from '../components/Banner';
 import ContactSection from '../components/ContactSection';
 import BlackFridayBanner from '../components/BlackFridayBanner/BlackFridayBanner';
 import api from '../api/api';
+// src/pages/Home.js
 
+// Add this import at the top with the other imports
+import { useScrollPosition } from '../contexts/ScrollPositionContext';
 function Home() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
