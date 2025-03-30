@@ -63,21 +63,20 @@ function Home() {
     };
   }, []);
   
-  // Add this effect to restore scroll position when returning to the page
-  useEffect(() => {
-    // Only run once when component mounts
-    const savedPosition = sessionStorage.getItem('homeScrollPosition');
-    
-    if (savedPosition) {
-      // Small timeout to ensure the DOM is fully rendered
-      setTimeout(() => {
-        window.scrollTo({
-          top: parseInt(savedPosition, 10),
-          behavior: 'auto' // Use 'auto' instead of 'smooth' for immediate positioning
-        });
-      }, 100);
-    }
-  }, []);
+// Inside Home.js - Find the useEffect near the top and update/add this one
+useEffect(() => {
+  // Restore scroll position when returning to home
+  const savedPosition = sessionStorage.getItem('homeScrollPosition');
+  
+  if (savedPosition) {
+    setTimeout(() => {
+      window.scrollTo({
+        top: parseInt(savedPosition, 10),
+        behavior: 'auto'
+      });
+    }, 0);
+  }
+}, []);
 
   
   // Handle navigation to home

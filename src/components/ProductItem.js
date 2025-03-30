@@ -13,8 +13,7 @@ function ProductItem({ product }) {
   const { addToCart } = useCart();
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const { showNotification } = useNotification();
-  const navigate = useNavigate();
-
+  
   const isWishlisted = isInWishlist(product._id);
   const hasDiscount = product.discountPercentage > 0;
   
@@ -42,23 +41,11 @@ function ProductItem({ product }) {
     
     return product.images[0];
   };
-  
-  // Go to product detail
-  const goToProductDetail = () => {
-    navigate(`/product/${product._id}`);
-  };
-  
-  // Function for wishlist toggle
-  const handleWishlistToggle = (e) => {
-    e.stopPropagation();
-    isWishlisted ? removeFromWishlist(product._id) : addToWishlist(product);
-  };
-  
-  // Function for image dots
-  const handleDotClick = (e, idx) => {
-    e.stopPropagation();
-    setCurrentImageIndex(idx);
-    setIsImageLoaded(false);
+
+  // Save scroll position before navigating
+  const saveScrollPosition = () => {
+    // Save current scroll position to sessionStorage
+    sessionStorage.setItem('homeScrollPosition', window.scrollY.toString());
   };
 
   return (
@@ -70,12 +57,13 @@ function ProductItem({ product }) {
         </div>
       )}
       
-      {/* Product Image Container - Use div with onClick instead of Link */}
-      <div 
-        className="relative w-full pt-[100%] bg-gray-50 overflow-hidden cursor-pointer"
-        onClick={goToProductDetail}
-      >
-        <div className="absolute inset-0 flex items-center justify-center p-3">
+      {/* Product Image Container */}
+      <div className="relative w-full pt-[100%] bg-gray-50 overflow-hidden">
+        <Link 
+          to={`/product/${product._id}`} 
+          className="absolute inset-0 flex items-center justify-center p-3"
+          onClick={saveScrollPosition}
+        >
           {/* Image with placeholder */}
           <div className="relative w-full h-full">
             {/* Gray background placeholder always visible, fades when image loads */}
@@ -92,11 +80,14 @@ function ProductItem({ product }) {
               loading="lazy"
             />
           </div>
-        </div>
+        </Link>
         
         {/* Wishlist Button */}
         <button
-          onClick={handleWishlistToggle}
+          onClick={(e) => {
+            e.stopPropagation();
+            isWishlisted ? removeFromWishlist(product._id) : addToWishlist(product);
+          }}
           className="absolute top-2 right-2 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white transition-colors duration-300"
           aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
         >
@@ -105,14 +96,19 @@ function ProductItem({ product }) {
         
         {/* Image Navigation Dots */}
         {product.images && product.images.length > 1 && (
-          <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5 z-10">
+          <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5">
             {product.images.map((_, idx) => (
               <button
                 key={idx}
                 className={`h-1.5 rounded-full transition-all duration-200 ${
                   idx === currentImageIndex ? 'w-4 bg-gray-800' : 'w-1.5 bg-gray-400'
                 }`}
-                onClick={(e) => handleDotClick(e, idx)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setCurrentImageIndex(idx);
+                  setIsImageLoaded(false);
+                }}
                 aria-label={`View image ${idx + 1}`}
               />
             ))}
@@ -122,13 +118,13 @@ function ProductItem({ product }) {
       
       {/* Product Info */}
       <div className="p-3 flex flex-col min-h-[120px]">
-        {/* Product title using onClick instead of Link */}
-        <div 
-          className="block mb-1 cursor-pointer"
-          onClick={goToProductDetail}
+        <Link 
+          to={`/product/${product._id}`} 
+          className="block mb-1"
+          onClick={saveScrollPosition}
         >
           <h3 className="text-sm font-medium text-gray-900 line-clamp-1 hover:text-gray-700 transition-colors duration-200">{product.name}</h3>
-        </div>
+        </Link>
         
         {/* Categories */}
         <div className="flex items-center mb-1.5 h-5 overflow-hidden">
@@ -178,6 +174,7 @@ function ProductItem({ product }) {
         <div className="mt-auto">
           <button
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               addToCart(product);
               openSideCart();
