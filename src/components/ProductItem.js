@@ -5,7 +5,7 @@ import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useNotification } from './Notification/NotificationProvider';
 import { getImageUrl } from '../utils/imageUtils';
-import { openSideCart } from '../utils/cartUtils'; // Add this import
+import { openSideCart } from '../utils/cartUtils';
 
 function ProductItem({ product }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -53,7 +53,10 @@ function ProductItem({ product }) {
       
       {/* Product Image Container */}
       <div className="relative w-full pt-[100%] bg-gray-50 overflow-hidden">
-        <Link to={`/product/${product._id}`} className="absolute inset-0 flex items-center justify-center p-3">
+        <Link 
+          to={`/product/${product._id}`} 
+          className="absolute inset-0 flex items-center justify-center p-3"
+        >
           {/* Image with placeholder */}
           <div className="relative w-full h-full">
             {/* Gray background placeholder always visible, fades when image loads */}
@@ -107,7 +110,10 @@ function ProductItem({ product }) {
       
       {/* Product Info */}
       <div className="p-3 flex flex-col min-h-[120px]">
-        <Link to={`/product/${product._id}`} className="block mb-1">
+        <Link 
+          to={`/product/${product._id}`} 
+          className="block mb-1"
+        >
           <h3 className="text-sm font-medium text-gray-900 line-clamp-1 hover:text-gray-700 transition-colors duration-200">{product.name}</h3>
         </Link>
         
@@ -159,7 +165,7 @@ function ProductItem({ product }) {
           <button
             onClick={() => {
               addToCart(product);
-              openSideCart(); // Open the cart after adding to cart
+              openSideCart();
             }}
             disabled={product.soldOut}
             className={`w-full py-1.5 rounded-full text-center text-sm font-medium transition-all duration-200 ${

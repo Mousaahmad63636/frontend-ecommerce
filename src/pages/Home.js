@@ -25,7 +25,7 @@ function Home() {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const searchQuery = searchParams.get('q');
-
+  const { saveScrollPosition, getScrollPosition, clearScrollPosition } = useScrollPosition();
   const [headerHeight, setHeaderHeight] = useState(0);
   const [showDiscountedOnly, setShowDiscountedOnly] = useState(false);
   const [showAllProducts, setShowAllProducts] = useState(false);
@@ -38,7 +38,7 @@ function Home() {
   const location = useLocation();
   const navigate = useNavigate();
   const productsRef = useRef(null);
-
+  const homeRef = useRef(null);
   const [heroSettings, setHeroSettings] = useState({
     type: 'image',
     mediaUrl: '/hero.jpg',
@@ -75,6 +75,8 @@ function Home() {
       }, 100);
     }
   }, []);
+
+  
   // Handle navigation to home
   const goToHome = () => {
     navigate('/', { replace: true });
