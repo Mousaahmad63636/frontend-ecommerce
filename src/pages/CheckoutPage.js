@@ -18,6 +18,13 @@ function CheckoutPage() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [formErrors, setFormErrors] = useState({});
 
+  const placeholderStyles = `
+  .faded-placeholder::placeholder {
+    color: #9ca3af !important; /* Light grey color */
+    opacity: 0.6 !important;
+    font-style: italic;
+  }
+`;
   // Form state
   const [formData, setFormData] = useState({
     customerName: '',
@@ -172,6 +179,7 @@ function CheckoutPage() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
+       <style>{placeholderStyles}</style>
       <div className="container mx-auto px-4 py-8">
         {/* Page Header */}
         <div className="mb-6">
@@ -292,7 +300,7 @@ function CheckoutPage() {
                       name="customerName"
                       value={formData.customerName}
                       onChange={handleInputChange}
-                      className={`w-full px-3 py-2 border ${formErrors.customerName ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500`}
+                      className={`w-full px-3 py-2 border ${formErrors.customerName ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 faded-placeholder`}
                       placeholder="Enter your full name"
                     />
                     {formErrors.customerName && (
@@ -310,7 +318,7 @@ function CheckoutPage() {
                       name="phoneNumber"
                       value={formData.phoneNumber}
                       onChange={handleInputChange}
-                      className={`w-full px-3 py-2 border ${formErrors.phoneNumber ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500`}
+                      className={`w-full px-3 py-2 border ${formErrors.phoneNumber ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 faded-placeholder`}
                       placeholder="8-digit phone number"
                     />
                     {formErrors.phoneNumber && (
@@ -327,7 +335,7 @@ function CheckoutPage() {
                       value={formData.address}
                       onChange={handleInputChange}
                       rows="3"
-                      className={`w-full px-3 py-2 border ${formErrors.address ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500`}
+                      className={`w-full px-3 py-2 border ${formErrors.address ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 faded-placeholder`}
                       placeholder="Enter your complete delivery address"
                     ></textarea>
                     {formErrors.address && (
@@ -344,7 +352,7 @@ function CheckoutPage() {
                       value={formData.specialInstructions}
                       onChange={handleInputChange}
                       rows="2"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 faded-placeholder"
                       placeholder="Any special delivery instructions"
                     ></textarea>
                   </div>
