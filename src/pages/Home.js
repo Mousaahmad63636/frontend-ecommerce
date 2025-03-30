@@ -964,7 +964,7 @@ function Home() {
               <ProductList
                 products={filteredProducts}
                 scrollable={false}
-                mobileColumns={1} // Keeping this at 1 for search results
+                mobileColumns={2} // Changed from 1 to 2 for mobile view
               />
             ) : (
               <div className="text-center py-8">
