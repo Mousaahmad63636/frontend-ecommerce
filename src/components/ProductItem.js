@@ -1,11 +1,11 @@
 // src/components/ProductItem.js
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useNotification } from './Notification/NotificationProvider';
 import { getImageUrl } from '../utils/imageUtils';
-import { openSideCart } from '../utils/cartUtils';
+import { openSideCart } from '../utils/cartUtils'; // Add this import
 
 function ProductItem({ product }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -13,7 +13,7 @@ function ProductItem({ product }) {
   const { addToCart } = useCart();
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const { showNotification } = useNotification();
-  
+
   const isWishlisted = isInWishlist(product._id);
   const hasDiscount = product.discountPercentage > 0;
   
@@ -42,12 +42,6 @@ function ProductItem({ product }) {
     return product.images[0];
   };
 
-  // Save scroll position before navigating
-  const saveScrollPosition = () => {
-    // Save current scroll position to sessionStorage
-    sessionStorage.setItem('homeScrollPosition', window.scrollY.toString());
-  };
-
   return (
     <div className="group w-full bg-white rounded-lg overflow-hidden transition-all duration-300 border border-gray-100 hover:border-gray-200 hover:shadow-md relative">
       {/* Discount Badge */}
@@ -59,11 +53,7 @@ function ProductItem({ product }) {
       
       {/* Product Image Container */}
       <div className="relative w-full pt-[100%] bg-gray-50 overflow-hidden">
-        <Link 
-          to={`/product/${product._id}`} 
-          className="absolute inset-0 flex items-center justify-center p-3"
-          onClick={saveScrollPosition}
-        >
+        <Link to={`/product/${product._id}`} className="absolute inset-0 flex items-center justify-center p-3">
           {/* Image with placeholder */}
           <div className="relative w-full h-full">
             {/* Gray background placeholder always visible, fades when image loads */}
@@ -85,7 +75,7 @@ function ProductItem({ product }) {
         {/* Wishlist Button */}
         <button
           onClick={(e) => {
-            e.stopPropagation();
+            e.preventDefault();
             isWishlisted ? removeFromWishlist(product._id) : addToWishlist(product);
           }}
           className="absolute top-2 right-2 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white transition-colors duration-300"
@@ -105,9 +95,8 @@ function ProductItem({ product }) {
                 }`}
                 onClick={(e) => {
                   e.preventDefault();
-                  e.stopPropagation();
                   setCurrentImageIndex(idx);
-                  setIsImageLoaded(false);
+                  setIsImageLoaded(false); // Reset when changing images
                 }}
                 aria-label={`View image ${idx + 1}`}
               />
@@ -118,11 +107,7 @@ function ProductItem({ product }) {
       
       {/* Product Info */}
       <div className="p-3 flex flex-col min-h-[120px]">
-        <Link 
-          to={`/product/${product._id}`} 
-          className="block mb-1"
-          onClick={saveScrollPosition}
-        >
+        <Link to={`/product/${product._id}`} className="block mb-1">
           <h3 className="text-sm font-medium text-gray-900 line-clamp-1 hover:text-gray-700 transition-colors duration-200">{product.name}</h3>
         </Link>
         
@@ -134,7 +119,6 @@ function ProductItem({ product }) {
                 key={category}
                 to={`/?category=${encodeURIComponent(category)}`}
                 className="inline-block text-xs px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-sm hover:bg-gray-200 transition-colors duration-200 whitespace-nowrap"
-                onClick={(e) => e.stopPropagation()}
               >
                 {category}
               </Link>
@@ -173,11 +157,9 @@ function ProductItem({ product }) {
         {/* Add to Cart Button */}
         <div className="mt-auto">
           <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onClick={() => {
               addToCart(product);
-              openSideCart();
+              openSideCart(); // Open the cart after adding to cart
             }}
             disabled={product.soldOut}
             className={`w-full py-1.5 rounded-full text-center text-sm font-medium transition-all duration-200 ${

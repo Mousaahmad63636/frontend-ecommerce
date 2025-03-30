@@ -1,1072 +1,853 @@
-// src/pages/Home.js
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useSearchParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Spinner } from 'flowbite-react';
-import { useLocation } from 'react-router-dom';
-import { getImageUrl } from '../utils/imageUtils';
-import OptimizedImage from '../components/OptimizedImage';
-import { useAuth } from '../contexts/AuthContext';
-import { useScrollPosition } from '../contexts/ScrollPositionContext';
-import DailyTimer from '../components/DailyTimer/DailyTimer';
-import ProductList from '../components/ProductList';
-import Banner from '../components/Banner';
-import ContactSection from '../components/ContactSection';
-import BlackFridayBanner from '../components/BlackFridayBanner/BlackFridayBanner';
+import { useCart } from '../contexts/CartContext';
+import { useWishlist } from '../contexts/WishlistContext';
+import { useNotification } from '../components/Notification/NotificationProvider';
 import api from '../api/api';
+import { formatPrice } from '../utils/formatters';
+import { getImageUrl } from '../utils/imageUtils';
+import DiscountTimer from '../components/DiscountTimer/DiscountTimer';
+import Loading from '../components/Loading/Loading';
+import RatingStars from '../components/RatingStars';
+import WhatsAppMetaTags from '../components/WhatsAppMetaTags';
+import ProductList from '../components/ProductList';
+import OptimizedImage from '../components/OptimizedImage';
+import { openSideCart } from '../utils/cartUtils'; 
 
-function Home() {
-  const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [blackFridayData, setBlackFridayData] = useState(null);
-  const [searchParams] = useSearchParams();
-  const { user } = useAuth();
-  const searchQuery = searchParams.get('q');
-  const { saveScrollPosition, getScrollPosition } = useScrollPosition();
-
-  const [headerHeight, setHeaderHeight] = useState(0);
-  const [showDiscountedOnly, setShowDiscountedOnly] = useState(false);
-  const [showAllProducts, setShowAllProducts] = useState(false);
-  const [showSimilarProducts, setShowSimilarProducts] = useState(false);
-  const [showCategoryView, setShowCategoryView] = useState(false);
-  const [categoryViewName, setCategoryViewName] = useState('');
-  const [relatedProductId, setRelatedProductId] = useState(null);
-  const [showScrollButton, setShowScrollButton] = useState(false);
-  const heroRef = useRef(null);
-  const location = useLocation();
+function ProductDetail() {
+  const { id } = useParams();
   const navigate = useNavigate();
-  const productsRef = useRef(null);
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [quantity, setQuantity] = useState(1);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [similarProducts, setSimilarProducts] = useState([]);
+  const [loadingSimilar, setLoadingSimilar] = useState(false);
+  const { addToCart } = useCart();
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
+  const { showNotification } = useNotification();
+  const [shareDropdownOpen, setShareDropdownOpen] = useState(false);
+  const [userRating, setUserRating] = useState(0);
+  const [selectedColor, setSelectedColor] = useState('');
+  const [selectedSize, setSelectedSize] = useState('');
 
-  const [heroSettings, setHeroSettings] = useState({
-    type: 'image',
-    mediaUrl: '/hero.jpg',
-    title: 'Just Trendy - Where Trends Meet Need!',
-    subtitle: 'Discover Amazing Products at Great Prices'
-  });
+  const preloadThumbnails = useCallback((imageUrls) => {
+    if (!imageUrls || imageUrls.length <= 1) return;
 
-  const preferredCategoryOrder = [
-    'TRENDY PRODUCTS',
-    'HOME & KITCHEN',
-    'BEAUTY & HEALTH',
-    'ELECTRONICS & CAR ACCESSORIES',
-    'TOYS'
-  ];
+    console.log('Preloading all thumbnails...');
 
-  // Save scroll position when leaving the home page
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.location.pathname === '/') {
-        saveScrollPosition('homePage', window.scrollY);
-      }
-    };
+    const preloadQueue = [];
 
-    // Add event listeners with throttling for performance
-    let scrollTimeout;
-    const throttledScroll = () => {
-      if (!scrollTimeout) {
-        scrollTimeout = setTimeout(() => {
-          handleScroll();
-          scrollTimeout = null;
-        }, 200);
-      }
-    };
+    if (currentImageIndex < imageUrls.length) {
+      const nextIndex = (currentImageIndex + 1) % imageUrls.length;
+      const prevIndex = (currentImageIndex - 1 + imageUrls.length) % imageUrls.length;
+      preloadQueue.push(nextIndex, prevIndex);
 
-    window.addEventListener('scroll', throttledScroll);
-    window.addEventListener('beforeunload', handleScroll);
-
-    // Save position when component unmounts
-    return () => {
-      handleScroll();
-      window.removeEventListener('scroll', throttledScroll);
-      window.removeEventListener('beforeunload', handleScroll);
-      clearTimeout(scrollTimeout);
-    };
-  }, [saveScrollPosition]);
-
-  // Restore scroll position when returning to the home page
-  useEffect(() => {
-    const savedPosition = getScrollPosition('homePage');
-
-    if (savedPosition && savedPosition > 0) {
-      // Use setTimeout to ensure the DOM is fully rendered
-      const timeoutId = setTimeout(() => {
-        window.scrollTo({
-          top: savedPosition,
-          behavior: 'auto' // Use 'auto' for immediate positioning
-        });
-      }, 300);
-
-      return () => clearTimeout(timeoutId);
-    }
-  }, [getScrollPosition]);
-
-  // Handle navigation to home
-  const goToHome = () => {
-    navigate('/', { replace: true });
-    setShowDiscountedOnly(false);
-    setShowAllProducts(false);
-    setShowSimilarProducts(false);
-    setShowCategoryView(false);
-    setSelectedCategory('all');
-    window.scrollTo(0, 0);
-  };
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowScrollButton(true);
-      } else {
-        setShowScrollButton(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  // Add this function to handle scrolling to top
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  };
-
-  // Separate useEffect for URL parameters and scroll functionality
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-
-    // Handle scrollToProducts parameter
-    if (params.get('scrollToProducts') === 'true' && productsRef.current) {
-      productsRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // Handle relatedTo parameter for similar products
-    const relatedToParam = params.get('relatedTo');
-    if (relatedToParam) {
-      setRelatedProductId(relatedToParam);
-      setShowSimilarProducts(true);
-      setShowDiscountedOnly(false);
-      setShowAllProducts(false);
-      setShowCategoryView(false);
-
-      // If there's also a category parameter, set it
-      const categoryParam = params.get('category');
-      if (categoryParam) {
-        setSelectedCategory(categoryParam);
-      }
-
-      // Scroll to products section
-      setTimeout(() => {
-        if (productsRef.current) {
-          productsRef.current.scrollIntoView({ behavior: 'smooth' });
+      for (let i = 0; i < imageUrls.length; i++) {
+        if (i !== currentImageIndex && i !== nextIndex && i !== prevIndex) {
+          preloadQueue.push(i);
         }
-      }, 300);
+      }
     } else {
-      // Reset showSimilarProducts when not in the URL
-      setShowSimilarProducts(false);
-    }
-
-    // Handle showDiscounted parameter
-    const showDiscounted = params.get('showDiscounted');
-    if (showDiscounted === 'true') {
-      setShowDiscountedOnly(true);
-      setShowAllProducts(false);
-      setShowSimilarProducts(false);
-      setShowCategoryView(false);
-
-      // If there's also a category parameter, set it
-      const categoryParam = params.get('category');
-      if (categoryParam) {
-        setSelectedCategory(categoryParam);
+      for (let i = 0; i < imageUrls.length; i++) {
+        preloadQueue.push(i);
       }
-
-      // Scroll to products section
-      setTimeout(() => {
-        if (productsRef.current) {
-          productsRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 300);
-    } else if (!relatedToParam) {
-      // Reset showDiscountedOnly when not in the URL and not showing related products
-      setShowDiscountedOnly(false);
     }
 
-    // Handle showAllProducts parameter
-    const showAll = params.get('showAllProducts');
-    if (showAll === 'true') {
-      setShowAllProducts(true);
-      setShowDiscountedOnly(false);
-      setShowSimilarProducts(false);
-      setShowCategoryView(false);
+    let loadedCount = 0;
+    const BATCH_SIZE = 2;
 
-      // If there's also a category parameter, set it
-      const categoryParam = params.get('category');
-      if (categoryParam) {
-        setSelectedCategory(categoryParam);
-      }
+    const loadNext = () => {
+      const batch = preloadQueue.splice(0, BATCH_SIZE);
+      if (batch.length === 0) return;
 
-      // Scroll to products section
-      setTimeout(() => {
-        if (productsRef.current) {
-          productsRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 300);
-    } else if (!relatedToParam) {
-      // Reset showAllProducts when not in the URL and not showing related products
-      setShowAllProducts(false);
-    }
+      batch.forEach(index => {
+        const img = new Image();
+        img.onload = () => {
+          loadedCount++;
+          console.log(`Preloaded thumbnail ${index + 1}/${imageUrls.length}`);
 
-    // Handle standalone category parameter for category view
-    const categoryParam = params.get('category');
-    if (categoryParam && !showDiscounted && !showAll && !relatedToParam) {
-      setSelectedCategory(categoryParam);
-      setShowCategoryView(true);
-      setShowDiscountedOnly(false);
-      setShowAllProducts(false);
-      setShowSimilarProducts(false);
-      setCategoryViewName(categoryParam);
+          if (preloadQueue.length > 0 && (loadedCount % BATCH_SIZE === 0)) {
+            setTimeout(loadNext, 100);
+          }
+        };
 
-      // Scroll to products section
-      setTimeout(() => {
-        if (productsRef.current) {
-          productsRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 300);
-    } else if (!showDiscounted && !showAll && !relatedToParam && !categoryParam) {
-      // Reset showCategoryView when no category parameter is present and no other special view is active
-      setShowCategoryView(false);
-    }
+        const thumbnailUrl = getImageUrl(imageUrls[index]);
+        img.src = `${thumbnailUrl.split('?')[0]}?size=120x120`;
+      });
+    };
 
-  }, [location.search]);
+    loadNext();
+  }, [currentImageIndex]);
 
-  // Calculate header height on mount and when window resizes
   useEffect(() => {
-    const updateHeaderHeight = () => {
-      const header = document.querySelector('header')?.parentElement;
-      if (header) {
-        const height = header.offsetHeight;
-        setHeaderHeight(height);
+    if (product?.images?.length > 1) {
+      preloadThumbnails(product.images);
+    }
+  }, [product, preloadThumbnails]);
+
+  useEffect(() => {
+    if (product) {
+      console.log("Product data:", product);
+      console.log("Has colors:", product.colors && product.colors.length > 0);
+      console.log("Has sizes:", product.sizes && product.sizes.length > 0);
+    }
+  }, [product]);
+
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+
+  const toggleShareDropdown = () => {
+    setShareDropdownOpen(prev => !prev);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (shareDropdownOpen && !event.target.closest('.share-dropdown-container')) {
+        setShareDropdownOpen(false);
       }
     };
 
-    // Initial calculation
-    updateHeaderHeight();
-
-    // Update only on resize, not on scroll
-    window.addEventListener('resize', updateHeaderHeight);
-
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      window.removeEventListener('resize', updateHeaderHeight);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
+  }, [shareDropdownOpen]);
 
-  // Inside Home.js, update the hero settings fetch
+  const goToHome = () => {
+    navigate('/');
+  };
+
+  const copyProductLink = () => {
+    const productUrl = window.location.href;
+
+    navigator.clipboard.writeText(productUrl)
+      .then(() => {
+        showNotification('Product link copied to clipboard!', 'success');
+        setShareDropdownOpen(false);
+      })
+      .catch((error) => {
+        console.error('Error copying link: ', error);
+        showNotification('Failed to copy link. Please try again.', 'error');
+      });
+  };
+
+  const shareToWhatsApp = () => {
+    try {
+      // Create a clean URL without query parameters
+      const baseUrl = window.location.origin + window.location.pathname;
+      // Create a clean message with the product name and URL
+      const message = `Check out this product: ${product.name} - ${baseUrl}`;
+      const encodedText = encodeURIComponent(message);
+      const shareUrl = `https://wa.me/?text=${encodedText}`;
+      
+      window.open(shareUrl, '_blank');
+      setShareDropdownOpen(false);
+    } catch (error) {
+      console.error('Error sharing to WhatsApp:', error);
+      showNotification('Failed to share to WhatsApp. Please try copying the link instead.', 'error');
+    }
+  };
+
   useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        setLoading(true); // Show loading state while fetching
-        const response = await api.getSettings();
-        if (response?.heroSection) {
-          // Pre-validate the hero image by checking if it exists
-          const { mediaUrl, ...otherSettings } = response.heroSection;
-
-          // Set the hero settings right away, even before image validation
-          setHeroSettings({
-            ...otherSettings,
-            mediaUrl: mediaUrl || '/hero.jpg' // Fallback path right away if none provided
-          });
-
-          // Image validation is now handled by the OptimizedImage component
-        }
-      } catch (error) {
-        console.error('Error fetching hero settings:', error);
-        // Set default hero settings on error
-        setHeroSettings({
-          type: 'image',
-          mediaUrl: '/hero.jpg',
-          title: 'Just Trendy - Where Trends Meet Need!',
-          subtitle: 'Discover Amazing Products at Great Prices'
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSettings();
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
+    const fetchProduct = async () => {
       try {
         setLoading(true);
-        const productsData = await api.getProducts();
-        setProducts(productsData);
+        const data = await api.getProductById(id);
+        setProduct(data);
 
-        // Extract ALL categories (primary and secondary) from products
-        const allCategories = new Set();
-
-        productsData.forEach(product => {
-          // Add primary category
-          if (product.category) {
-            allCategories.add(product.category);
-          }
-
-          // Add secondary categories from the categories array
-          if (Array.isArray(product.categories)) {
-            product.categories.forEach(category => {
-              if (category) allCategories.add(category);
-            });
-          }
-        });
-
-        setCategories([...allCategories].sort());
-
-        if (api.getBlackFridayData) {
-          try {
-            const blackFridayResponse = await api.getBlackFridayData();
-            if (blackFridayResponse?.isActive) {
-              setBlackFridayData({
-                discount: blackFridayResponse.discountPercentage,
-                endDate: blackFridayResponse.endDate
-              });
-            }
-          } catch (blackFridayError) {
-            console.log('Black Friday data not available');
-          }
+        if (data.colors && data.colors.length > 0) {
+          setSelectedColor(data.colors[0]);
         }
+        if (data.sizes && data.sizes.length > 0) {
+          setSelectedSize(data.sizes[0]);
+        }
+
+        fetchSimilarProducts(data);
       } catch (error) {
-        console.error('Error fetching products:', error);
-        setError('Failed to load products. Please try again later.');
+        console.error('Error fetching product:', error);
+        showNotification('Error loading product', 'error');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
-  }, []);
+    fetchProduct();
+  }, [id, showNotification]);
 
-  useEffect(() => {
-    let filtered = [...products]; // Create a copy to avoid mutating the original
+  const fetchSimilarProducts = async (currentProduct) => {
+    if (!currentProduct) return;
 
-    // Apply search filter
-    if (searchQuery) {
-      const searchLower = searchQuery.toLowerCase();
-      filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(searchLower) ||
-        product.description.toLowerCase().includes(searchLower) ||
-        (product.category && product.category.toLowerCase().includes(searchLower)) ||
-        (Array.isArray(product.categories) && product.categories.some(cat =>
-          cat.toLowerCase().includes(searchLower)
-        ))
-      );
-    }
-    // Special case for related products filtering
-    else if (showSimilarProducts && relatedProductId) {
-      const relatedProduct = products.find(p => p._id === relatedProductId);
+    try {
+      setLoadingSimilar(true);
 
-      if (relatedProduct) {
-        // Get all categories from the reference product
-        const relatedCategories = [];
+      const productCategories = new Set();
 
-        if (relatedProduct.category) {
-          relatedCategories.push(relatedProduct.category);
-        }
+      if (currentProduct.category) {
+        productCategories.add(currentProduct.category);
+      }
 
-        if (Array.isArray(relatedProduct.categories) && relatedProduct.categories.length > 0) {
-          relatedProduct.categories.forEach(cat => {
-            if (cat && !relatedCategories.includes(cat)) {
-              relatedCategories.push(cat);
-            }
-          });
-        }
-
-        // Filter products by matching any category with the reference product
-        filtered = products.filter(product => {
-          // Skip the reference product itself
-          if (product._id === relatedProductId) return false;
-
-          // Check if primary category matches any reference category
-          if (product.category && relatedCategories.includes(product.category)) {
-            return true;
-          }
-
-          // Check if any product category matches any reference category
-          if (Array.isArray(product.categories) && product.categories.length > 0) {
-            return product.categories.some(cat => relatedCategories.includes(cat));
-          }
-
-          return false;
+      if (Array.isArray(currentProduct.categories) && currentProduct.categories.length > 0) {
+        currentProduct.categories.forEach(cat => {
+          if (cat) productCategories.add(cat);
         });
       }
-    }
-    // Apply category filter
-    else if (selectedCategory !== 'all') {
-      filtered = filtered.filter(product => {
-        // Check primary category
-        if (product.category === selectedCategory) {
-          return true;
-        }
 
-        // Check categories array for secondary categories
-        if (Array.isArray(product.categories) && product.categories.includes(selectedCategory)) {
-          return true;
+      if (productCategories.size === 0) {
+        setLoadingSimilar(false);
+        return;
+      }
+
+      const categoriesArray = Array.from(productCategories);
+      console.log('Looking for similar products in categories:', categoriesArray);
+
+      const products = await api.getProducts();
+
+      const filtered = products.filter(p => {
+        if (p._id === currentProduct._id) return false;
+
+        if (p.category && categoriesArray.includes(p.category)) return true;
+
+        if (Array.isArray(p.categories) && p.categories.length > 0) {
+          return p.categories.some(cat => categoriesArray.includes(cat));
         }
 
         return false;
       });
+
+      setSimilarProducts(filtered.slice(0, 10));
+    } catch (error) {
+      console.error('Error fetching similar products:', error);
+    } finally {
+      setLoadingSimilar(false);
     }
-
-    // Apply discount filter if showDiscountedOnly is true
-    if (showDiscountedOnly) {
-      filtered = filtered.filter(product =>
-        product.discountPercentage > 0
-      );
-    }
-
-    setFilteredProducts(filtered);
-  }, [products, searchQuery, selectedCategory, showDiscountedOnly, showSimilarProducts, relatedProductId]);
-
-  // Handle category change with URL update
-  const handleCategoryChange = (e) => {
-    const newCategory = e.target.value;
-    setSelectedCategory(newCategory);
-
-    // Update URL to reflect the new category
-    let params = new URLSearchParams(location.search);
-
-    if (newCategory === 'all') {
-      params.delete('category');
-    } else {
-      params.set('category', newCategory);
-    }
-
-    // Preserve view mode parameters if they exist
-    if (showDiscountedOnly) {
-      params.set('showDiscounted', 'true');
-    } else if (showAllProducts) {
-      params.set('showAllProducts', 'true');
-    } else if (showSimilarProducts && relatedProductId) {
-      params.set('relatedTo', relatedProductId);
-    }
-
-    navigate({ search: params.toString() });
   };
 
-  // Function to get products by category
-  const getProductsByCategory = (categoryName) => {
-    return products.filter(product => {
-      // Check primary category
-      if (product.category === categoryName) {
-        return true;
-      }
+  const containsArabic = (text) => {
+    if (!text) return false;
+    const arabicPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+    return arabicPattern.test(text);
+  };
 
-      // Check categories array for secondary categories
-      if (Array.isArray(product.categories) && product.categories.includes(categoryName)) {
-        return true;
-      }
+  const getPrimaryDirection = (text) => {
+    if (!text) return 'ltr';
 
-      return false;
+    const arabicChars = (text.match(/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/g) || []).length;
+    const latinChars = (text.match(/[A-Za-z]/g) || []).length;
+
+    return arabicChars > latinChars ? 'rtl' : 'ltr';
+  };
+
+  const handleQuantityChange = (change) => {
+    const newQuantity = quantity + change;
+    if (newQuantity >= 1 && newQuantity <= 10) {
+      setQuantity(newQuantity);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const value = parseInt(e.target.value);
+    if (!isNaN(value) && value >= 1 && value <= 10) {
+      setQuantity(value);
+    }
+  };
+
+  const handleAddToCart = () => {
+    if (!product) {
+      showNotification('Product not available', 'error');
+      return;
+    }
+
+    if (product.colors && product.colors.length > 0) {
+      if (!selectedColor) {
+        showNotification('Please select a color before adding to cart', 'error');
+        return;
+      }
+    }
+
+    if (product.sizes && product.sizes.length > 0) {
+      if (!selectedSize) {
+        showNotification('Please select a size before adding to cart', 'error');
+        return;
+      }
+    }
+
+    const colorToAdd = selectedColor || '';
+    const sizeToAdd = selectedSize || '';
+
+    console.log('Adding to cart:', {
+      product: product.name,
+      quantity,
+      color: colorToAdd,
+      size: sizeToAdd
     });
+
+    addToCart(product, quantity, colorToAdd, sizeToAdd);
+
+    openSideCart();
+
+    let successMessage = `Added to cart: ${product.name}`;
+    if (colorToAdd && sizeToAdd) {
+      successMessage += ` (${colorToAdd}, ${sizeToAdd})`;
+    } else if (colorToAdd) {
+      successMessage += ` (${colorToAdd})`;
+    } else if (sizeToAdd) {
+      successMessage += ` (${sizeToAdd})`;
+    }
   };
 
-  // Function to check if category has products
-  const categoryHasProducts = (categoryName) => {
-    return getProductsByCategory(categoryName).length > 0;
+  const handleWishlistToggle = () => {
+    if (!product) return;
+
+    if (isInWishlist(product._id)) {
+      removeFromWishlist(product._id);
+    } else {
+      addToWishlist(product);
+    }
   };
 
-  // Function to render a category section
-  const renderCategorySection = (category) => {
-    // Get products for this category
-    const categoryProducts = getProductsByCategory(category);
+  const handleRatingChange = (rating) => {
+    setUserRating(rating);
+    showNotification(`You rated this product ${rating} stars`, 'success');
+  };
 
-    // Skip rendering if the category has no products
-    if (categoryProducts.length === 0) return null;
+  useEffect(() => {
+    if (product?.images?.length > 1) {
+      const nextIndex = (currentImageIndex + 1) % product.images.length;
+      const prevIndex = (currentImageIndex - 1 + product.images.length) % product.images.length;
 
-    return (
-      <section key={category} className="py-6">
-        <div className="container mx-auto px-0">
-          <div className="mb-2 text-center">
-            <h2 className="text-2xl font-bold">{category}</h2>
-          </div>
-          <ProductList
-            title=" "
-            products={categoryProducts}
-            scrollable={true}
-            viewAllUrl={`/?category=${encodeURIComponent(category)}`}
-            viewAllText="View All"
-          />
-        </div>
-      </section>
+      const preloadImage = (index) => {
+        const img = new Image();
+        img.src = getImageUrl(product.images[index]);
+      };
+
+      preloadImage(nextIndex);
+      preloadImage(prevIndex);
+    }
+  }, [currentImageIndex, product]);
+
+  const handleWhatsAppClick = () => {
+    if (!product) return;
+
+    const phoneNumber = '96176919370';
+    const productUrl = window.location.href;
+
+    let colorInfo = selectedColor ? `\n *Selected Color:* ${selectedColor}` : '';
+    let sizeInfo = selectedSize ? `\n *Selected Size:* ${selectedSize}` : '';
+
+    const messageWithPreview = encodeURIComponent(
+      `Hello! I want to buy the following product(s):\n *Product Name:* ${product.name} \n *Price:* ${product.price} $${colorInfo}${sizeInfo}\n *URL:* ${productUrl}?preview=true`
     );
+
+    window.open(`https://wa.me/${phoneNumber}?text=${messageWithPreview}`, '_blank');
+  };
+
+  const navigateImage = (direction) => {
+    if (!product || !product.images || product.images.length <= 1) return;
+
+    let newIndex;
+    if (direction === 'next') {
+      newIndex = (currentImageIndex + 1) % product.images.length;
+    } else {
+      newIndex = (currentImageIndex - 1 + product.images.length) % product.images.length;
+    }
+
+    setCurrentImageIndex(newIndex);
+  };
+
+  const selectImage = (index) => {
+    if (index >= 0 && index < (product?.images?.length || 0)) {
+      setCurrentImageIndex(index);
+    }
+  };
+
+  const getFormattedCategories = () => {
+    if (!product) return [];
+
+    if (Array.isArray(product.categories) && product.categories.length > 0) {
+      return product.categories;
+    }
+
+    return product.category ? [product.category] : [];
+  };
+
+  const hasDiscount = product && product.originalPrice && product.price < product.originalPrice;
+
+  const getDiscountPercentage = () => {
+    if (!hasDiscount) return 0;
+
+    return Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+  };
+
+  const getTotalPrice = () => {
+    if (!product) return 0;
+    return product.price * quantity;
+  };
+
+  const getViewAllUrl = () => {
+    if (!product) return '/';
+
+    const categories = [];
+
+    if (product.category) {
+      categories.push(product.category);
+    }
+
+    if (Array.isArray(product.categories) && product.categories.length > 0) {
+      product.categories.forEach(cat => {
+        if (cat && !categories.includes(cat)) {
+          categories.push(cat);
+        }
+      });
+    }
+
+    if (categories.length === 0) return '/';
+
+    return `/?relatedTo=${encodeURIComponent(product._id)}&category=${encodeURIComponent(categories[0])}`;
   };
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <Spinner size="xl" />
+      <div className="container mx-auto px-4 py-8">
+        <Loading />
       </div>
     );
   }
 
-  // Get discounted products
-  const discountedProducts = products.filter(p => p.discountPercentage > 0);
-
-  // Create the custom URL for viewing all discounted products
-  const viewAllDiscountedUrl = selectedCategory !== 'all'
-    ? `/?showDiscounted=true&category=${encodeURIComponent(selectedCategory)}`
-    : '/?showDiscounted=true';
-
-  // Create URL for viewing all products with selected category
-  const viewAllProductsUrl = selectedCategory !== 'all'
-    ? `/?showAllProducts=true&category=${encodeURIComponent(selectedCategory)}`
-    : '/?showAllProducts=true';
+  if (!product) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        <h2 className="text-2xl font-bold mb-4">Product not found</h2>
+        <p className="mb-6 text-gray-600">The product you are looking for may have been removed or is no longer available.</p>
+        <Link to="/" className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition duration-200">
+          Return to Homepage
+        </Link>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Helmet>
-        <title>Trendy E-commerce Store | Discover Amazing Products</title>
-        <meta name="description" content="Welcome to our trendy e-commerce store. Discover amazing products at great prices." />
+    <div className="product-detail-page bg-gray-50">
+      <WhatsAppMetaTags product={product} />
+      <Helmet prioritizeSeoTags>
+        <title>{product.name} | Spotlylb</title>
+        <meta name="description" content={product.description.substring(0, 160)} />
+        <meta property="og:title" content={product.name} />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:type" content="product" />
+        <meta property="og:image" content={product.images && product.images.length > 0
+          ? getImageUrl(product.images[0], true)
+          : 'https://spotlylb.com/placeholder.jpg'} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={product.name} />
+        <meta property="og:description" content={product.description.substring(0, 160)} />
+        <meta property="og:site_name" content="Spotlylb" />
+        <meta property="product:price:amount" content={product.price} />
+        <meta property="product:price:currency" content="USD" />
       </Helmet>
 
-      {/* Admin Panel Section */}
-      {user && user.role === 'admin' && (
-        <section className="py-8 bg-gray-100">
-          <div className="container mx-auto px-0">
-            <div className="bg-white rounded-lg shadow-md p-6 text-center mx-4">
-              <h3 className="text-2xl font-bold mb-4">Admin Panel</h3>
-              <p className="mb-4">Manage your store, products, and orders</p>
-              <Link
-                to="/admin"
-                className="bg-primary-600 text-white px-6 py-2 rounded-full hover:bg-primary-700 transition-all duration-300"
-              >
-                Go to Admin Dashboard
-              </Link>
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-6 mt-14 pt-4">
+          <button
+            onClick={goToHome}
+            className="flex items-center text-purple-600 hover:text-purple-800 transition-colors"
+          >
+            <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to Home
+          </button>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+          <div className="md:flex">
+            <div className="md:w-1/2 p-4">
+              <div className="relative rounded-lg overflow-hidden bg-gray-100">
+                <div className="relative aspect-square">
+                  {product.images && product.images.length > 0 ? (
+                    <OptimizedImage
+                      src={product.images[currentImageIndex]}
+                      alt={`${product.name} - Image ${currentImageIndex + 1}`}
+                      className="w-full h-full"
+                      style={{ objectFit: 'contain' }}
+                      fallbackSrc="/placeholder.jpg"
+                      onLoad={() => console.log(`Main image ${currentImageIndex + 1} loaded`)}
+                      onError={() => console.error(`Failed to load image ${currentImageIndex + 1}`)}
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full">
+                      <p className="text-gray-500">No image available</p>
+                    </div>
+                  )}
+                </div>
+
+                {product.images && product.images.length > 1 && (
+                  <div className="absolute inset-0 flex items-center justify-between px-4 pointer-events-none">
+                    <button
+                      className="bg-white/80 backdrop-blur-sm text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-md pointer-events-auto hover:bg-white transition duration-200"
+                      onClick={() => navigateImage('prev')}
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
+                      </svg>
+                    </button>
+                    <button
+                      className="bg-white/80 backdrop-blur-sm text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-md pointer-events-auto hover:bg-white transition duration-200"
+                      onClick={() => navigateImage('next')}
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+                      </svg>
+                    </button>
+                  </div>
+                )}
+              </div>
+              {product.images && product.images.length > 1 && (
+                <div className="mt-4 relative">
+                  <div className="overflow-x-auto pb-2 hide-scrollbar">
+                    <div className="flex gap-2 min-w-min">
+                      {product.images.map((image, index) => (
+                        <button
+                          key={index}
+                          className={`relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-md overflow-hidden border-2 ${currentImageIndex === index
+                            ? 'border-purple-500'
+                            : 'border-transparent hover:border-gray-300'
+                            } transition duration-200`}
+                          onClick={() => selectImage(index)}
+                        >
+                          <img
+                            src={getImageUrl(image)}
+                            alt={`${product.name} thumbnail ${index + 1}`}
+                            className="w-full h-full object-cover"
+                            loading={index < 5 ? "eager" : "lazy"}
+                            onError={(e) => {
+                              console.error(`Thumbnail ${index + 1} failed to load`);
+                              e.target.src = '/placeholder.jpg';
+                            }}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="md:w-1/2 p-6 md:border-l border-gray-100">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
+
+              <div className="flex flex-wrap gap-2 mb-3">
+                {getFormattedCategories().map(category => (
+                  <Link
+                    key={category}
+                    to={`/?category=${encodeURIComponent(category)}`}
+                    className="bg-purple-100 hover:bg-purple-200 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded-full transition duration-200"
+                  >
+                    {category}
+                  </Link>
+                ))}
+              </div>
+
+              <div className="flex items-center mb-4">
+                <div className="flex mr-2">
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <svg
+                      key={star}
+                      className={`w-5 h-5 ${star <= (product.rating || 4) ? 'text-yellow-400' : 'text-gray-300'}`}
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <span className="text-sm text-gray-500">
+                  ({product.reviewCount || 0} reviews)
+                </span>
+              </div>
+
+              <div className="mb-6">
+                {hasDiscount ? (
+                  <div className="flex items-center flex-wrap">
+                    <span className="text-3xl font-bold text-purple-600 mr-3">
+                      {formatPrice(getTotalPrice())}
+                    </span>
+
+                    <span className="text-lg text-gray-500 line-through mr-3">
+                      {formatPrice(product.originalPrice * quantity)}
+                    </span>
+
+                    <span className="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded">
+                      Save {formatPrice((product.originalPrice - product.price) * quantity)}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-baseline">
+                    <span className="text-3xl font-bold text-gray-900 mr-2">
+                      {formatPrice(getTotalPrice())}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {product.discountEndDate && new Date(product.discountEndDate) > new Date() && (
+                <div className="mb-6 p-3 bg-orange-50 rounded-lg border border-orange-100">
+                  <h5 className="font-medium text-orange-800 mb-1">Limited Time Offer:</h5>
+                  <DiscountTimer endDate={product.discountEndDate} />
+                </div>
+              )}
+
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                <h5 className="font-medium text-gray-900 mb-3">Product Description</h5>
+                <div className="prose max-w-none text-gray-700">
+                  {product.description.split('\n').map((paragraph, index) => {
+                    const hasMixedContent = containsArabic(paragraph) && /[A-Za-z0-9]/.test(paragraph);
+                    const primaryDirection = getPrimaryDirection(paragraph);
+
+                    return (
+                      <p
+                        key={index}
+                        className="whitespace-pre-line mb-2"
+                        dir="auto"
+                        lang={primaryDirection === 'rtl' ? 'ar' : 'en'}
+                        style={{
+                          fontFamily: containsArabic(paragraph) ? "'Tajawal', 'Noto Sans Arabic', sans-serif" : 'inherit',
+                          lineHeight: 1.8,
+                          textAlign: hasMixedContent ? 'start' : (primaryDirection === 'rtl' ? 'right' : 'left'),
+                          unicodeBidi: hasMixedContent ? 'embed' : 'normal',
+                        }}
+                      >
+                        {paragraph}
+                      </p>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {product.colors && product.colors.length > 0 && (
+                <div className="mb-6">
+                  <h5 className="font-medium text-gray-900 mb-2">Color:</h5>
+                  <div className="flex flex-wrap gap-2">
+                    {product.colors.map(color => (
+                      <button
+                        key={color}
+                        type="button"
+                        onClick={() => setSelectedColor(color)}
+                        className={`w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all ${selectedColor === color
+                          ? 'border-purple-500 scale-110 shadow-md'
+                          : 'border-gray-300'
+                          }`}
+                        style={{ backgroundColor: color }}
+                        title={color}
+                      >
+                        {selectedColor === color && (
+                          <svg className="w-6 h-6 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                          </svg>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {product.sizes && product.sizes.length > 0 && (
+                <div className="mb-6">
+                  <h5 className="font-medium text-gray-900 mb-2">Size:</h5>
+                  <div className="flex flex-wrap gap-2">
+                    {product.sizes.map(size => (
+                      <button
+                        key={size}
+                        type="button"
+                        onClick={() => setSelectedSize(size)}
+                        className={`h-10 min-w-[40px] px-3 rounded-md border transition-all ${selectedSize === size
+                          ? 'border-purple-500 bg-purple-50 text-purple-700 font-medium'
+                          : 'border-gray-300 bg-white text-gray-700'
+                          }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="mb-6">
+                <h5 className="font-medium text-gray-900 mb-2">Quantity:</h5>
+                <div className="flex items-center">
+                  <button
+                    className="bg-gray-200 hover:bg-gray-300 text-gray-700 h-10 w-10 rounded-l-lg flex items-center justify-center transition duration-200"
+                    onClick={() => handleQuantityChange(-1)}
+                    disabled={quantity <= 1}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4"></path>
+                    </svg>
+                  </button>
+                  <input
+                    type="number"
+                    className="h-10 w-16 border-gray-200 text-center focus:ring-purple-500 focus:border-purple-500"
+                    value={quantity}
+                    onChange={handleInputChange}
+                    min="1"
+                    max="10"
+                  />
+                  <button
+                    className="bg-gray-200 hover:bg-gray-300 text-gray-700 h-10 w-10 rounded-r-lg flex items-center justify-center transition duration-200"
+                    onClick={() => handleQuantityChange(1)}
+                    disabled={quantity >= 10}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {(selectedColor || selectedSize) && (
+                <div className="mb-6 p-3 bg-gray-50 rounded-lg">
+                  <h5 className="font-medium text-gray-900 mb-2">Selected Options:</h5>
+                  <div className="flex flex-wrap gap-4">
+                    {selectedColor && (
+                      <div className="flex items-center">
+                        <span className="text-gray-700 mr-2">Color:</span>
+                        <div className="w-6 h-6 rounded-full border border-gray-300" style={{ backgroundColor: selectedColor }}></div>
+                        <span className="ml-2 text-gray-900">{selectedColor}</span>
+                      </div>
+                    )}
+                    {selectedSize && (
+                      <div className="flex items-center">
+                        <span className="text-gray-700 mr-2">Size:</span>
+                        <span className="text-gray-900 font-medium">{selectedSize}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-3">
+                <div className="flex gap-2">
+                  <button
+                    className={`flex-1 py-3 px-4 rounded-lg font-medium ${product.soldOut
+                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                      : 'bg-purple-600 hover:bg-purple-700 text-white'
+                      } transition duration-200`}
+                    onClick={handleAddToCart}
+                    disabled={product.soldOut}
+                  >
+                    {product.soldOut ? 'Sold Out' : 'Add to Cart'}
+                  </button>
+
+                  <button
+                    className={`p-3 rounded-lg ${isInWishlist(product._id)
+                      ? 'bg-red-500 text-white'
+                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                      } transition duration-200`}
+                    onClick={handleWishlistToggle}
+                  >
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd"></path>
+                    </svg>
+                  </button>
+
+                  <div className="relative share-dropdown-container">
+                    <button
+                      className="p-3 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition duration-200"
+                      onClick={toggleShareDropdown}
+                      aria-label="Share product"
+                    >
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                      </svg>
+                    </button>
+
+                    {shareDropdownOpen && (
+                      <div className="absolute right-0 mt-2 z-10 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <div className="py-1">
+                          <button
+                            onClick={copyProductLink}
+                            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            <svg className="w-5 h-5 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                            </svg>
+                            Copy Link
+                          </button>
+
+                          <button
+                            onClick={shareToWhatsApp}
+                            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            <svg className="w-5 h-5 mr-3 text-green-500" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                            </svg>
+                            WhatsApp
+                          </button>
+
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  className="w-full py-3 px-4 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition duration-200"
+                  onClick={handleWhatsAppClick}
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                  </svg>
+                  Buy on WhatsApp
+                </button>
+              </div>
+
+              <div className="mt-4">
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${product.soldOut
+                  ? 'bg-red-100 text-red-800'
+                  : 'bg-green-100 text-green-800'
+                  }`}>
+                  <span className={`w-2 h-2 rounded-full mr-1.5 ${product.soldOut ? 'bg-red-500' : 'bg-green-500'
+                    }`}></span>
+                  {product.soldOut ? 'Out of Stock' : 'In Stock'}
+                </span>
+              </div>
             </div>
           </div>
-        </section>
-      )}
+        </div>
 
-      {/* Black Friday Banner */}
-      {blackFridayData && (
-        <div className="bg-black text-white py-3">
-          <div className="container mx-auto px-0">
-            <div className="mx-4">
-              <BlackFridayBanner
-                endDate={blackFridayData.endDate}
-                discount={blackFridayData.discount}
+        <div className="mt-10 mx-auto max-w-4xl">
+          <div className="bg-white p-8 rounded-xl shadow-sm text-center">
+            <h2 className="text-2xl font-bold text-purple-600 mb-6">Rate This Product</h2>
+            <div className="flex flex-col items-center justify-center">
+              <RatingStars
+                initialRating={userRating}
+                size="large"
+                onRatingChange={handleRatingChange}
+                labelText="Your rating helps other shoppers!"
               />
             </div>
           </div>
         </div>
-      )}
 
-      {/* Main content - either normal homepage or special views */}
-      {!searchQuery && !showDiscountedOnly && !showAllProducts && !showSimilarProducts && !showCategoryView && (
-        <>
-          {/* Hero Section - ENSURE NO TOP PADDING CONFLICTS */}
-          <section
-            ref={heroRef}
-            className="w-full relative z-10 mt-0" // Ensure margin-top is 0
-          >
-            <Banner
-              src={heroSettings.mediaUrl}
-              alt="Hero banner"
-              title={heroSettings.title}
-              subtitle={heroSettings.subtitle}
-              isVideo={heroSettings.type === 'video'}
-              onLoad={() => console.log('Hero banner loaded successfully')}
-              onError={() => console.error('Failed to load hero banner')}
+        {similarProducts.length > 0 && (
+          <div className="mt-12">
+            <ProductList
+              title="You Might Also Like"
+              products={similarProducts}
+              loading={loadingSimilar}
+              error={null}
+              scrollable={true}
+              viewAllUrl={getViewAllUrl()}
+              viewAllText="View All Similar Products"
             />
-          </section>
-
-          {/* Special Offers Section - Horizontal Scrollable Row */}
-          <section className="py-10">
-            <div className="container mx-auto px-0">
-              {/* Daily Timer added here - above the Special Offers title */}
-              <DailyTimer />
-              <br></br>
-              <div className="mb-2 text-center">
-                <h2 className="text-3xl font-bold">Special Offers</h2>
-              </div>
-              <div>
-                {discountedProducts.length > 0 ? (
-                  <ProductList
-                    title=" "
-                    products={discountedProducts}
-                    scrollable={true}
-                    viewAllUrl={viewAllDiscountedUrl}
-                    viewAllText="View All"
-                  />
-                ) : (
-                  <div className="text-center py-5">
-                    <p className="text-gray-500">
-                      No discounted products available at the moment.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </section>
-
-          {/* Render preferred categories first in the specified order */}
-          {preferredCategoryOrder.map(category => {
-            // Only render if the category exists in the fetched categories
-            if (categories.includes(category)) {
-              return renderCategorySection(category);
-            }
-            return null;
-          })}
-
-          {/* Render remaining categories that are not in the preferred list */}
-          {categories
-            .filter(category => !preferredCategoryOrder.includes(category))
-            .map(category => renderCategorySection(category))}
-
-          {/* Explore Our Products Section - Now also Horizontal Scrollable */}
-          <section ref={productsRef} className="py-10">
-            <div className="container mx-auto px-0">
-              <div className="mb-2 text-center">
-                <h2 className="text-3xl font-bold">Explore Our Products</h2>
-              </div>
-
-              {/* Category Filter */}
-              <div className="max-w-md mx-auto mb-8 px-4">
-                <select
-                  value={selectedCategory}
-                  onChange={handleCategoryChange}
-                  className="w-full border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-                >
-                  <option value="all">All Categories</option>
-                  {categories.map(category => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Products Horizontal Scrollable, just like Special Offers */}
-              {filteredProducts.length > 0 ? (
-                <ProductList
-                  title=" "
-                  products={filteredProducts}
-                  filterCategory={selectedCategory !== 'all' ? selectedCategory : null}
-                  scrollable={true}
-                  viewAllUrl={viewAllProductsUrl}
-                  viewAllText="View All"
-                />
-              ) : (
-                <div className="text-center py-5 px-4">
-                  <p className="text-gray-500">
-                    No products available in this category.
-                  </p>
-                </div>
-              )}
-            </div>
-          </section>
-        </>
-      )}
-
-      {/* Category View Section - REMOVED PADDINGTOP STYLE */}
-      {!searchQuery && !showDiscountedOnly && !showAllProducts && !showSimilarProducts && showCategoryView && (
-        <section
-          ref={productsRef}
-          className="py-10"
-        >
-          <div className="container mx-auto px-4">
-            {/* Back to Home Button with Title */}
-            <div className="flex justify-between items-center mb-4">
-              <button
-                onClick={goToHome}
-                className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
-              >
-                <i className="fas fa-arrow-left text-sm mr-1"></i>
-                Home
-              </button>
-
-              <h2 className="text-2xl font-bold text-center">{categoryViewName}</h2>
-
-              {/* Empty div to maintain flex spacing */}
-              <div className="w-[100px]"></div>
-            </div>
-
-            {/* Products Grid */}
-            {filteredProducts.length > 0 ? (
-              <ProductList
-                products={filteredProducts}
-                scrollable={false}
-                mobileColumns={2}
-              />
-            ) : (
-              <div className="text-center py-8">
-                <div className="bg-gray-50 p-6 rounded-lg">
-                  <h3 className="text-xl mb-2">No Products Found</h3>
-                  <p className="text-gray-600 mb-4">
-                    No products available in the "{categoryViewName}" category.
-                  </p>
-                  <button
-                    onClick={goToHome}
-                    className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors"
-                  >
-                    Return to Home
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Return to Home Button */}
-            <div className="flex justify-center mt-8 mb-4">
-              <button
-                onClick={goToHome}
-                className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center min-w-[240px]"
-              >
-                Return to Home
-              </button>
-            </div>
-
-            <div className="text-center mt-4 text-sm text-gray-500">
-              Showing {filteredProducts.length} products in {categoryViewName}
-            </div>
           </div>
-        </section>
-      )}
-
-      {/* Similar Products Section - REMOVED PADDINGTOP STYLE */}
-      {!searchQuery && !showDiscountedOnly && !showAllProducts && showSimilarProducts && (
-        <section
-          ref={productsRef}
-          className="py-10"
-        >
-          <div className="container mx-auto px-4">
-            {/* Back to Home Button with Title */}
-            <div className="flex justify-between items-center mb-4">
-              <button
-                onClick={goToHome}
-                className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
-              >
-                <i className="fas fa-arrow-left text-sm mr-1"></i>
-                Home
-              </button>
-
-              <h2 className="text-2xl font-bold text-center">Similar Products</h2>
-
-              {/* Empty div to maintain flex spacing */}
-              <div className="w-[100px]"></div>
-            </div>
-
-            {/* Category Filter */}
-            <div className="max-w-md mx-auto mb-8">
-              <select
-                value={selectedCategory}
-                onChange={handleCategoryChange}
-                className="w-full border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-              >
-                <option value="all">All Categories</option>
-                {categories.map(category => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Products Grid */}
-            {filteredProducts.length > 0 ? (
-              <ProductList
-                products={filteredProducts}
-                scrollable={false}
-                mobileColumns={2}
-              />
-            ) : (
-              <div className="text-center py-8">
-                <div className="bg-gray-50 p-6 rounded-lg">
-                  <h3 className="text-xl mb-2">No Similar Products Found</h3>
-                  <p className="text-gray-600 mb-4">
-                    No similar products available
-                    {selectedCategory !== 'all' && ` in the "${selectedCategory}" category`}.
-                  </p>
-                  <button
-                    onClick={() => setSelectedCategory('all')}
-                    className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors"
-                  >
-                    View All Categories
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Return to Home Button */}
-            <div className="flex justify-center mt-8 mb-4">
-              <button
-                onClick={goToHome}
-                className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center min-w-[240px]"
-              >
-                Return to Home
-              </button>
-            </div>
-
-            <div className="text-center mt-4 text-sm text-gray-500">
-              Showing {filteredProducts.length} similar products
-              {selectedCategory !== 'all' && ` in ${selectedCategory}`}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* View All Discounted Products Section - REMOVED PADDINGTOP STYLE */}
-      {!searchQuery && showDiscountedOnly && !showAllProducts && !showSimilarProducts && (
-        <section
-          ref={productsRef}
-          className="py-10"
-        >
-          <div className="container mx-auto px-4">
-            {/* Back to Home Button - Above the title */}
-            <div className="flex justify-between items-center mb-4">
-              <button
-                onClick={goToHome}
-                className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
-              >
-                <i className="fas fa-arrow-left text-sm mr-1"></i>
-                Home
-              </button>
-
-              <h2 className="text-2xl font-bold text-center">Special Offers</h2>
-
-              {/* Empty div to maintain flex spacing */}
-              <div className="w-[100px]"></div>
-            </div>
-
-            {/* Category Filter */}
-            <div className="max-w-md mx-auto mb-8">
-              <select
-                value={selectedCategory}
-                onChange={handleCategoryChange}
-                className="w-full border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-              >
-                <option value="all">All Categories</option>
-                {categories.map(category => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Products Grid */}
-            {filteredProducts.length > 0 ? (
-              <ProductList
-                products={filteredProducts}
-                scrollable={false}
-                mobileColumns={2} // Changed from 1 to 2 for mobile view
-              />
-            ) : (
-              <div className="text-center py-8">
-                <div className="bg-gray-50 p-6 rounded-lg">
-                  <h3 className="text-xl mb-2">No Discounted Products Found</h3>
-                  <p className="text-gray-600 mb-4">
-                    No discounted products available
-                    {selectedCategory !== 'all' && ` in the "${selectedCategory}" category`}.
-                  </p>
-                  <button
-                    onClick={() => setSelectedCategory('all')}
-                    className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors"
-                  >
-                    View All Categories
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Return to Home Button */}
-            <div className="flex justify-center mt-8 mb-4">
-              <button
-                onClick={goToHome}
-                className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center min-w-[240px]"
-              >
-                Return to Home
-              </button>
-            </div>
-
-            <div className="text-center mt-4 text-sm text-gray-500">
-              Showing {filteredProducts.length} discounted products
-              {selectedCategory !== 'all' && ` in ${selectedCategory}`}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* View All Products Section - REMOVED PADDINGTOP STYLE */}
-      {!searchQuery && !showDiscountedOnly && showAllProducts && !showSimilarProducts && (
-        <section
-          ref={productsRef}
-          className="py-10"
-        >
-          <div className="container mx-auto px-4">
-            {/* Back to Home Button with Title */}
-            <div className="flex justify-between items-center mb-4">
-              <button
-                onClick={goToHome}
-                className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
-              >
-                <i className="fas fa-arrow-left text-sm mr-1"></i>
-                Home
-              </button>
-
-              <h2 className="text-2xl font-bold text-center">All Products</h2>
-
-              {/* Empty div to maintain flex spacing */}
-              <div className="w-[100px]"></div>
-            </div>
-
-            {/* Category Filter */}
-            <div className="max-w-md mx-auto mb-8">
-              <select
-                value={selectedCategory}
-                onChange={handleCategoryChange}
-                className="w-full border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-              >
-                <option value="all">All Categories</option>
-                {categories.map(category => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {/* Products Grid */}
-            {filteredProducts.length > 0 ? (
-              <ProductList
-                products={filteredProducts}
-                scrollable={false}
-                mobileColumns={2} // Changed from 1 to 2 for mobile view
-              />
-            ) : (
-              <div className="text-center py-8">
-                <div className="bg-gray-50 p-6 rounded-lg">
-                  <h3 className="text-xl mb-2">No Products Found</h3>
-                  <p className="text-gray-600 mb-4">
-                    No products available
-                    {selectedCategory !== 'all' && ` in the "${selectedCategory}" category`}.
-                  </p>
-                  <button
-                    onClick={() => setSelectedCategory('all')}
-                    className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors"
-                  >
-                    View All Categories
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Return to Home Button */}
-            <div className="flex justify-center mt-8 mb-4">
-              <button
-                onClick={goToHome}
-                className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center min-w-[240px]"
-              >
-                Return to Home
-              </button>
-            </div>
-
-            <div className="text-center mt-4 text-sm text-gray-500">
-              Showing {filteredProducts.length} products
-              {selectedCategory !== 'all' && ` in ${selectedCategory}`}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Search Results Section - REMOVED PADDINGTOP STYLE */}
-      {searchQuery && (
-        <section
-          className="py-10"
-        >
-          <div className="container mx-auto px-4">
-            {/* Back to Home Button with Title */}
-            <div className="flex justify-between items-center mb-4">
-              <button
-                onClick={goToHome}
-                className="text-primary-600 hover:text-primary-700 flex items-center gap-1"
-              >
-                <i className="fas fa-arrow-left text-sm mr-1"></i>
-                Home
-              </button>
-
-              <h2 className="text-2xl font-bold text-center">Search Results: "{searchQuery}"</h2>
-
-              {/* Empty div to maintain flex spacing */}
-              <div className="w-[100px]"></div>
-            </div>
-
-            {error ? (
-              <div className="text-center py-8">
-                <div className="bg-red-50 p-6 rounded-lg">
-                  <h3 className="text-red-600 text-xl mb-2">Error</h3>
-                  <p className="text-red-700">{error}</p>
-                </div>
-              </div>
-            ) : filteredProducts.length > 0 ? (
-              <ProductList
-                products={filteredProducts}
-                scrollable={false}
-                mobileColumns={2} // Changed from 1 to 2 for search results
-              />
-            ) : (
-              <div className="text-center py-8">
-                <div className="bg-gray-50 p-6 rounded-lg">
-                  <h3 className="text-xl mb-2">No Products Found</h3>
-                  <p className="text-gray-600">
-                    No results found for "{searchQuery}". Try a different search term or browse our categories.
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Return to Home Button */}
-            <div className="flex justify-center mt-8 mb-4">
-              <button
-                onClick={goToHome}
-                className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-8 rounded transition-colors duration-200 text-center min-w-[240px]"
-              >
-                Return to Home
-              </button>
-            </div>
-
-            <div className="text-center mt-4 text-sm text-gray-500">
-              Showing {filteredProducts.length} products
-            </div>
-          </div>
-        </section>
-      )}
-
-      <ContactSection />
-      {showScrollButton && (
-        <button
-          onClick={scrollToTop}
-          className="!fixed !bottom-8 !right-8 bg-purple-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-purple-700 transition-all duration-300 !z-[9999] animate-fade-in"
-          aria-label="Scroll to top"
-          style={{
-            position: 'fixed',
-            bottom: '32px',
-            right: '32px',
-            zIndex: 9999
-          }}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-          </svg>
-        </button>
-      )}
+        )}
+      </div>
     </div>
   );
 }
 
-export default Home;
+export default ProductDetail;

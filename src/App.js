@@ -12,7 +12,7 @@ import { NotificationProvider } from './components/Notification/NotificationProv
 import { AuthProvider } from './contexts/AuthContext';
 import { useAuth } from './contexts/AuthContext';
 import { useNotification } from './components/Notification/NotificationProvider';
-import { ScrollPositionProvider } from './contexts/ScrollPositionContext';
+
 // Components
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import ScrollToTop from './components/ScrollToTop';
@@ -147,7 +147,7 @@ function AppContent() {
                   </ProtectedRoute>
                 }
               />
-
+              
               <Route
                 path="/orders"
                 element={
@@ -200,24 +200,22 @@ function AppContent() {
 
 function App() {
   return (
-    <ScrollPositionProvider>
-      <HelmetProvider>
-        <Router>
-          <ErrorBoundary>
-            <NotificationProvider>
-              <AuthProvider>
-                <WishlistProvider>
-                  <CartProvider>
-                    <ScrollToTop />
-                    <AppContent />
-                  </CartProvider>
-                </WishlistProvider>
-              </AuthProvider>
-            </NotificationProvider>
-          </ErrorBoundary>
-        </Router>
-      </HelmetProvider>
-    </ScrollPositionProvider>
+    <HelmetProvider>
+      <Router>
+        <ErrorBoundary>
+          <NotificationProvider>
+            <AuthProvider>
+              <WishlistProvider>
+                <CartProvider>
+                  <ScrollToTop />
+                  <AppContent />
+                </CartProvider>
+              </WishlistProvider>
+            </AuthProvider>
+          </NotificationProvider>
+        </ErrorBoundary>
+      </Router>
+    </HelmetProvider>
   );
 }
 

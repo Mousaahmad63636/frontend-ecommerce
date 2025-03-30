@@ -13,10 +13,6 @@ import Banner from '../components/Banner';
 import ContactSection from '../components/ContactSection';
 import BlackFridayBanner from '../components/BlackFridayBanner/BlackFridayBanner';
 import api from '../api/api';
-// src/pages/Home.js
-
-// Add this import at the top with the other imports
-import { useScrollPosition } from '../contexts/ScrollPositionContext';
 function Home() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -28,7 +24,7 @@ function Home() {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const searchQuery = searchParams.get('q');
-  const { saveScrollPosition, getScrollPosition, clearScrollPosition } = useScrollPosition();
+
   const [headerHeight, setHeaderHeight] = useState(0);
   const [showDiscountedOnly, setShowDiscountedOnly] = useState(false);
   const [showAllProducts, setShowAllProducts] = useState(false);
@@ -41,7 +37,7 @@ function Home() {
   const location = useLocation();
   const navigate = useNavigate();
   const productsRef = useRef(null);
-  const homeRef = useRef(null);
+
   const [heroSettings, setHeroSettings] = useState({
     type: 'image',
     mediaUrl: '/hero.jpg',
@@ -56,29 +52,7 @@ function Home() {
     'ELECTRONICS & CAR ACCESSORIES',
     'TOYS'
   ];
-  useEffect(() => {
-    // Save the current scroll position when component unmounts
-    return () => {
-      sessionStorage.setItem('homeScrollPosition', window.scrollY.toString());
-    };
-  }, []);
-  
-// Inside Home.js - Find the useEffect near the top and update/add this one
-useEffect(() => {
-  // Restore scroll position when returning to home
-  const savedPosition = sessionStorage.getItem('homeScrollPosition');
-  
-  if (savedPosition) {
-    setTimeout(() => {
-      window.scrollTo({
-        top: parseInt(savedPosition, 10),
-        behavior: 'auto'
-      });
-    }, 0);
-  }
-}, []);
 
-  
   // Handle navigation to home
   const goToHome = () => {
     navigate('/', { replace: true });
