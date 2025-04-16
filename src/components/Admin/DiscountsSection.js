@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNotification } from '../../components/Notification/NotificationProvider';
 import api from '../../api/api';
 
 function DiscountsSection() {
     const [products, setProducts] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const { showNotification } = useNotification();
+    const [searchTerm, setSearchTerm] = useState('');
     const [discountData, setDiscountData] = useState({
-        discountType: 'percentage', // New field to select between percentage and fixed
+        discountType: 'percentage',
         discountValue: '',
         selectedProductId: '',
         category: '',
@@ -19,15 +21,35 @@ function DiscountsSection() {
         fetchProducts();
     }, []);
 
+    useEffect(() => {
+        filterProducts();
+    }, [products, searchTerm]);
+
     const fetchProducts = async () => {
         try {
             const data = await api.getProducts();
             setProducts(data);
+            setFilteredProducts(data);
             const uniqueCategories = [...new Set(data.map(product => product.category))];
             setCategories(uniqueCategories);
         } catch (error) {
             showNotification('Failed to load products', 'error');
         }
+    };
+
+    const filterProducts = () => {
+        if (!searchTerm.trim()) {
+            setFilteredProducts(products);
+            return;
+        }
+
+        const term = searchTerm.toLowerCase();
+        const filtered = products.filter(product => 
+            product.name.toLowerCase().includes(term) || 
+            (product.category && product.category.toLowerCase().includes(term)) ||
+            product.price.toString().includes(term)
+        );
+        setFilteredProducts(filtered);
     };
 
     const handleDiscountChange = (e) => {
@@ -38,74 +60,73 @@ function DiscountsSection() {
         }));
     };
 
-// src/components/Admin/DiscountsSection.js
-// Find the handleApplyDiscount function and modify it like this:
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+    };
 
-const handleApplyDiscount = async (type) => {
-    try {
-        if (!discountData.discountValue) {
-            showNotification('Please enter a discount value', 'error');
-            return;
+    const handleClearSearch = () => {
+        setSearchTerm('');
+    };
+
+    const handleApplyDiscount = async (type) => {
+        try {
+            if (!discountData.discountValue) {
+                showNotification('Please enter a discount value', 'error');
+                return;
+            }
+
+            if (type === 'specific' && !discountData.selectedProductId) {
+                showNotification('Please select a product', 'error');
+                return;
+            }
+
+            if (type === 'category' && !discountData.category) {
+                showNotification('Please select a category', 'error');
+                return;
+            }
+
+            const discountValue = parseFloat(discountData.discountValue);
+            
+            if (discountData.discountType === 'percentage' && (discountValue <= 0 || discountValue > 100)) {
+                showNotification('Percentage discount must be between 1 and 100', 'error');
+                return;
+            }
+            
+            if (discountData.discountType === 'fixed' && discountValue <= 0) {
+                showNotification('Fixed discount must be greater than 0', 'error');
+                return;
+            }
+
+            let endDate = null;
+            if (discountData.enableTimer && discountData.endDate) {
+                endDate = new Date(discountData.endDate);
+            }
+
+            const discountPayload = {
+                type,
+                discountType: discountData.discountType,
+                value: discountValue,
+                targetId: type === 'specific' ? discountData.selectedProductId : null,
+                category: type === 'category' ? discountData.category : null,
+                discountEndDate: endDate ? endDate.toISOString() : null
+            };
+
+            await api.applyDiscount(discountPayload);
+            showNotification('Discount applied successfully!', 'success');
+            fetchProducts();
+
+            setDiscountData({
+                discountType: 'percentage',
+                discountValue: '',
+                selectedProductId: '',
+                category: '',
+                enableTimer: false,
+                endDate: ''
+            });
+        } catch (error) {
+            showNotification(error.message || 'Error applying discount', 'error');
         }
-
-        if (type === 'specific' && !discountData.selectedProductId) {
-            showNotification('Please select a product', 'error');
-            return;
-        }
-
-        if (type === 'category' && !discountData.category) {
-            showNotification('Please select a category', 'error');
-            return;
-        }
-
-        // Validate discount value based on type
-        const discountValue = parseFloat(discountData.discountValue);
-        
-        if (discountData.discountType === 'percentage' && (discountValue <= 0 || discountValue > 100)) {
-            showNotification('Percentage discount must be between 1 and 100', 'error');
-            return;
-        }
-        
-        if (discountData.discountType === 'fixed' && discountValue <= 0) {
-            showNotification('Fixed discount must be greater than 0', 'error');
-            return;
-        }
-
-        // Only set end date if timer is enabled
-        let endDate = null;
-        if (discountData.enableTimer && discountData.endDate) {
-            endDate = new Date(discountData.endDate);
-        }
-        // Removed the else block that was setting a default 7-day end date
-
-        // Create the discount payload
-        const discountPayload = {
-            type,
-            discountType: discountData.discountType,
-            value: discountValue,
-            targetId: type === 'specific' ? discountData.selectedProductId : null,
-            category: type === 'category' ? discountData.category : null,
-            discountEndDate: endDate ? endDate.toISOString() : null // Make this nullable
-        };
-
-        // Call API to apply discount
-        await api.applyDiscount(discountPayload);
-        showNotification('Discount applied successfully!', 'success');
-        fetchProducts(); // Refresh the products list
-
-        // Reset the form
-        setDiscountData({
-            discountType: 'percentage',
-            discountValue: '',
-            selectedProductId: '',
-            category: '',
-            enableTimer: false,
-            endDate: ''
-        });
-    } catch (error) {
-        showNotification(error.message || 'Error applying discount', 'error');
-    }
-};
+    };
 
     const handleResetDiscount = async (productId = null) => {
         try {
@@ -117,24 +138,17 @@ const handleApplyDiscount = async (type) => {
         }
     };
 
-    const formatDateTime = (dateString) => {
-        if (!dateString) return 'No end date';
-        return new Date(dateString).toLocaleString();
+    const formatDiscount = (product) => {
+        if (!product.discountPercentage || product.discountPercentage <= 0) {
+            return <span className="text-muted">No discount</span>;
+        }
+        
+        if (product.discountType === 'fixed') {
+            return <span className="text-success">-${product.discountPercentage.toFixed(2)}</span>;
+        } else {
+            return <span className="text-success">{product.discountPercentage}% off</span>;
+        }
     };
-
-    // Helper function to format discount display
-    // In DiscountsSection.js
-const formatDiscount = (product) => {
-    if (!product.discountPercentage || product.discountPercentage <= 0) {
-        return <span className="text-muted">No discount</span>;
-    }
-    
-    if (product.discountType === 'fixed') {
-        return <span className="text-success">-${product.discountPercentage.toFixed(2)}</span>;
-    } else {
-        return <span className="text-success">{product.discountPercentage}% off</span>;
-    }
-};
 
     return (
         <div className="discounts-section">
@@ -144,7 +158,6 @@ const formatDiscount = (product) => {
                 </div>
                 <div className="card-body">
                     <div className="row">
-                        {/* Discount Type Selection */}
                         <div className="col-md-4 mb-3">
                             <label className="form-label">Discount Type</label>
                             <select
@@ -275,52 +288,80 @@ const formatDiscount = (product) => {
             </div>
 
             <div className="card">
-                <div className="card-header">
+                <div className="card-header d-flex justify-content-between align-items-center">
                     <h3>Products with Discounts</h3>
+                    <div className="input-group" style={{ maxWidth: '300px' }}>
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Search products..."
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                        />
+                        {searchTerm && (
+                            <button 
+                                className="btn btn-outline-secondary" 
+                                type="button"
+                                onClick={handleClearSearch}
+                            >
+                                <i className="fas fa-times"></i>
+                            </button>
+                        )}
+                    </div>
                 </div>
                 <div className="card-body">
                     <div className="table-responsive">
-                        <table className="table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Category</th>
-                                    <th>Original Price</th>
-                                    <th>Current Price</th>
-                                    <th>Discount</th>
-                                    <th>End Date</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {products.map(product => (
-                                    <tr key={product._id}>
-                                        <td>{product.name}</td>
-                                        <td>{product.category}</td>
-                                        <td>${product.originalPrice ? product.originalPrice.toFixed(2) : product.price.toFixed(2)}</td>
-                                        <td>${product.price.toFixed(2)}</td>
-                                        <td>
-                                            {formatDiscount(product)}
-                                        </td>
-                                        <td>
-                                            {product.discountEndDate ?
-                                                new Date(product.discountEndDate).toLocaleString() :
-                                                '-'
-                                            }
-                                        </td>
-                                        <td>
-                                            <button
-                                                className="btn btn-sm btn-warning"
-                                                onClick={() => handleResetDiscount(product._id)}
-                                                disabled={product.discountPercentage === 0}
-                                            >
-                                                Reset Discount
-                                            </button>
-                                        </td>
+                        {filteredProducts.length === 0 ? (
+                            <div className="alert alert-info">
+                                {searchTerm ? 'No products match your search.' : 'No products with discounts found.'}
+                            </div>
+                        ) : (
+                            <table className="table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Category</th>
+                                        <th>Original Price</th>
+                                        <th>Current Price</th>
+                                        <th>Discount</th>
+                                        <th>End Date</th>
+                                        <th>Actions</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {filteredProducts.map(product => (
+                                        <tr key={product._id}>
+                                            <td>{product.name}</td>
+                                            <td>{product.category}</td>
+                                            <td>${product.originalPrice ? product.originalPrice.toFixed(2) : product.price.toFixed(2)}</td>
+                                            <td>${product.price.toFixed(2)}</td>
+                                            <td>
+                                                {formatDiscount(product)}
+                                            </td>
+                                            <td>
+                                                {product.discountEndDate ?
+                                                    new Date(product.discountEndDate).toLocaleString() :
+                                                    '-'
+                                                }
+                                            </td>
+                                            <td>
+                                                <button
+                                                    className="btn btn-sm btn-warning"
+                                                    onClick={() => handleResetDiscount(product._id)}
+                                                    disabled={product.discountPercentage === 0}
+                                                >
+                                                    Reset Discount
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
+                    </div>
+                    <div className="mt-2 text-muted small">
+                        Showing {filteredProducts.length} of {products.length} products
+                        {searchTerm && <span> matching "{searchTerm}"</span>}
                     </div>
                 </div>
             </div>
