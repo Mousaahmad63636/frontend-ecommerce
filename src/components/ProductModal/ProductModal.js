@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import RatingStars from '../RatingStars';
 import cachedApi from '../../services/cachedApi';
 import imageCacheService from '../../services/imageCacheService';
+import { getImageUrl } from '../../utils/imageUtils';
 import './ProductModal.css';
 
 // SVG Icon Components (using custom icons instead of lucide-react to avoid dependency issues)
@@ -75,6 +76,9 @@ const ProductModal = ({
         setError(null);
         
         const data = await cachedApi.getProductById(productId);
+        console.log('Product data loaded:', data);
+        console.log('Product images:', data.images);
+        console.log('Product image:', data.image);
         setProduct(data);
         
         // Preload product images
@@ -212,9 +216,16 @@ const ProductModal = ({
               <div className="product-modal-images">
                 <div className="main-image-container">
                   <img
-                    src={product.images?.[selectedImage] || product.image || '/placeholder.jpg'}
+                    src={getImageUrl(product.images?.[selectedImage] || product.image || '/placeholder.jpg')}
                     alt={product.name}
                     className="main-product-image"
+                    onError={(e) => {
+                      console.log('Image failed to load:', e.target.src);
+                      e.target.src = '/placeholder.jpg';
+                    }}
+                    onLoad={() => {
+                      console.log('Image loaded successfully:', getImageUrl(product.images?.[selectedImage] || product.image));
+                    }}
                   />
                   
                   {product.images && product.images.length > 1 && (
@@ -242,7 +253,7 @@ const ProductModal = ({
                     {product.images.map((image, index) => (
                       <img
                         key={index}
-                        src={image}
+                        src={getImageUrl(image)}
                         alt={`${product.name} ${index + 1}`}
                         className={`thumbnail ${index === selectedImage ? 'active' : ''}`}
                         onClick={() => setSelectedImage(index)}
@@ -387,7 +398,7 @@ const ProductModal = ({
                           }}
                         >
                           <img
-                            src={similarProduct.image}
+                            src={getImageUrl(similarProduct.image)}
                             alt={similarProduct.name}
                           />
                           <p>{similarProduct.name}</p>
