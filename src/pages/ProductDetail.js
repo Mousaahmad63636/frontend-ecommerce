@@ -818,6 +818,7 @@ function ProductDetail() {
               </div>
             </div>
           </div>
+          </div>
         </div>
 
         <div className="container mx-auto px-4 mt-8">
