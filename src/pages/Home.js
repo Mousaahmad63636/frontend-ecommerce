@@ -15,7 +15,7 @@ import BlackFridayBanner from '../components/BlackFridayBanner/BlackFridayBanner
 import api from '../api/api';
 import cachedApi from '../services/cachedApi';
 import imageCacheService from '../services/imageCacheService';
-import { useScrollPosition as useScrollCtx } from '../contexts/ScrollPositionContext';
+import { useScrollRestoration } from '../hooks/useScrollRestoration';
 function Home() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -40,7 +40,9 @@ function Home() {
   const location = useLocation();
   const navigate = useNavigate();
   const productsRef = useRef(null);
-  const { saveScrollPosition, getScrollPosition } = useScrollCtx();
+  
+  // Simple scroll restoration
+  useScrollRestoration('home');
 
   const [heroSettings, setHeroSettings] = useState({
     type: 'image',
@@ -68,52 +70,11 @@ function Home() {
     window.scrollTo(0, 0);
   };
   useEffect(() => {
-    // Attempt to restore scroll position for Home on mount
-    const saved = getScrollPosition && getScrollPosition('home');
-    if (typeof saved === 'number' && saved > 0) {
-      // Wait for content to load before restoring scroll position
-      const restoreScroll = () => {
-        window.scrollTo(0, saved);
-        console.log(`Restored scroll position to ${saved}px`);
-      };
-      
-      if (loading) {
-        // If still loading, wait for loading to finish
-        const checkLoading = setInterval(() => {
-          if (!loading) {
-            clearInterval(checkLoading);
-            setTimeout(restoreScroll, 100);
-          }
-        }, 50);
-        
-        // Cleanup interval after 5 seconds max
-        setTimeout(() => clearInterval(checkLoading), 5000);
-      } else {
-        // Content already loaded, restore immediately
-        setTimeout(restoreScroll, 100);
-      }
-    }
-  }, [getScrollPosition, loading]);
-
-  useEffect(() => {
-    let scrollSaveTimer;
-    
     const handleScroll = () => {
-      // Show/hide scroll button
       if (window.scrollY > 300) {
         setShowScrollButton(true);
       } else {
         setShowScrollButton(false);
-      }
-
-      // Save scroll position with debouncing
-      if (saveScrollPosition) {
-        clearTimeout(scrollSaveTimer);
-        scrollSaveTimer = setTimeout(() => {
-          const currentScroll = window.scrollY;
-          saveScrollPosition('home', currentScroll);
-          console.log(`Saved scroll position: ${currentScroll}px`);
-        }, 150); // Debounce scroll position saving
       }
     };
 
@@ -121,13 +82,8 @@ function Home() {
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      // Save final scroll position on unmount
-      if (saveScrollPosition) {
-        clearTimeout(scrollSaveTimer);
-        saveScrollPosition('home', window.scrollY);
-      }
     };
-  }, [saveScrollPosition]);
+  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({
