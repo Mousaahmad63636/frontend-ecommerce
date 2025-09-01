@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useCart } from '../contexts/CartContext';
@@ -94,10 +94,6 @@ function ProductDetail() {
       console.log("Has sizes:", product.sizes && product.sizes.length > 0);
     }
   }, [product]);
-
-  const handleGoBack = () => {
-    navigate(-1);
-  };
 
   const toggleShareDropdown = () => {
     setShareDropdownOpen(prev => !prev);
