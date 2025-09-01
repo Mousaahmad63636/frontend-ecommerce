@@ -96,18 +96,26 @@ function Home() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
-  // Add this function to handle scrolling to top
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  };
+      // Fix: Remove stray code and misplaced scroll behavior, and properly wrap scroll event logic in useEffect
+      useEffect(() => {
+        const handleScroll = () => {
+          if (window.scrollY > 300) {
+            setShowScrollButton(true);
+          } else {
+            setShowScrollButton(false);
+          }
+        };
 
-  // Separate useEffect for URL parameters and scroll functionality
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
+        window.addEventListener('scroll', handleScroll);
+
+        return () => {
+          window.removeEventListener('scroll', handleScroll);
+        };
+      }, []);
+
+      // Separate useEffect for URL parameters and scroll functionality
+      useEffect(() => {
+        const params = new URLSearchParams(location.search);
 
     // Handle scrollToProducts parameter
     if (params.get('scrollToProducts') === 'true' && productsRef.current) {
