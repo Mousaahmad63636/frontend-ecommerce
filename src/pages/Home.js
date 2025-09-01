@@ -15,7 +15,7 @@ import BlackFridayBanner from '../components/BlackFridayBanner/BlackFridayBanner
 import api from '../api/api';
 import cachedApi from '../services/cachedApi';
 import imageCacheService from '../services/imageCacheService';
-import { useScrollRestoration } from '../hooks/useScrollRestoration';
+import { useHomeScrollRestoration } from '../hooks/useHomeScrollRestoration';
 function Home() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -41,8 +41,8 @@ function Home() {
   const navigate = useNavigate();
   const productsRef = useRef(null);
   
-  // Simple scroll restoration
-  useScrollRestoration('home');
+  // Robust scroll restoration for home page
+  const { hasPendingRestore } = useHomeScrollRestoration(loading);
 
   const [heroSettings, setHeroSettings] = useState({
     type: 'image',

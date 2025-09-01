@@ -55,20 +55,44 @@ export const useScrollRestoration = (key = 'main') => {
         isRestoringRef.current = true;
         hasRestoredRef.current = true;
         
-        // Wait a bit for content to render
         const restoreScroll = () => {
-          window.scrollTo(0, scrollY);
-          console.log(`Restored scroll position to: ${scrollY}px`);
+          // Check if we can scroll to the target position
+          const maxScroll = Math.max(
+            document.body.scrollHeight - window.innerHeight,
+            document.documentElement.scrollHeight - window.innerHeight
+          );
           
-          setTimeout(() => {
-            isRestoringRef.current = false;
-          }, 200);
+          if (maxScroll >= scrollY) {
+            window.scrollTo(0, scrollY);
+            console.log(`Successfully restored scroll position to: ${scrollY}px`);
+            setTimeout(() => {
+              isRestoringRef.current = false;
+            }, 300);
+            return true;
+          }
+          return false;
         };
 
-        // Try multiple times to ensure it works
-        setTimeout(restoreScroll, 100);
-        setTimeout(restoreScroll, 300);
-        setTimeout(restoreScroll, 500);
+        // Try to restore immediately
+        if (!restoreScroll()) {
+          // If immediate restore fails, wait for content to load
+          let attempts = 0;
+          const maxAttempts = 20; // Try for up to 2 seconds
+          
+          const tryRestore = () => {
+            attempts++;
+            if (restoreScroll() || attempts >= maxAttempts) {
+              if (attempts >= maxAttempts) {
+                console.log(`Failed to restore scroll position after ${attempts} attempts`);
+                isRestoringRef.current = false;
+              }
+              return;
+            }
+            setTimeout(tryRestore, 100);
+          };
+          
+          setTimeout(tryRestore, 100);
+        }
       }
     }
   }, [scrollKey, location.pathname]);
