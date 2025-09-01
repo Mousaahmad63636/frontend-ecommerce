@@ -449,25 +449,30 @@ function ProductDetail() {
         <meta property="product:price:currency" content="USD" />
       </Helmet>
 
-      <div className="container mx-auto px-4 py-8">
-        <nav className="mb-4">
-          <button
-            onClick={goToHome}
-            className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 hover:text-purple-600 hover:border-purple-300 transition-all duration-200"
-          >
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Back to Home
-          </button>
-        </nav>
+      <div className="min-h-screen bg-gray-50">
+        <div className="bg-white shadow-sm border-b">
+          <div className="container mx-auto px-4 py-3">
+            <nav>
+              <button
+                onClick={goToHome}
+                className="inline-flex items-center text-sm text-gray-600 hover:text-purple-600 transition-colors"
+              >
+                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Home
+              </button>
+            </nav>
+          </div>
+        </div>
 
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <div className="md:flex">
-            <div className="md:w-1/2 p-4">
-              <div className="relative rounded-lg overflow-hidden bg-gray-100">
-                <div className="relative aspect-square">
-                  {product.images && product.images.length > 0 ? (
+        <div className="container mx-auto px-4 py-6">
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div className="lg:flex">
+              <div className="lg:w-2/5 p-6">
+                <div className="relative rounded-xl overflow-hidden bg-gray-50">
+                  <div className="relative aspect-[4/3]">
+                    {product.images && product.images.length > 0 ? (
                     <OptimizedImage
                       src={product.images[currentImageIndex]}
                       alt={`${product.name} - Image ${currentImageIndex + 1}`}
@@ -536,8 +541,9 @@ function ProductDetail() {
               )}
             </div>
 
-            <div className="md:w-1/2 p-6 md:border-l border-gray-100">
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
+            <div className="lg:w-3/5 p-6 lg:border-l border-gray-100">
+              <div className="max-w-2xl">
+                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3">{product.name}</h1>
 
               <div className="flex flex-wrap gap-2 mb-3">
                 {getFormattedCategories().map(category => (
@@ -600,22 +606,22 @@ function ProductDetail() {
                 </div>
               )}
 
-              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                <h5 className="font-medium text-gray-900 mb-3">Product Description</h5>
-                <div className="prose max-w-none text-gray-700">
-                  {product.description.split('\n').map((paragraph, index) => {
+              <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                <h5 className="font-medium text-gray-900 mb-2 text-sm">Description</h5>
+                <div className="text-gray-700 text-sm">
+                  {product.description.split('\n').slice(0, 3).map((paragraph, index) => {
                     const hasMixedContent = containsArabic(paragraph) && /[A-Za-z0-9]/.test(paragraph);
                     const primaryDirection = getPrimaryDirection(paragraph);
 
                     return (
                       <p
                         key={index}
-                        className="whitespace-pre-line mb-2"
+                        className="whitespace-pre-line mb-1 last:mb-0"
                         dir="auto"
                         lang={primaryDirection === 'rtl' ? 'ar' : 'en'}
                         style={{
                           fontFamily: containsArabic(paragraph) ? "'Tajawal', 'Noto Sans Arabic', sans-serif" : 'inherit',
-                          lineHeight: 1.8,
+                          lineHeight: 1.6,
                           textAlign: hasMixedContent ? 'start' : (primaryDirection === 'rtl' ? 'right' : 'left'),
                           unicodeBidi: hasMixedContent ? 'embed' : 'normal',
                         }}
@@ -628,15 +634,15 @@ function ProductDetail() {
               </div>
 
               {product.colors && product.colors.length > 0 && (
-                <div className="mb-6">
-                  <h5 className="font-medium text-gray-900 mb-2">Color:</h5>
+                <div className="mb-4">
+                  <h5 className="font-medium text-gray-900 mb-2 text-sm">Color:</h5>
                   <div className="flex flex-wrap gap-2">
                     {product.colors.map(color => (
                       <button
                         key={color}
                         type="button"
                         onClick={() => setSelectedColor(color)}
-                        className={`w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all ${selectedColor === color
+                        className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all ${selectedColor === color
                           ? 'border-purple-500 scale-110 shadow-md'
                           : 'border-gray-300'
                           }`}
@@ -644,7 +650,7 @@ function ProductDetail() {
                         title={color}
                       >
                         {selectedColor === color && (
-                          <svg className="w-6 h-6 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                           </svg>
                         )}
@@ -655,15 +661,15 @@ function ProductDetail() {
               )}
 
               {product.sizes && product.sizes.length > 0 && (
-                <div className="mb-6">
-                  <h5 className="font-medium text-gray-900 mb-2">Size:</h5>
+                <div className="mb-4">
+                  <h5 className="font-medium text-gray-900 mb-2 text-sm">Size:</h5>
                   <div className="flex flex-wrap gap-2">
                     {product.sizes.map(size => (
                       <button
                         key={size}
                         type="button"
                         onClick={() => setSelectedSize(size)}
-                        className={`h-10 min-w-[40px] px-3 rounded-md border transition-all ${selectedSize === size
+                        className={`h-9 min-w-[36px] px-3 rounded-md border transition-all text-sm ${selectedSize === size
                           ? 'border-purple-500 bg-purple-50 text-purple-700 font-medium'
                           : 'border-gray-300 bg-white text-gray-700'
                           }`}
@@ -675,11 +681,11 @@ function ProductDetail() {
                 </div>
               )}
 
-              <div className="mb-6">
-                <h5 className="font-medium text-gray-900 mb-2">Quantity:</h5>
+              <div className="mb-4">
+                <h5 className="font-medium text-gray-900 mb-2 text-sm">Quantity:</h5>
                 <div className="flex items-center">
                   <button
-                    className="bg-gray-200 hover:bg-gray-300 text-gray-700 h-10 w-10 rounded-l-lg flex items-center justify-center transition duration-200"
+                    className="bg-gray-200 hover:bg-gray-300 text-gray-700 h-9 w-9 rounded-l-lg flex items-center justify-center transition duration-200"
                     onClick={() => handleQuantityChange(-1)}
                     disabled={quantity <= 1}
                   >
@@ -689,14 +695,14 @@ function ProductDetail() {
                   </button>
                   <input
                     type="number"
-                    className="h-10 w-16 border-gray-200 text-center focus:ring-purple-500 focus:border-purple-500"
+                    className="h-9 w-14 border-gray-200 text-center text-sm focus:ring-purple-500 focus:border-purple-500"
                     value={quantity}
                     onChange={handleInputChange}
                     min="1"
                     max="10"
                   />
                   <button
-                    className="bg-gray-200 hover:bg-gray-300 text-gray-700 h-10 w-10 rounded-r-lg flex items-center justify-center transition duration-200"
+                    className="bg-gray-200 hover:bg-gray-300 text-gray-700 h-9 w-9 rounded-r-lg flex items-center justify-center transition duration-200"
                     onClick={() => handleQuantityChange(1)}
                     disabled={quantity >= 10}
                   >
@@ -728,10 +734,10 @@ function ProductDetail() {
                 </div>
               )}
 
-              <div className="space-y-3">
+              <div className="space-y-3 mt-6">
                 <div className="flex gap-2">
                   <button
-                    className={`flex-1 py-3 px-4 rounded-lg font-medium ${product.soldOut
+                    className={`flex-1 py-2.5 px-4 rounded-lg font-medium text-sm ${product.soldOut
                       ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                       : 'bg-purple-600 hover:bg-purple-700 text-white'
                       } transition duration-200`}
@@ -742,24 +748,24 @@ function ProductDetail() {
                   </button>
 
                   <button
-                    className={`p-3 rounded-lg ${isInWishlist(product._id)
+                    className={`p-2.5 rounded-lg ${isInWishlist(product._id)
                       ? 'bg-red-500 text-white'
                       : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                       } transition duration-200`}
                     onClick={handleWishlistToggle}
                   >
-                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd"></path>
                     </svg>
                   </button>
 
                   <div className="relative share-dropdown-container">
                     <button
-                      className="p-3 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition duration-200"
+                      className="p-2.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition duration-200"
                       onClick={toggleShareDropdown}
                       aria-label="Share product"
                     >
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
                       </svg>
                     </button>
@@ -794,7 +800,7 @@ function ProductDetail() {
                 </div>
 
                 <button
-                  className="w-full py-3 px-4 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition duration-200"
+                  className="w-full py-2.5 px-4 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition duration-200 text-sm"
                   onClick={handleWhatsAppClick}
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -818,9 +824,9 @@ function ProductDetail() {
           </div>
         </div>
 
-        <div className="mt-10 mx-auto max-w-4xl">
-          <div className="bg-white p-8 rounded-xl shadow-sm text-center">
-            <h2 className="text-2xl font-bold text-purple-600 mb-6">Rate This Product</h2>
+        <div className="container mx-auto px-4 mt-8">
+          <div className="bg-white p-6 rounded-xl shadow-sm text-center">
+            <h2 className="text-xl font-bold text-purple-600 mb-4">Rate This Product</h2>
             <div className="flex flex-col items-center justify-center">
               <RatingStars
                 initialRating={userRating}
@@ -833,7 +839,7 @@ function ProductDetail() {
         </div>
 
         {similarProducts.length > 0 && (
-          <div className="mt-12">
+          <div className="container mx-auto px-4 mt-8">
             <ProductList
               title="You Might Also Like"
               products={similarProducts}
@@ -846,7 +852,6 @@ function ProductDetail() {
           </div>
         )}
       </div>
-    </div>
   );
 }
 
