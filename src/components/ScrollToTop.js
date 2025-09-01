@@ -6,15 +6,13 @@ function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    // Get navigation type to determine if this is a back navigation
-    const navigation = performance.getEntriesByType('navigation')[0];
-    const isBackNavigation = navigation && navigation.type === 'back_forward';
-    
-    // Only scroll to top on new navigation (not back navigation)
-    // And not for the home page (let it handle its own scroll restoration)
-    if (!isBackNavigation && pathname !== '/') {
-      window.scrollTo(0, 0);
+    // Never scroll to top for home page - let it handle its own scroll restoration
+    if (pathname === '/') {
+      return;
     }
+    
+    // For all other pages, scroll to top
+    window.scrollTo(0, 0);
   }, [pathname]);
 
   return null;

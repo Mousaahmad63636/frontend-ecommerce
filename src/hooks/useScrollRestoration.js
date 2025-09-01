@@ -4,67 +4,74 @@ import { useLocation } from 'react-router-dom';
 
 export const useScrollRestoration = (key = 'main') => {
   const location = useLocation();
-  const scrollKey = `scroll-${key}-${location.pathname}`;
+  const scrollKey = `scroll-${key}`;
   const isRestoringRef = useRef(false);
+  const hasRestoredRef = useRef(false);
 
-  // Save scroll position when leaving the page
+  // Save scroll position when scrolling
   useEffect(() => {
+    let saveTimer;
+    
     const saveScrollPosition = () => {
       if (!isRestoringRef.current) {
-        sessionStorage.setItem(scrollKey, window.scrollY.toString());
+        const scrollY = window.scrollY;
+        sessionStorage.setItem(scrollKey, scrollY.toString());
+        console.log(`Saved scroll position: ${scrollY}px`);
       }
     };
 
-    // Save on page unload
-    window.addEventListener('beforeunload', saveScrollPosition);
-    
-    // Save periodically while scrolling (throttled)
-    let saveTimer;
     const handleScroll = () => {
       if (!isRestoringRef.current) {
         clearTimeout(saveTimer);
-        saveTimer = setTimeout(saveScrollPosition, 100);
+        saveTimer = setTimeout(saveScrollPosition, 150);
       }
     };
+
+    // Save immediately on mount if we're scrolled
+    if (window.scrollY > 0 && !hasRestoredRef.current) {
+      saveScrollPosition();
+    }
 
     window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
-      window.removeEventListener('beforeunload', saveScrollPosition);
       window.removeEventListener('scroll', handleScroll);
       clearTimeout(saveTimer);
-      // Final save on cleanup
+      // Save final position
       saveScrollPosition();
     };
   }, [scrollKey]);
 
-  // Restore scroll position when component mounts
+  // Restore scroll position on mount
   useEffect(() => {
-    // Only restore on back navigation or page refresh
-    const navigation = performance.getEntriesByType('navigation')[0];
-    const isBackNavigation = navigation && navigation.type === 'back_forward';
-    const isPageRefresh = navigation && navigation.type === 'reload';
-    
-    if (isBackNavigation || isPageRefresh) {
-      const savedPosition = sessionStorage.getItem(scrollKey);
-      if (savedPosition) {
-        const scrollY = parseInt(savedPosition, 10);
-        if (scrollY > 0) {
-          isRestoringRef.current = true;
+    if (hasRestoredRef.current) return;
+
+    const savedPosition = sessionStorage.getItem(scrollKey);
+    if (savedPosition && location.pathname === '/') {
+      const scrollY = parseInt(savedPosition, 10);
+      if (scrollY > 0) {
+        console.log(`Attempting to restore scroll position: ${scrollY}px`);
+        
+        isRestoringRef.current = true;
+        hasRestoredRef.current = true;
+        
+        // Wait a bit for content to render
+        const restoreScroll = () => {
+          window.scrollTo(0, scrollY);
+          console.log(`Restored scroll position to: ${scrollY}px`);
           
-          // Use requestAnimationFrame to ensure DOM is ready
-          requestAnimationFrame(() => {
-            window.scrollTo(0, scrollY);
-            
-            // Reset flag after restoration
-            setTimeout(() => {
-              isRestoringRef.current = false;
-            }, 100);
-          });
-        }
+          setTimeout(() => {
+            isRestoringRef.current = false;
+          }, 200);
+        };
+
+        // Try multiple times to ensure it works
+        setTimeout(restoreScroll, 100);
+        setTimeout(restoreScroll, 300);
+        setTimeout(restoreScroll, 500);
       }
     }
-  }, [scrollKey]);
+  }, [scrollKey, location.pathname]);
 
   return null;
 };
