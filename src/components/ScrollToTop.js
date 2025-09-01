@@ -6,13 +6,17 @@ function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    // Never scroll to top for home page - let it handle its own scroll restoration
+    // Completely disable ScrollToTop for home page
     if (pathname === '/') {
+      console.log('🏠 Home page detected - ScrollToTop disabled');
       return;
     }
     
-    // For all other pages, scroll to top
-    window.scrollTo(0, 0);
+    // For all other pages, scroll to top after a small delay
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      console.log(`📄 Scrolled to top for: ${pathname}`);
+    }, 10);
   }, [pathname]);
 
   return null;

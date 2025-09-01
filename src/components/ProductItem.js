@@ -58,7 +58,8 @@ function ProductItem({ product }) {
           className="absolute inset-0 flex items-center justify-center p-3"
           onClick={() => {
             // Save current scroll position before navigating
-            sessionStorage.setItem('scroll-home', window.scrollY.toString());
+            sessionStorage.setItem('home-scroll-position', window.scrollY.toString());
+            console.log(`💾 Saved on click: ${window.scrollY}px`);
           }}
         >
           {/* Image with placeholder */}
@@ -119,7 +120,8 @@ function ProductItem({ product }) {
           className="block mb-1"
           onClick={() => {
             // Save current scroll position before navigating
-            sessionStorage.setItem('scroll-home', window.scrollY.toString());
+            sessionStorage.setItem('home-scroll-position', window.scrollY.toString());
+            console.log(`💾 Saved on click: ${window.scrollY}px`);
           }}
         >
           <h3 className="text-sm font-medium text-gray-900 line-clamp-1 hover:text-gray-700 transition-colors duration-200">{product.name}</h3>
