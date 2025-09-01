@@ -13,6 +13,8 @@ import Banner from '../components/Banner';
 import ContactSection from '../components/ContactSection';
 import BlackFridayBanner from '../components/BlackFridayBanner/BlackFridayBanner';
 import api from '../api/api';
+import cachedApi from '../services/cachedApi';
+import imageCacheService from '../services/imageCacheService';
 import { useScrollPosition as useScrollCtx } from '../contexts/ScrollPositionContext';
 function Home() {
   const [products, setProducts] = useState([]);
@@ -240,18 +242,21 @@ function Home() {
     const fetchSettings = async () => {
       try {
         setLoading(true); // Show loading state while fetching
-        const response = await api.getSettings();
+        const response = await cachedApi.getSettings();
         if (response?.heroSection) {
           // Pre-validate the hero image by checking if it exists
           const { mediaUrl, ...otherSettings } = response.heroSection;
 
           // Set the hero settings right away, even before image validation
-          setHeroSettings({
+          const heroData = {
             ...otherSettings,
             mediaUrl: mediaUrl || '/hero.jpg' // Fallback path right away if none provided
-          });
+          };
+          
+          setHeroSettings(heroData);
 
-          // Image validation is now handled by the OptimizedImage component
+          // Preload hero images for better performance
+          imageCacheService.preloadHeroImages(heroData);
         }
       } catch (error) {
         console.error('Error fetching hero settings:', error);
@@ -274,7 +279,9 @@ function Home() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const productsData = await api.getProducts();
+        
+        // Use cached API for better performance
+        const productsData = await cachedApi.getProducts();
         setProducts(productsData);
 
         // Extract ALL categories (primary and secondary) from products
@@ -296,9 +303,15 @@ function Home() {
 
         setCategories([...allCategories].sort());
 
-        if (api.getBlackFridayData) {
+        // Preload product images for better performance
+        imageCacheService.smartPreload('homepage', {
+          products: productsData,
+          heroSettings
+        });
+
+        if (cachedApi.getBlackFridayData) {
           try {
-            const blackFridayResponse = await api.getBlackFridayData();
+            const blackFridayResponse = await cachedApi.getBlackFridayData();
             if (blackFridayResponse?.isActive) {
               setBlackFridayData({
                 discount: blackFridayResponse.discountPercentage,
@@ -318,7 +331,7 @@ function Home() {
     };
 
     fetchData();
-  }, []);
+  }, [heroSettings]);
 
   useEffect(() => {
     let filtered = [...products]; // Create a copy to avoid mutating the original

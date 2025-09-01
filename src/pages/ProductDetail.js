@@ -5,6 +5,8 @@ import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useNotification } from '../components/Notification/NotificationProvider';
 import api from '../api/api';
+import cachedApi from '../services/cachedApi';
+import imageCacheService from '../services/imageCacheService';
 import { formatPrice } from '../utils/formatters';
 import { getImageUrl } from '../utils/imageUtils';
 import DiscountTimer from '../components/DiscountTimer/DiscountTimer';
@@ -151,7 +153,7 @@ function ProductDetail() {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const data = await api.getProductById(id);
+        const data = await cachedApi.getProductById(id);
         setProduct(data);
 
         if (data.colors && data.colors.length > 0) {
@@ -159,6 +161,11 @@ function ProductDetail() {
         }
         if (data.sizes && data.sizes.length > 0) {
           setSelectedSize(data.sizes[0]);
+        }
+
+        // Preload product images immediately
+        if (data.images && data.images.length > 0) {
+          imageCacheService.preloadImages(data.images.map(img => getImageUrl(img)), 'high');
         }
 
         fetchSimilarProducts(data);
@@ -199,7 +206,7 @@ function ProductDetail() {
       const categoriesArray = Array.from(productCategories);
       console.log('Looking for similar products in categories:', categoriesArray);
 
-      const products = await api.getProducts();
+      const products = await cachedApi.getProducts();
 
       const filtered = products.filter(p => {
         if (p._id === currentProduct._id) return false;

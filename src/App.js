@@ -22,6 +22,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import ConsultingFloat from './components/ConsultingFloat/ConsultingFloat';
 import { ScrollPositionProvider } from './contexts/ScrollPositionContext';
+import { initPerformanceMonitoring } from './hooks/usePerformance';
 
 // Loading Spinner Component
 function LoadingSpinner() {
@@ -200,6 +201,11 @@ function AppContent() {
 }
 
 function App() {
+  // Initialize performance monitoring
+  React.useEffect(() => {
+    initPerformanceMonitoring();
+  }, []);
+
   return (
     <HelmetProvider>
       <ScrollPositionProvider>
