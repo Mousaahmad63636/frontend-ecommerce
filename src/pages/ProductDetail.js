@@ -852,6 +852,7 @@ function ProductDetail() {
           </div>
         )}
       </div>
+    </div>
   );
 }
 
