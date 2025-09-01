@@ -7,7 +7,7 @@ import { useNotification } from './Notification/NotificationProvider';
 import { getImageUrl } from '../utils/imageUtils';
 import { openSideCart } from '../utils/cartUtils'; // Add this import
 
-function ProductItem({ product }) {
+function ProductItem({ product, onProductClick }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const { addToCart } = useCart();
@@ -53,13 +53,12 @@ function ProductItem({ product }) {
       
       {/* Product Image Container */}
       <div className="relative w-full pt-[100%] bg-gray-50 overflow-hidden">
-        <Link 
-          to={`/product/${product._id}`} 
-          className="absolute inset-0 flex items-center justify-center p-3"
+        <div 
+          className="absolute inset-0 flex items-center justify-center p-3 cursor-pointer"
           onClick={() => {
-            // Save current scroll position before navigating
-            sessionStorage.setItem('home-scroll-position', window.scrollY.toString());
-            console.log(`💾 Saved on click: ${window.scrollY}px`);
+            if (onProductClick) {
+              onProductClick(product._id);
+            }
           }}
         >
           {/* Image with placeholder */}
@@ -78,7 +77,7 @@ function ProductItem({ product }) {
               loading="lazy"
             />
           </div>
-        </Link>
+        </div>
         
         {/* Wishlist Button */}
         <button
@@ -115,17 +114,16 @@ function ProductItem({ product }) {
       
       {/* Product Info */}
       <div className="p-3 flex flex-col min-h-[120px]">
-        <Link 
-          to={`/product/${product._id}`} 
-          className="block mb-1"
+        <div 
+          className="block mb-1 cursor-pointer"
           onClick={() => {
-            // Save current scroll position before navigating
-            sessionStorage.setItem('home-scroll-position', window.scrollY.toString());
-            console.log(`💾 Saved on click: ${window.scrollY}px`);
+            if (onProductClick) {
+              onProductClick(product._id);
+            }
           }}
         >
           <h3 className="text-sm font-medium text-gray-900 line-clamp-1 hover:text-gray-700 transition-colors duration-200">{product.name}</h3>
-        </Link>
+        </div>
         
         {/* Categories */}
         <div className="flex items-center mb-1.5 h-5 overflow-hidden">

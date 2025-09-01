@@ -15,7 +15,8 @@ import BlackFridayBanner from '../components/BlackFridayBanner/BlackFridayBanner
 import api from '../api/api';
 import cachedApi from '../services/cachedApi';
 import imageCacheService from '../services/imageCacheService';
-import { useSimpleScrollRestore } from '../hooks/useSimpleScrollRestore';
+
+import ProductModal from '../components/ProductModal/ProductModal';
 function Home() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -36,13 +37,23 @@ function Home() {
   const [categoryViewName, setCategoryViewName] = useState(''); // Store the category name for the view
   const [relatedProductId, setRelatedProductId] = useState(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const heroRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
   const productsRef = useRef(null);
-  
-  // Simple and direct scroll restoration
-  useSimpleScrollRestore();
+
+  // Modal handlers
+  const openProductModal = (productId) => {
+    setSelectedProductId(productId);
+    setIsModalOpen(true);
+  };
+
+  const closeProductModal = () => {
+    setIsModalOpen(false);
+    setSelectedProductId(null);
+  };
 
   const [heroSettings, setHeroSettings] = useState({
     type: 'image',
@@ -466,6 +477,7 @@ function Home() {
             scrollable={true}
             viewAllUrl={`/?category=${encodeURIComponent(category)}`}
             viewAllText="View All"
+            onProductClick={openProductModal}
           />
         </div>
       </section>
@@ -568,6 +580,7 @@ function Home() {
                     scrollable={true}
                     viewAllUrl={viewAllDiscountedUrl}
                     viewAllText="View All"
+                    onProductClick={openProductModal}
                   />
                 ) : (
                   <div className="text-center py-5">
@@ -626,6 +639,7 @@ function Home() {
                   scrollable={true}
                   viewAllUrl={viewAllProductsUrl}
                   viewAllText="View All"
+                  onProductClick={openProductModal}
                 />
               ) : (
                 <div className="text-center py-5 px-4">
@@ -668,6 +682,7 @@ function Home() {
                 products={filteredProducts}
                 scrollable={false}
                 mobileColumns={2}
+                onProductClick={openProductModal}
               />
             ) : (
               <div className="text-center py-8">
@@ -748,6 +763,7 @@ function Home() {
                 products={filteredProducts}
                 scrollable={false}
                 mobileColumns={2}
+                onProductClick={openProductModal}
               />
             ) : (
               <div className="text-center py-8">
@@ -830,6 +846,7 @@ function Home() {
                 products={filteredProducts}
                 scrollable={false}
                 mobileColumns={2} // Changed from 1 to 2 for mobile view
+                onProductClick={openProductModal}
               />
             ) : (
               <div className="text-center py-8">
@@ -911,6 +928,7 @@ function Home() {
                 products={filteredProducts}
                 scrollable={false}
                 mobileColumns={2} // Changed from 1 to 2 for mobile view
+                onProductClick={openProductModal}
               />
             ) : (
               <div className="text-center py-8">
@@ -982,6 +1000,7 @@ function Home() {
                 products={filteredProducts}
                 scrollable={false}
                 mobileColumns={2} // Changed from 1 to 2 for mobile view
+                onProductClick={openProductModal}
               />
             ) : (
               <div className="text-center py-8">
@@ -1029,6 +1048,24 @@ function Home() {
           </svg>
         </button>
       )}
+      
+      {/* Product Modal */}
+      <ProductModal
+        productId={selectedProductId}
+        isOpen={isModalOpen}
+        onClose={closeProductModal}
+        onAddToCart={(product) => {
+          // Handle add to cart - you can integrate with your existing cart logic
+          console.log('Adding to cart:', product);
+          // Example: addToCart(product);
+        }}
+        onToggleWishlist={(product) => {
+          // Handle wishlist toggle - you can integrate with your existing wishlist logic
+          console.log('Toggle wishlist:', product);
+          // Example: toggleWishlist(product);
+        }}
+        isInWishlist={false} // You can check if the product is in wishlist
+      />
     </div>
   );
 }
