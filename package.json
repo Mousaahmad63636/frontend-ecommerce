@@ -1,0 +1,71 @@
+{
+  "name": "ecommerce-demo",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@fortawesome/fontawesome-free": "^6.0.0",
+    "@headlessui/react": "^2.2.0",
+    "@heroicons/react": "^2.2.0",
+    "@material-tailwind/react": "^2.1.10",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "autoprefixer": "^10.4.20",
+    "axios": "^1.7.7",
+    "bcryptjs": "^2.4.3",
+    "bootstrap": "^5.3.3",
+    "compression": "^1.7.5",
+    "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
+    "daisyui": "^4.12.23",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "flowbite": "^3.1.2",
+    "flowbite-react": "^0.10.2",
+    "framer-motion": "^11.15.0",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.10.0",
+    "mongoose": "^8.8.2",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.16",
+    "postcss": "^8.5.3",
+    "prop-types": "^15.8.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-helmet-async": "^2.0.5",
+    "react-router-dom": "^6.26.2",
+    "react-scripts": "^5.0.1",
+    "react-swipeable": "^7.0.2",
+    "styled-components": "^6.1.14",
+    "tailwindcss": "^3.4.17",
+    "web-vitals": "^2.1.4",
+    "yocto-queue": "^1.2.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "GENERATE_SOURCEMAP=false react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
