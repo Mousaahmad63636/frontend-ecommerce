@@ -83,6 +83,7 @@ function Home() {
       }
     };
   }, [saveScrollPosition]);
+  useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 300) {
         setShowScrollButton(true);
@@ -96,25 +97,17 @@ function Home() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-      // Fix: Remove stray code and misplaced scroll behavior, and properly wrap scroll event logic in useEffect
-      useEffect(() => {
-        const handleScroll = () => {
-          if (window.scrollY > 300) {
-            setShowScrollButton(true);
-          } else {
-            setShowScrollButton(false);
-          }
-        };
+  }, []);
 
-        window.addEventListener('scroll', handleScroll);
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
 
-        return () => {
-          window.removeEventListener('scroll', handleScroll);
-        };
-      }, []);
-
-      // Separate useEffect for URL parameters and scroll functionality
-      useEffect(() => {
+  // Separate useEffect for URL parameters and scroll functionality
+  useEffect(() => {
         const params = new URLSearchParams(location.search);
 
     // Handle scrollToProducts parameter
