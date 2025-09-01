@@ -21,6 +21,7 @@ import AdminRoute from './components/Auth/AdminRoute';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ConsultingFloat from './components/ConsultingFloat/ConsultingFloat';
+import { ScrollPositionProvider } from './contexts/ScrollPositionContext';
 
 // Loading Spinner Component
 function LoadingSpinner() {
@@ -201,20 +202,22 @@ function AppContent() {
 function App() {
   return (
     <HelmetProvider>
-      <Router>
-        <ErrorBoundary>
-          <NotificationProvider>
-            <AuthProvider>
-              <WishlistProvider>
-                <CartProvider>
-                  <ScrollToTop />
-                  <AppContent />
-                </CartProvider>
-              </WishlistProvider>
-            </AuthProvider>
-          </NotificationProvider>
-        </ErrorBoundary>
-      </Router>
+      <ScrollPositionProvider>
+        <Router>
+          <ErrorBoundary>
+            <NotificationProvider>
+              <AuthProvider>
+                <WishlistProvider>
+                  <CartProvider>
+                    <ScrollToTop />
+                    <AppContent />
+                  </CartProvider>
+                </WishlistProvider>
+              </AuthProvider>
+            </NotificationProvider>
+          </ErrorBoundary>
+        </Router>
+      </ScrollPositionProvider>
     </HelmetProvider>
   );
 }

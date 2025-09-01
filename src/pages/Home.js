@@ -13,6 +13,7 @@ import Banner from '../components/Banner';
 import ContactSection from '../components/ContactSection';
 import BlackFridayBanner from '../components/BlackFridayBanner/BlackFridayBanner';
 import api from '../api/api';
+import { useScrollPosition as useScrollCtx } from '../contexts/ScrollPositionContext';
 function Home() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -37,6 +38,7 @@ function Home() {
   const location = useLocation();
   const navigate = useNavigate();
   const productsRef = useRef(null);
+  const { saveScrollPosition, getScrollPosition } = useScrollCtx();
 
   const [heroSettings, setHeroSettings] = useState({
     type: 'image',
@@ -64,6 +66,23 @@ function Home() {
     window.scrollTo(0, 0);
   };
   useEffect(() => {
+    // Attempt to restore scroll position for Home on mount
+    const saved = getScrollPosition && getScrollPosition('home');
+    if (typeof saved === 'number') {
+      setTimeout(() => {
+        window.scrollTo(0, saved);
+      }, 0);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Save scroll position on unmount
+    return () => {
+      if (saveScrollPosition) {
+        saveScrollPosition('home', window.scrollY);
+      }
+    };
+  }, [saveScrollPosition]);
     const handleScroll = () => {
       if (window.scrollY > 300) {
         setShowScrollButton(true);

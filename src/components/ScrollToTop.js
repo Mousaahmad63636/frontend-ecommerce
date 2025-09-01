@@ -1,12 +1,21 @@
 // src/components/ScrollToTop.js
-import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
+import { useLocation, useNavigationType } from 'react-router-dom';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
+  const navType = useNavigationType();
+  const wasPopRef = useRef(false);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // Skip auto-scroll on POP (back/forward) navigations to preserve position
+    wasPopRef.current = navType === 'POP';
+  }, [navType]);
+
+  useEffect(() => {
+    if (!wasPopRef.current) {
+      window.scrollTo(0, 0);
+    }
   }, [pathname]);
 
   return null;
