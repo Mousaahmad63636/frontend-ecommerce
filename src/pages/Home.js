@@ -55,6 +55,11 @@ function Home() {
     setSelectedProductId(null);
   };
 
+  const handleProductChange = (newProductId) => {
+    setSelectedProductId(newProductId);
+    // Modal will automatically re-fetch the new product data
+  };
+
   const [heroSettings, setHeroSettings] = useState({
     type: 'image',
     mediaUrl: '/hero.jpg',
@@ -1054,6 +1059,7 @@ function Home() {
         productId={selectedProductId}
         isOpen={isModalOpen}
         onClose={closeProductModal}
+        onProductChange={handleProductChange}
         onAddToCart={(product) => {
           // Handle add to cart - you can integrate with your existing cart logic
           console.log('Adding to cart:', product);

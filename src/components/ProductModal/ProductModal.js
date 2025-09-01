@@ -55,7 +55,8 @@ const ProductModal = ({
   onClose, 
   onAddToCart, 
   onToggleWishlist, 
-  isInWishlist 
+  isInWishlist,
+  onProductChange // Add this prop to handle product switching
 }) => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -97,8 +98,9 @@ const ProductModal = ({
         // Fetch similar products
         const allProducts = await cachedApi.getProducts();
         const similar = allProducts
-          .filter(p => p.id !== productId && p.category === data.category)
+          .filter(p => (p._id || p.id) !== productId && p.category === data.category)
           .slice(0, 4);
+        console.log('Similar products:', similar);
         setSimilarProducts(similar);
         
       } catch (err) {
@@ -386,20 +388,24 @@ const ProductModal = ({
                     <div className="similar-products-grid">
                       {similarProducts.map((similarProduct) => (
                         <div
-                          key={similarProduct.id}
+                          key={similarProduct._id || similarProduct.id}
                           className="similar-product-item"
                           onClick={() => {
-                            setProduct(null);
-                            setLoading(true);
-                            // This will trigger the useEffect to fetch the new product
-                            setTimeout(() => {
-                              // Update the productId prop would be handled by parent
-                            }, 0);
+                            if (onProductChange) {
+                              onProductChange(similarProduct._id || similarProduct.id);
+                            }
                           }}
                         >
                           <img
-                            src={getImageUrl(similarProduct.image)}
+                            src={getImageUrl(
+                              similarProduct.images?.[0] || 
+                              similarProduct.image || 
+                              '/placeholder.jpg'
+                            )}
                             alt={similarProduct.name}
+                            onError={(e) => {
+                              e.target.src = '/placeholder.jpg';
+                            }}
                           />
                           <p>{similarProduct.name}</p>
                           <span>${similarProduct.price}</span>
