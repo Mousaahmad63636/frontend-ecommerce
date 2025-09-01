@@ -427,23 +427,7 @@ function ProductDetail() {
   return (
     <div className="product-detail-page bg-gray-50">
       <WhatsAppMetaTags product={product} />
-      <Helmet prioritizeSeoTags>
-        <title>{product.name} | Spotlylb</title>
-        <meta name="description" content={product.description.substring(0, 160)} />
-        <meta property="og:title" content={product.name} />
-        <meta property="og:url" content={window.location.href} />
-        <meta property="og:type" content="product" />
-        <meta property="og:image" content={product.images && product.images.length > 0
-          ? getImageUrl(product.images[0], true)
-          : 'https://spotlylb.com/placeholder.jpg'} />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:image:alt" content={product.name} />
-        <meta property="og:description" content={product.description.substring(0, 160)} />
-        <meta property="og:site_name" content="Spotlylb" />
-        <meta property="product:price:amount" content={product.price} />
-        <meta property="product:price:currency" content="USD" />
-      </Helmet>
+      
 
       <div className="min-h-screen bg-gray-50">
         <div className="bg-white shadow-sm border-b">
@@ -817,6 +801,8 @@ function ProductDetail() {
                   {product.soldOut ? 'Out of Stock' : 'In Stock'}
                 </span>
               </div>
+              </div>
+            </div>
             </div>
           </div>
         </div>
