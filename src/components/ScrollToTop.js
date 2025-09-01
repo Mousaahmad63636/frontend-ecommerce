@@ -13,9 +13,12 @@ function ScrollToTop() {
   }, [navType]);
 
   useEffect(() => {
-    if (!wasPopRef.current) {
+    // Don't scroll to top on back navigation or when going back to home
+    if (!wasPopRef.current && pathname !== '/') {
       window.scrollTo(0, 0);
     }
+    // Reset the flag after handling
+    wasPopRef.current = false;
   }, [pathname]);
 
   return null;

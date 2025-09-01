@@ -70,27 +70,50 @@ function Home() {
   useEffect(() => {
     // Attempt to restore scroll position for Home on mount
     const saved = getScrollPosition && getScrollPosition('home');
-    if (typeof saved === 'number') {
-      setTimeout(() => {
+    if (typeof saved === 'number' && saved > 0) {
+      // Wait for content to load before restoring scroll position
+      const restoreScroll = () => {
         window.scrollTo(0, saved);
-      }, 0);
+        console.log(`Restored scroll position to ${saved}px`);
+      };
+      
+      if (loading) {
+        // If still loading, wait for loading to finish
+        const checkLoading = setInterval(() => {
+          if (!loading) {
+            clearInterval(checkLoading);
+            setTimeout(restoreScroll, 100);
+          }
+        }, 50);
+        
+        // Cleanup interval after 5 seconds max
+        setTimeout(() => clearInterval(checkLoading), 5000);
+      } else {
+        // Content already loaded, restore immediately
+        setTimeout(restoreScroll, 100);
+      }
     }
-  }, []);
+  }, [getScrollPosition, loading]);
 
   useEffect(() => {
-    // Save scroll position on unmount
-    return () => {
-      if (saveScrollPosition) {
-        saveScrollPosition('home', window.scrollY);
-      }
-    };
-  }, [saveScrollPosition]);
-  useEffect(() => {
+    let scrollSaveTimer;
+    
     const handleScroll = () => {
+      // Show/hide scroll button
       if (window.scrollY > 300) {
         setShowScrollButton(true);
       } else {
         setShowScrollButton(false);
+      }
+
+      // Save scroll position with debouncing
+      if (saveScrollPosition) {
+        clearTimeout(scrollSaveTimer);
+        scrollSaveTimer = setTimeout(() => {
+          const currentScroll = window.scrollY;
+          saveScrollPosition('home', currentScroll);
+          console.log(`Saved scroll position: ${currentScroll}px`);
+        }, 150); // Debounce scroll position saving
       }
     };
 
@@ -98,8 +121,13 @@ function Home() {
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      // Save final scroll position on unmount
+      if (saveScrollPosition) {
+        clearTimeout(scrollSaveTimer);
+        saveScrollPosition('home', window.scrollY);
+      }
     };
-  }, []);
+  }, [saveScrollPosition]);
 
   const scrollToTop = () => {
     window.scrollTo({
