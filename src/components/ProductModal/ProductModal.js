@@ -1,7 +1,49 @@
 // src/components/ProductModal/ProductModal.js
 import React, { useState, useEffect } from 'react';
-import { X, ShoppingCart, Heart, Share2, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+// Using SVG icons instead of lucide-react to avoid dependency issues
 import { Helmet } from 'react-helmet-async';
+
+// SVG Icon Components
+const XIcon = ({ size = 24 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18"></line>
+    <line x1="6" y1="6" x2="18" y2="18"></line>
+  </svg>
+);
+
+const ShoppingCartIcon = ({ size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="9" cy="21" r="1"></circle>
+    <circle cx="20" cy="21" r="1"></circle>
+    <path d="m1 1 4 4 3.5 8.5h9l3-8H8"></path>
+  </svg>
+);
+
+const HeartIcon = ({ size = 20, fill = 'none' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+  </svg>
+);
+
+const ShareIcon = ({ size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+    <polyline points="16,6 12,2 8,6"></polyline>
+    <line x1="12" y1="2" x2="12" y2="15"></line>
+  </svg>
+);
+
+const ChevronLeftIcon = ({ size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="15,18 9,12 15,6"></polyline>
+  </svg>
+);
+
+const ChevronRightIcon = ({ size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="9,18 15,12 9,6"></polyline>
+  </svg>
+);
 import RatingStars from '../RatingStars';
 import cachedApi from '../../services/cachedApi';
 import imageCacheService from '../../services/imageCacheService';
@@ -148,7 +190,7 @@ const ProductModal = ({
             onClick={onClose}
             aria-label="Close modal"
           >
-            <X size={24} />
+            <XIcon size={24} />
           </button>
 
           {loading && (
@@ -183,14 +225,14 @@ const ProductModal = ({
                         onClick={() => handleImageNavigation('prev')}
                         aria-label="Previous image"
                       >
-                        <ChevronLeft size={20} />
+                        <ChevronLeftIcon size={20} />
                       </button>
                       <button
                         className="image-nav-btn next"
                         onClick={() => handleImageNavigation('next')}
                         aria-label="Next image"
                       >
-                        <ChevronRight size={20} />
+                        <ChevronRightIcon size={20} />
                       </button>
                     </>
                   )}
@@ -220,7 +262,7 @@ const ProductModal = ({
                     onClick={() => onToggleWishlist(product)}
                     aria-label="Add to wishlist"
                   >
-                    <Heart size={20} fill={isInWishlist ? 'currentColor' : 'none'} />
+                    <HeartIcon size={20} fill={isInWishlist ? 'currentColor' : 'none'} />
                   </button>
                 </div>
 
@@ -306,7 +348,7 @@ const ProductModal = ({
                     className="add-to-cart-btn"
                     onClick={handleAddToCart}
                   >
-                    <ShoppingCart size={20} />
+                    <ShoppingCartIcon size={20} />
                     Add to Cart
                   </button>
                   
@@ -322,7 +364,7 @@ const ProductModal = ({
                       }
                     }}
                   >
-                    <Share2 size={20} />
+                    <ShareIcon size={20} />
                     Share
                   </button>
                 </div>
