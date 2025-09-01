@@ -817,7 +817,6 @@ function ProductDetail() {
                   {product.soldOut ? 'Out of Stock' : 'In Stock'}
                 </span>
               </div>
-              </div>
             </div>
           </div>
         </div>
