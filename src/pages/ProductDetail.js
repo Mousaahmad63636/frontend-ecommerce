@@ -469,77 +469,78 @@ function ProductDetail() {
                 <div className="relative rounded-xl overflow-hidden bg-gray-50">
                   <div className="relative aspect-[4/3]">
                     {product.images && product.images.length > 0 ? (
-                    <OptimizedImage
-                      src={product.images[currentImageIndex]}
-                      alt={`${product.name} - Image ${currentImageIndex + 1}`}
-                      className="w-full h-full"
-                      style={{ objectFit: 'contain' }}
-                      fallbackSrc="/placeholder.jpg"
-                      onLoad={() => console.log(`Main image ${currentImageIndex + 1} loaded`)}
-                      onError={() => console.error(`Failed to load image ${currentImageIndex + 1}`)}
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center h-full">
-                      <p className="text-gray-500">No image available</p>
+                      <OptimizedImage
+                        src={product.images[currentImageIndex]}
+                        alt={`${product.name} - Image ${currentImageIndex + 1}`}
+                        className="w-full h-full"
+                        style={{ objectFit: 'contain' }}
+                        fallbackSrc="/placeholder.jpg"
+                        onLoad={() => console.log(`Main image ${currentImageIndex + 1} loaded`)}
+                        onError={() => console.error(`Failed to load image ${currentImageIndex + 1}`)}
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full">
+                        <p className="text-gray-500">No image available</p>
+                      </div>
+                    )}
+
+                    {product.images && product.images.length > 1 && (
+                      <div className="absolute inset-0 flex items-center justify-between px-4 pointer-events-none">
+                        <button
+                          className="bg-white/80 backdrop-blur-sm text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-md pointer-events-auto hover:bg-white transition duration-200"
+                          onClick={() => navigateImage('prev')}
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
+                          </svg>
+                        </button>
+                        <button
+                          className="bg-white/80 backdrop-blur-sm text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-md pointer-events-auto hover:bg-white transition duration-200"
+                          onClick={() => navigateImage('next')}
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+                          </svg>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {product.images && product.images.length > 1 && (
+                    <div className="mt-4 relative">
+                      <div className="overflow-x-auto pb-2 hide-scrollbar">
+                        <div className="flex gap-2 min-w-min">
+                          {product.images.map((image, index) => (
+                            <button
+                              key={index}
+                              className={`relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-md overflow-hidden border-2 ${currentImageIndex === index
+                                ? 'border-purple-500'
+                                : 'border-transparent hover:border-gray-300'
+                                } transition duration-200`}
+                              onClick={() => selectImage(index)}
+                            >
+                              <img
+                                src={getImageUrl(image)}
+                                alt={`${product.name} thumbnail ${index + 1}`}
+                                className="w-full h-full object-cover"
+                                loading={index < 5 ? "eager" : "lazy"}
+                                onError={(e) => {
+                                  console.error(`Thumbnail ${index + 1} failed to load`);
+                                  e.target.src = '/placeholder.jpg';
+                                }}
+                              />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
-
-                {product.images && product.images.length > 1 && (
-                  <div className="absolute inset-0 flex items-center justify-between px-4 pointer-events-none">
-                    <button
-                      className="bg-white/80 backdrop-blur-sm text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-md pointer-events-auto hover:bg-white transition duration-200"
-                      onClick={() => navigateImage('prev')}
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
-                      </svg>
-                    </button>
-                    <button
-                      className="bg-white/80 backdrop-blur-sm text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-md pointer-events-auto hover:bg-white transition duration-200"
-                      onClick={() => navigateImage('next')}
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-                      </svg>
-                    </button>
-                  </div>
-                )}
               </div>
-              {product.images && product.images.length > 1 && (
-                <div className="mt-4 relative">
-                  <div className="overflow-x-auto pb-2 hide-scrollbar">
-                    <div className="flex gap-2 min-w-min">
-                      {product.images.map((image, index) => (
-                        <button
-                          key={index}
-                          className={`relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-md overflow-hidden border-2 ${currentImageIndex === index
-                            ? 'border-purple-500'
-                            : 'border-transparent hover:border-gray-300'
-                            } transition duration-200`}
-                          onClick={() => selectImage(index)}
-                        >
-                          <img
-                            src={getImageUrl(image)}
-                            alt={`${product.name} thumbnail ${index + 1}`}
-                            className="w-full h-full object-cover"
-                            loading={index < 5 ? "eager" : "lazy"}
-                            onError={(e) => {
-                              console.error(`Thumbnail ${index + 1} failed to load`);
-                              e.target.src = '/placeholder.jpg';
-                            }}
-                          />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
 
-            <div className="lg:w-3/5 p-6 lg:border-l border-gray-100">
-              <div className="max-w-2xl">
-                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3">{product.name}</h1>
+              <div className="lg:w-3/5 p-6 lg:border-l border-gray-100">
+                <div className="max-w-2xl">
+                  <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3">{product.name}</h1>
 
               <div className="flex flex-wrap gap-2 mb-3">
                 {getFormattedCategories().map(category => (
@@ -816,8 +817,8 @@ function ProductDetail() {
                   {product.soldOut ? 'Out of Stock' : 'In Stock'}
                 </span>
               </div>
+              </div>
             </div>
-          </div>
           </div>
         </div>
 
