@@ -7,7 +7,7 @@ import { useNotification } from './Notification/NotificationProvider';
 import { getImageUrl } from '../utils/imageUtils';
 import { openSideCart } from '../utils/cartUtils'; // Add this import
 
-function ProductItem({ product, onProductClick }) {
+function ProductItem({ product }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const { addToCart } = useCart();
@@ -53,14 +53,7 @@ function ProductItem({ product, onProductClick }) {
       
       {/* Product Image Container */}
       <div className="relative w-full pt-[100%] bg-gray-50 overflow-hidden">
-        <div 
-          className="absolute inset-0 flex items-center justify-center p-3 cursor-pointer"
-          onClick={() => {
-            if (onProductClick) {
-              onProductClick(product._id);
-            }
-          }}
-        >
+        <Link to={`/product/${product._id}`} className="absolute inset-0 flex items-center justify-center p-3">
           {/* Image with placeholder */}
           <div className="relative w-full h-full">
             {/* Gray background placeholder always visible, fades when image loads */}
@@ -77,7 +70,7 @@ function ProductItem({ product, onProductClick }) {
               loading="lazy"
             />
           </div>
-        </div>
+        </Link>
         
         {/* Wishlist Button */}
         <button
@@ -114,16 +107,9 @@ function ProductItem({ product, onProductClick }) {
       
       {/* Product Info */}
       <div className="p-3 flex flex-col min-h-[120px]">
-        <div 
-          className="block mb-1 cursor-pointer"
-          onClick={() => {
-            if (onProductClick) {
-              onProductClick(product._id);
-            }
-          }}
-        >
+        <Link to={`/product/${product._id}`} className="block mb-1">
           <h3 className="text-sm font-medium text-gray-900 line-clamp-1 hover:text-gray-700 transition-colors duration-200">{product.name}</h3>
-        </div>
+        </Link>
         
         {/* Categories */}
         <div className="flex items-center mb-1.5 h-5 overflow-hidden">

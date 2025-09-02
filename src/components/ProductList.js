@@ -13,8 +13,7 @@ function ProductList({
   mobileColumns = 2,
   filterCategory = null,
   viewAllUrl = null,
-  viewAllText = "View All Products",
-  onProductClick = null
+  viewAllText = "View All Products"
 }) {
   const scrollContainerRef = useRef(null);
 
@@ -100,10 +99,7 @@ function ProductList({
         >
           {filteredProducts.map(product => (
             <div key={product._id} className="min-w-[200px] max-w-[200px]">
-              <ProductItem 
-                product={product} 
-                onProductClick={onProductClick}
-              />
+              <ProductItem product={product} />
             </div>
           ))}
         </div>
@@ -113,11 +109,7 @@ function ProductList({
           : "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3"
         }>
           {filteredProducts.map(product => (
-            <ProductItem 
-              key={product._id} 
-              product={product} 
-              onProductClick={onProductClick}
-            />
+            <ProductItem key={product._id} product={product} />
           ))}
         </div>
       )}
