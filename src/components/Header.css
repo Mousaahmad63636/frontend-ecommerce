@@ -1,0 +1,224 @@
+/* src/components/Header.css */
+.nav-link {
+  position: relative;
+  color: #4B5563;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #8c52ff;
+  transform: translateY(-1px);
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #8c52ff;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Badge animation */
+.badge-animation {
+  animation: pulse 2s infinite;
+  box-shadow: 0 0 0 rgba(140, 82, 255, 0.4);
+}
+
+/* Logo animation */
+.logo-animation {
+  transition: transform 0.3s ease;
+}
+
+.logo-animation:hover {
+  transform: scale(1.05);
+}
+
+/* Icon button hover effects */
+.icon-button {
+  transition: transform 0.2s ease, color 0.3s ease;
+}
+
+.icon-button:hover {
+  transform: translateY(-2px);
+  color: #8c52ff !important;
+}
+
+/* Mobile menu animation */
+.mobile-menu-animation {
+  animation: slideDown 0.3s ease-out forwards;
+  transform-origin: top center;
+  overflow: hidden;
+}
+
+/* Search input styling */
+.search-input {
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.search-input:focus {
+  border-color: #8c52ff;
+  box-shadow: 0 0 0 2px rgba(140, 82, 255, 0.2);
+}
+
+/* Dropdown animation */
+.dropdown-animation {
+  animation: fadeIn 0.2s ease-out forwards;
+  transform-origin: top right;
+}
+
+/* Mobile navigation links */
+.mobile-nav-link {
+  position: relative;
+  transition: all 0.3s ease;
+  padding-left: 0;
+}
+
+.mobile-nav-link:hover {
+  background-color: rgba(140, 82, 255, 0.05);
+}
+
+/* Social icons */
+.social-icon {
+  transition: all 0.3s ease;
+}
+
+/* Fixed Header Container */
+.fixed-header-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Purple Banner - Now part of the fixed header */
+.top-banner {
+  background-color: #8c52ff;
+  color: white;
+  overflow: hidden;
+}
+
+.top-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 100%
+  );
+  transform: skewX(-25deg);
+  animation: shine 6s infinite;
+}
+
+/* Main header */
+.main-header {
+  padding: 10px 0;
+  background-color: white;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Category navigation section */
+.category-nav-section {
+  background-color: white;
+  border-bottom: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.category-nav-section.hidden {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.category-nav-section.visible {
+  max-height: 60px; /* Adjust based on your category nav height */
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Header spacer - to prevent content jumps */
+.header-spacer {
+  height: 138px; /* Adjust based on the combined height of your banner + header + category nav */
+}
+
+/* Ensure dropdown menus appear above other elements */
+.user-menu-container .dropdown-animation,
+.mobile-menu-animation {
+  z-index: 35;
+}
+
+/* Social icon hover effect */
+.social-icon:hover {
+  transform: scale(1.2);
+}
+
+/* WhatsApp icon animation */
+.whatsapp-icon {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% { 
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% { 
+    transform: scale(1.1);
+    opacity: 0.9;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 500px;
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+  20%, 100% {
+    left: 100%;
+  }
+}

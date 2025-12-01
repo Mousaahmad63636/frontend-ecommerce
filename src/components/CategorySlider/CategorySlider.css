@@ -1,0 +1,74 @@
+/* src/components/CategorySlider/CategorySlider.css */
+.category-slider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
+    position: relative;
+  }
+  
+  .categories-container {
+    display: flex;
+    gap: 1rem;
+    overflow: hidden;
+    flex: 1;
+  }
+  
+  .category-button {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #e0e0e0;
+    background: white;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    min-width: 120px;
+    flex: 1;
+  }
+  
+  .category-button:hover {
+    border-color: #007bff;
+    color: #007bff;
+  }
+  
+  .category-button.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+  
+  .slider-arrow {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+  
+  .slider-arrow:hover:not(.disabled) {
+    background: #0056b3;
+  }
+  
+  .slider-arrow.disabled {
+    background: #e0e0e0;
+    cursor: not-allowed;
+  }
+  
+  @media (max-width: 768px) {
+    .category-button {
+      padding: 0.5rem 1rem;
+      min-width: 100px;
+    }
+    
+    .slider-arrow {
+      width: 32px;
+      height: 32px;
+    }
+  }
