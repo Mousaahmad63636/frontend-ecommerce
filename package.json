@@ -46,7 +46,11 @@
   },
   "scripts": {
     "start": "react-scripts start",
+<<<<<<< HEAD
     "build": "react-scripts build",
+=======
+    "build": "GENERATE_SOURCEMAP=false react-scripts build",
+>>>>>>> 61c9381a1ae57ac0d345cdd402ae69ca3dbad481
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
